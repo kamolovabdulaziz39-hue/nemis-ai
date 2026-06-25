@@ -719,7 +719,7 @@ def assistant_query_voice():
                 "Nemis tilini o'rganishiga yordam ber."
             )
         
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name="models/gemini-flash-latest")
         response = model.generate_content([prompt, sample_file])
         answer_text = response.text
         
