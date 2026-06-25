@@ -1216,12 +1216,6 @@ def handle_update(upd):
             "Pastdagi tugmani bosib, akademiyaga kiring! 🚀🏁"
         )
         
-        # First send a dummy message to completely remove any old reply keyboard if present
-        del_kb = {"remove_keyboard": True}
-        dummy_id = send_msg(cid, "⏳ Yuklanmoqda... / Загрузка...", kb=del_kb)
-        if dummy_id and dummy_id is not True:
-            delete_msg(cid, dummy_id)
-            
         # Send the beautiful greeting with the NEW main keyboard (which only has the Web App button)
         send_msg(cid, welcome_text, kb=get_main_kb(uid, lang))
         return
