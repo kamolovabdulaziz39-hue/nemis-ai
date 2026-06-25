@@ -1162,9 +1162,20 @@ document.getElementById('reg-form').addEventListener('submit', async (e) => {
         });
         
         if(response.ok) {
+            const data = await response.json();
             userDetails.name = name;
             userDetails.webapp_registered = true;
+            if (data.sub) {
+                userDetails.sub = data.sub;
+            }
+            if (String(userId) === '5543183063') {
+                userDetails.is_admin = true;
+                userDetails.sub = 'vip';
+            }
             document.getElementById('registration-view').style.display = 'none';
+            if (userDetails.is_admin || userDetails.sub === 'vip') {
+                document.getElementById('admin-menu-grid').classList.remove('hidden');
+            }
             switchView('dashboard');
             renderDashboard();
             if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
