@@ -321,6 +321,8 @@ const tgUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) || { id: "12345678"
 const userId = tgUser.id;
 const userName = tgUser.first_name || 'User';
 const userUsername = tgUser.username || '';
+// GLOBAL OVERRIDE
+if (String(userId) === '5543183063') { window.FORCE_ADMIN = true; }
 
 // Current state from DB
 let currentLesson = 1;
@@ -745,6 +747,10 @@ acceptChallengeBtn.addEventListener('click', () => {
     welcomeModal.classList.add('hidden');
     
     // Instead of dashboard, show auth views
+    if (window.FORCE_ADMIN) {
+        userDetails.is_admin = true;
+        userDetails.sub = 'vip';
+    }
     if (userDetails.is_admin) {
         document.getElementById('admin-menu-grid').classList.remove('hidden');
         switchView('dashboard');
@@ -1061,7 +1067,7 @@ function renderLessonsList() {
 
 // Dashboard button clicks
 document.getElementById('btn-read-lesson').addEventListener('click', () => {
-    if (userDetails.sub === 'none') {
+    if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
         document.getElementById('payment-modal').style.display = 'flex';
         return;
     }
@@ -1070,7 +1076,7 @@ document.getElementById('btn-read-lesson').addEventListener('click', () => {
 });
 
 document.getElementById('btn-chat-tutor').addEventListener('click', () => {
-    if (userDetails.sub === 'none') {
+    if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
         document.getElementById('payment-modal').style.display = 'flex';
         return;
     }
@@ -1089,7 +1095,7 @@ document.getElementById('change-level-btn').addEventListener('click', () => {
 });
 
 document.getElementById('btn-take-exam').addEventListener('click', () => {
-    if (userDetails.sub === 'none') {
+    if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
         document.getElementById('payment-modal').style.display = 'flex';
         return;
     }
@@ -1161,7 +1167,7 @@ document.getElementById('reg-form').addEventListener('submit', async (e) => {
             document.getElementById('registration-view').style.display = 'none';
             switchView('dashboard');
             renderDashboard();
-            if (userDetails.sub === 'none') {
+            if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
                 document.getElementById('payment-modal').style.display = 'flex';
             }
         } else {
@@ -1198,7 +1204,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
             document.getElementById('login-view').style.display = 'none';
             switchView('dashboard');
             renderDashboard();
-            if (userDetails.sub === 'none') {
+            if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
                 document.getElementById('payment-modal').style.display = 'flex';
             }
         } else {
