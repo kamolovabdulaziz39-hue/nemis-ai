@@ -704,10 +704,22 @@ def assistant_query_voice():
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
         sample_file = genai.upload_file(path=temp_audio_path)
         
-        prompt = "Ты репетитор немецкого языка. Ученик отправил тебе голосовое сообщение. Ответь ему."
-        if lang == 'uz': prompt = "Sen nemis tili repetitorisan. O'quvchining ovozli xabariga yordam berib javob qaytar."
+        # Multilingual Prompt with Identity
+        prompt = (
+            "Твое имя: Abdulaziz Nemis AI. Твой создатель: Abdulaziz. "
+            "Ты лучший ИИ-репетитор немецкого языка. Пойми это аудио от ученика (оно может быть на немецком, русском, узбекском или английском языках). "
+            "Ответь ему дружелюбно на том языке, на котором он говорит (или на немецком, если он практикует немецкий). "
+            "Помогай ему учить немецкий."
+        )
+        if lang == 'uz': 
+            prompt = (
+                "Sening isming: Abdulaziz Nemis AI. Yaratuvching: Abdulaziz. "
+                "Sen eng zo'r nemis tili repetitorisan. O'quvchining ushbu ovozli xabarini tushun (u nemis, rus, o'zbek yoki ingliz tilida bo'lishi mumkin). "
+                "Unga qaysi tilda gapirgan bo'lsa, o'sha tilda (yoki nemis tilini mashq qilayotgan bo'lsa, nemis tilida) do'stona javob qaytar. "
+                "Nemis tilini o'rganishiga yordam ber."
+            )
         
-        model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
+        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
         response = model.generate_content([prompt, sample_file])
         answer_text = response.text
         
