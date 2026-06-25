@@ -706,8 +706,8 @@ def assistant_query_voice():
         temp_audio_path = temp_audio.name
         
     try:
-        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        sample_file = genai.upload_file(path=temp_audio_path)
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        sample_file = client.files.upload(file=temp_audio_path)
         
         # Multilingual Prompt with Identity
         prompt = (
@@ -724,12 +724,14 @@ def assistant_query_voice():
                 "Nemis tilini o'rganishiga yordam ber."
             )
         
-        model = genai.GenerativeModel(model_name="models/gemini-flash-latest")
-        response = model.generate_content([prompt, sample_file])
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=[prompt, sample_file]
+        )
         answer_text = response.text
         
         try:
-            genai.delete_file(sample_file.name)
+            client.files.delete(name=sample_file.name)
         except:
             pass
             
