@@ -156,6 +156,7 @@ def get_or_create_user_data():
         }
     
     admin_telegram_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
+    res['is_admin'] = (uid == admin_telegram_id)
     if admin_telegram_id and uid == admin_telegram_id:
         res['sub'] = 'vip'
         

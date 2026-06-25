@@ -467,10 +467,9 @@ def get_ai_resp(prompt, lang="ru"):
         return err_msgs.get(lang, err_msgs['ru'])
 
 def get_main_kb(uid, lang):
-    t = TEXTS.get(lang, TEXTS['ru'])
+    web_app_url = os.getenv("WEB_APP_URL", "https://nemis-ai.onrender.com/assistant").strip()
     rows = [
-        [{"text": t['ai_btn']}],
-        [{"text": t['founder_btn']}]
+        [{"text": "🇩🇪 Nemis tilini o'rganish / Начать обучение", "web_app": {"url": web_app_url}}]
     ]
     return {"keyboard": rows, "resize_keyboard": True}
 
@@ -1211,19 +1210,20 @@ def handle_update(upd):
     if txt == '/start':
         db.update_user(uid, step="main")
         
-        # 2. Send the beautiful welcome text with the Inline Web App Button
         welcome_text = (
             "Assalomu alaykum! 👋 Abdulaziz NEMIS AI raqamli akademiyamizga xush kelibsiz! 🏛✨\n\n"
             "Bu yerda ortiqcha vaqt yo‘qotishlarsiz ⏳, uzoq yo‘l yurmasdan 🚷, uyingizda o‘tirib 24/7 rejimda mukammal bilim olasiz! 🧠💻 Bizning tizim dangasalikni butunlay yo‘q qiladi va yuqori natija beradi. 🎯🔥\n\n"
-            "Qoidalarimiz qattiq, lekin adolatli. 🛡⚖️ O‘z darajangizni tanlang va maqsad sari ilk qadamni bosing! 🚀🏁"
+            "Pastdagi tugmani bosib, akademiyaga kiring! 🚀🏁"
         )
-        web_app_url = os.getenv("WEB_APP_URL", "https://nemis-ai.onrender.com/assistant").strip()
-        inline_kb = {
-            "inline_keyboard": [
-                [{"text": "🇩🇪 Nemis tilini o'rganish / Начать обучение", "web_app": {"url": web_app_url}}]
-            ]
-        }
-        send_msg(cid, welcome_text, kb=inline_kb)
+        
+        # First send a dummy message to completely remove any old reply keyboard if present
+        del_kb = {"remove_keyboard": True}
+        dummy_id = send_msg(cid, "⏳ Yuklanmoqda... / Загрузка...", kb=del_kb)
+        if dummy_id and dummy_id is not True:
+            delete_msg(cid, dummy_id)
+            
+        # Send the beautiful greeting with the NEW main keyboard (which only has the Web App button)
+        send_msg(cid, welcome_text, kb=get_main_kb(uid, lang))
         return
 
     if (txt == '/admin' or txt.lower() in ['admin', 'админ']) and is_owner:
