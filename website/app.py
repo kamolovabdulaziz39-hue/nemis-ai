@@ -182,8 +182,13 @@ def webapp_register():
     else:
         conn.execute("UPDATE users SET name=?, webapp_surname=?, webapp_password=? WHERE id=?", (name, surname, password, uid))
     conn.commit()
+    
+    # Fetch updated user sub
+    updated_user = conn.execute("SELECT sub FROM users WHERE id=?", (uid,)).fetchone()
+    sub_status = updated_user['sub'] if updated_user and updated_user['sub'] else 'none'
     conn.close()
-    return {"status": "ok"}
+    
+    return {"status": "ok", "sub": sub_status}
 
 @app.route('/api/webapp_login', methods=['POST'])
 def webapp_login():
