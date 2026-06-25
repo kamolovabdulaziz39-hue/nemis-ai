@@ -1236,67 +1236,62 @@ def handle_update(upd):
         send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": kb, "resize_keyboard": True}); return
 
     if is_owner:
-        # Broadcast step (Attack)
-        if u['step'] == "admin_broadcast" and txt:
-            if txt == "⬅️ Menyu" or txt == "/admin":
-                db.update_user(uid, step="admin_main")
-                kb = [
-                    [{"text": "📊 Statistika"}, {"text": "🚨 Ataka"}],
-                    [{"text": "🔍 Ataka batafsil"}, {"text": "🤖 AI loglari"}],
-                    [{"text": "🎁 VIP Sovg'a qilish"}, {"text": "⬅️ Menyu"}]
-                ]
-                send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": kb, "resize_keyboard": True}); return
-            else:
-                all_u = db.get_all_users(); count = 0
-                for user_id in all_u:
-                    if send_msg(user_id, f"📢 *XABAR:*\n\n{txt}"): count += 1
-                    time.sleep(0.05)
-                db.update_user(uid, step="admin_main")
-                send_msg(cid, f"✅ Xabar {count} ta foydalanuvchiga yuborildi!")
-                return
+        admin_kb = [
+            [{"text": "📢 E'lon (Rassilka)"}, {"text": "🔓 Blokdan chiqarish"}],
+            [{"text": "🚨 Ataka"}, {"text": "🔍 Ataka batafsil"}],
+            [{"text": "🎁 VIP Sovg'a qilish"}, {"text": "⬅️ Menyu"}]
+        ]
 
-        # Broadcast Detailed (Ataka batafsil)
-        if u['step'] == "admin_broadcast_photo":
+        # Broadcast Step
+        if u['step'] == "admin_broadcast":
             if txt and (txt == "⬅️ Menyu" or txt == "/admin"):
                 db.update_user(uid, step="admin_main")
-                kb = [
-                    [{"text": "📊 Statistika"}, {"text": "🚨 Ataka"}],
-                    [{"text": "🔍 Ataka batafsil"}, {"text": "🤖 AI loglari"}],
-                    [{"text": "🎁 VIP Sovg'a qilish"}, {"text": "⬅️ Menyu"}]
-                ]
-                send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": kb, "resize_keyboard": True}); return
+                send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": admin_kb, "resize_keyboard": True}); return
             else:
-                # Forward the message to everyone
                 all_u = db.get_all_users(); count = 0
                 for user_id in all_u:
+                    # if it has text, video, photo...
                     try:
-                        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/copyMessage"
+                        url = f"https://api.telegram.org/bot{BOT_TOKEN}/copyMessage"
+                        import json
                         data = {"chat_id": user_id, "from_chat_id": cid, "message_id": m['message_id']}
                         req = urllib.request.Request(url, data=json.dumps(data).encode(), headers={'Content-Type': 'application/json'})
                         res = urllib.request.urlopen(req)
                         if res.getcode() == 200: count += 1
                     except Exception as e: pass
+                    import time
                     time.sleep(0.05)
                 db.update_user(uid, step="admin_main")
-                send_msg(cid, f"✅ Xabar {count} ta foydalanuvchiga yuborildi!")
+                send_msg(cid, f"✅ E'lon {count} ta foydalanuvchiga yuborildi!", kb={"keyboard": admin_kb, "resize_keyboard": True})
+                return
+
+        # Unban Step
+        if u['step'] == "admin_unban":
+            if txt and (txt == "⬅️ Menyu" or txt == "/admin"):
+                db.update_user(uid, step="admin_main")
+                send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": admin_kb, "resize_keyboard": True}); return
+            else:
+                target_id = str(txt).strip()
+                target_user = db.get_user(target_id)
+                if target_user:
+                    db.update_user(target_id, banned=0, violations=0, step="main")
+                    send_msg(cid, f"✅ Foydalanuvchi (ID: {target_id}) blokdan chiqarildi!", kb={"keyboard": admin_kb, "resize_keyboard": True})
+                    send_msg(target_id, "🔓 Sizning akkauntingiz admin tomonidan blokdan chiqarildi. Xush kelibsiz!")
+                else:
+                    send_msg(cid, "❌ Bunday ID bilan foydalanuvchi topilmadi.")
                 return
 
         # Gift VIP Step
         if u['step'] == "admin_gift_vip" and txt:
             if txt == "⬅️ Menyu" or txt == "/admin":
                 db.update_user(uid, step="admin_main")
-                kb = [
-                    [{"text": "📊 Statistika"}, {"text": "🚨 Ataka"}],
-                    [{"text": "🔍 Ataka batafsil"}, {"text": "🤖 AI loglari"}],
-                    [{"text": "🎁 VIP Sovg'a qilish"}, {"text": "⬅️ Menyu"}]
-                ]
-                send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": kb, "resize_keyboard": True}); return
+                send_msg(cid, "🛠️ *Admin Panel*", kb={"keyboard": admin_kb, "resize_keyboard": True}); return
             else:
-                target_id = txt.strip()
+                target_id = str(txt).strip()
                 target_user = db.get_user(target_id)
                 if target_user:
                     db.update_user(target_id, sub="vip", sub_expire="2099-12-31 23:59:59", ai_count=0, banned=0, violations=0)
-                    send_msg(cid, f"✅ Foydalanuvchi (ID: {target_id}) ga VIP taqdim etildi!")
+                    send_msg(cid, f"✅ Foydalanuvchi (ID: {target_id}) ga VIP taqdim etildi!", kb={"keyboard": admin_kb, "resize_keyboard": True})
                     send_msg(target_id, "🎁 Tabriklaymiz! Admin sizga bir umrlik *VIP* ta'lim kurslarini taqdim etdi. Endi barcha xizmatlardan bepul foydalanishingiz mumkin!")
                 else:
                     send_msg(cid, "❌ Bunday ID bilan foydalanuvchi topilmadi.")
@@ -1304,30 +1299,35 @@ def handle_update(upd):
 
         # Main Admin Menu Buttons
         if u['step'] == "admin_main" and txt:
-            if txt == "📊 Statistika":
-                all_u = db.get_all_users()
-                total = len(all_u)
-                active = sum(1 for v in all_u.values() if v.get('sub') != 'none')
-                today = sum(1 for v in all_u.values() if v.get('registered_at', '').startswith(time.strftime("%Y-%m-%d")))
-                text = f"📊 *Umumiy statistika:*\n\n👥 Jami: {total}\n💎 Faol obunalar: {active}\n🆕 Bugun: {today}"
-                send_msg(cid, text)
+            if txt == "📢 E'lon (Rassilka)":
+                db.update_user(uid, step="admin_broadcast")
+                send_msg(cid, "📢 Barcha foydalanuvchilarga yuboriladigan xabar, rasm yoki videoni yuboring (forward qilsangiz ham bo'ladi):\n\n(Bekor qilish uchun ⬅️ Menyu bosing)", kb={"keyboard": [[{"text": "⬅️ Menyu"}]], "resize_keyboard": True})
+                return
+            elif txt == "🔓 Blokdan chiqarish":
+                db.update_user(uid, step="admin_unban")
+                send_msg(cid, "🔓 *Blokdan chiqarish:*\n\nFoydalanuvchining Telegram ID raqamini yuboring:", kb={"keyboard": [[{"text": "⬅️ Menyu"}]], "resize_keyboard": True})
                 return
             elif txt == "🚨 Ataka":
-                db.update_user(uid, step="admin_broadcast")
-                send_msg(cid, "📢 Barcha foydalanuvchilarga yuboriladigan xabarni yozing:\n\n(Bekor qilish uchun ⬅️ Menyu bosing)", kb={"keyboard": [[{"text": "⬅️ Menyu"}]], "resize_keyboard": True})
+                # Fetch recent hackers from hacker_logs
+                logs = db.conn.execute("SELECT user_id, action, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 10").fetchall()
+                if not logs:
+                    send_msg(cid, "Hech qanday hujum (ataka) qayd etilmagan.")
+                else:
+                    res = "🚨 *So'nggi 10 ta Hujum (Ataka):*\n\n"
+                    for l in logs:
+                        res += f"👤 ID: `{l[0]}`\n🕒 {l[2]}\n⚠️ Harakat: {l[1]}\n\n"
+                    send_msg(cid, res)
                 return
             elif txt == "🔍 Ataka batafsil":
-                db.update_user(uid, step="admin_broadcast_photo")
-                send_msg(cid, "📢 Rasmli, videolar yoki istalgan postni yuboring (forward qilsangiz ham bo'ladi). Barcha foydalanuvchilarga nusxalanadi:\n\n(Bekor qilish uchun ⬅️ Menyu bosing)", kb={"keyboard": [[{"text": "⬅️ Menyu"}]], "resize_keyboard": True})
-                return
-            elif txt == "🤖 AI loglari":
-                logs = db.conn.execute('SELECT user_id, prompt, timestamp FROM ai_logs ORDER BY id DESC LIMIT 5').fetchall()
+                # Fetch detailed logs (what exactly they wrote)
+                logs = db.conn.execute("SELECT user_id, action, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 5").fetchall()
                 if not logs:
-                    send_msg(cid, "Hech qanday AI loglari topilmadi.")
+                    send_msg(cid, "Hech qanday hujum (ataka) qayd etilmagan.")
                 else:
-                    res = "🤖 *So'nggi 5 ta AI loglari:*\n\n"
+                    res = "🔍 *Batafsil Hujumlar:*\n\n"
                     for l in logs:
-                        res += f"👤 ID: `{l[0]}`\n🕒 {l[2]}\n💬 {l[1][:100]}...\n\n"
+                        # Sometimes they upload a fake receipt or write something
+                        res += f"👤 Hacker ID: `{l[0]}`\n🕒 Vaqt: {l[2]}\n💬 Tafsilot:\n_{l[1]}_\n\n"
                     send_msg(cid, res)
                 return
             elif txt == "🎁 VIP Sovg'a qilish":
