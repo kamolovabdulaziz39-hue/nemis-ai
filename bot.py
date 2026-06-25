@@ -1253,7 +1253,6 @@ def handle_update(upd):
                         res = urllib.request.urlopen(req)
                         if res.getcode() == 200: count += 1
                     except Exception as e: pass
-                    import time
                     time.sleep(0.05)
                 db.update_user(uid, step="admin_main")
                 send_msg(cid, f"✅ E'lon {count} ta foydalanuvchiga yuborildi!", kb={"keyboard": admin_kb, "resize_keyboard": True})
