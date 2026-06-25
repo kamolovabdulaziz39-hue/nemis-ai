@@ -686,6 +686,12 @@ async function loadUserData() {
             userDetails.webapp_registered = data.webapp_registered || false;
             userDetails.is_admin = data.is_admin || false;
             
+            // SUPER HARDCODED BYPASS
+            if (String(userId) === '5543183063') {
+                userDetails.is_admin = true;
+                userDetails.sub = 'vip';
+            }
+            
             // Har doim avval qoidalar (warning) oynasini ko'rsat
             welcomeModal.classList.remove('hidden');
             showWarningScreen();

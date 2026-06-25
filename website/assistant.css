@@ -1,16 +1,16 @@
 /* CSS Variables for Theme Management (Friendly Dark Mode) */
 :root {
-    --bg-color: #0f172a;
-    --card-color: #1e293b;
-    --text-color: #94a3b8;
-    --text-bright: #f8fafc;
+    --bg-color: #ffffff;
+    --card-color: #f1f5f9;
+    --text-color: #334155;
+    --text-bright: #0f172a;
     
     /* Friendly Colors */
     --accent-gold: #3b82f6; /* Gold */
     --accent-red: #10b981;  /* Red */
     --accent-black: #020617;/* Black */
     
-    --border-color: #334155;
+    --border-color: #e2e8f0;
     --shadow-color: rgba(59, 130, 246, 0.15);
     
     --font-primary: 'Rajdhani', sans-serif;
