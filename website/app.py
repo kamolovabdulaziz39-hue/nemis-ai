@@ -154,8 +154,14 @@ def get_or_create_user_data():
             "sub": user['sub'] or "none",
             "webapp_registered": bool(user['webapp_password'])
         }
+    
+    admin_telegram_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
+    if admin_telegram_id and uid == admin_telegram_id:
+        res['sub'] = 'vip'
+        
     conn.close()
     return res
+
 
 @app.route('/api/webapp_register', methods=['POST'])
 def webapp_register():
