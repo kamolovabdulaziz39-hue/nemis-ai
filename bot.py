@@ -467,7 +467,7 @@ def get_ai_resp(prompt, lang="ru"):
         return err_msgs.get(lang, err_msgs['ru'])
 
 def get_main_kb(uid, lang):
-    web_app_url = os.getenv("WEB_APP_URL", "https://nemis-ai.onrender.com/assistant").strip()
+    web_app_url = os.getenv("WEB_APP_URL").strip()
     rows = [
         [{"text": "🇩🇪 Nemis tilini o'rganish / Начать обучение", "web_app": {"url": web_app_url}}]
     ]
@@ -1199,7 +1199,7 @@ def handle_update(upd):
         if any(txt == TEXTS[l]['back_btn'] for l in TEXTS): db.update_user(uid, step="main"); send_msg(cid, "🏠", kb=get_main_kb(uid, lang)); return
     
     if any(txt == TEXTS[l]['ai_btn'] for l in TEXTS):
-        web_app_url = os.getenv("WEB_APP_URL", "https://nemis-ai.onrender.com/assistant")
+        web_app_url = os.getenv("WEB_APP_URL")
         kb = {
             "inline_keyboard": [
                 [{"text": "🇩🇪 Nemis tilini o'rganish / Начать обучение", "web_app": {"url": web_app_url}}]
@@ -1539,7 +1539,7 @@ def set_default_menu_button():
             if render_url:
                 web_app_url = f"{render_url}/assistant"
             else:
-                web_app_url = "https://nemis-ai.onrender.com/assistant"
+                web_app_url = os.getenv("WEB_APP_URL")
         p = {
             "menu_button": json.dumps({
                 "type": "web_app",
