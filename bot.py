@@ -1540,7 +1540,13 @@ def handle_update(upd):
 
 def set_default_menu_button():
     try:
-        web_app_url = os.getenv("WEB_APP_URL", "https://nemis-ai.onrender.com/assistant")
+        web_app_url = os.getenv("WEB_APP_URL")
+        if not web_app_url:
+            render_url = os.getenv("RENDER_EXTERNAL_URL")
+            if render_url:
+                web_app_url = f"{render_url}/assistant"
+            else:
+                web_app_url = "https://nemis-ai.onrender.com/assistant"
         p = {
             "menu_button": json.dumps({
                 "type": "web_app",
