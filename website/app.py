@@ -391,37 +391,37 @@ Z z — [Tset] (o‘zbekcha "S" va "T" qorishmasi, "Ts" kabi o‘qiladi)
 
 **2. Maxsus nemis harflari (Umlaut va Eszett)**
 Nemis tilida faqat ushbu tilga xos bo‘lgan 4 ta maxsus harf mavjud. Ularni yaxshilab eslab qoling:
-**Ä ä (A-umlaut)** — [E] kabi o‘qiladi. Misol: Mädchen [Medxen] — qiz bola.
-**Ö ö (O-umlaut)** — [Yo] kabi yumshoq o‘qiladi (lablar oldinga cho‘ziladi). Misol: schön [shyon] — go‘zal.
-**Ü ü (U-umlaut)** — [Yu] kabi yumshoq o‘qiladi. Misol: tschüss [chyus] — xayr.
-**ß (Eszett)** — bu harf har doim ikkita "ss" kabi o‘qiladi. Misol: heißen [xaysen] — nomlanmoq.
+Ä ä (A-umlaut) — [E] kabi o‘qiladi. Misol: Mädchen [Medxen] — qiz bola.
+Ö ö (O-umlaut) — [Yo] kabi yumshoq o‘qiladi (lablar oldinga cho‘ziladi). Misol: schön [shyon] — go‘zal.
+Ü ü (U-umlaut) — [Yu] kabi yumshoq o‘qiladi. Misol: tschüss [chyus] — xayr.
+ß (Eszett) — bu harf har doim ikkita "ss" kabi o‘qiladi. Misol: heißen [xaysen] — nomlanmoq.
 
 **3. Unli harflar birikmasi (O‘qish qoidalari)**
 Ikki unli harf yonma-yon kelsa, yangi tovush hosil qiladi:
-**ei** — [Ay] deb o‘qiladi:
+ei — [Ay] deb o‘qiladi:
 Nein [Nayn] — Yo‘q
 Mein [Mayn] — Mening
 
-**eu va äu** — [Oy] deb o‘qiladi:
+eu va äu — [Oy] deb o‘qiladi:
 Euro [Oyro] — Yevro
 Häuser [Xoyzer] — Uylar
 
-**ie** — [I] tovushini uzunroq qilib o‘qitadi:
+ie — [I] tovushini uzunroq qilib o‘qitadi:
 Auf Wiedersehen [Auf viderzeen] — Xayrlashish iborasi.
 
 **4. Undosh harflar birikmasi**
 Nemis tilida eng ko‘p uchraydigan undosh birikmalar:
-**ch** — [X] kabi o‘qiladi:
+ch — [X] kabi o‘qiladi:
 Ich [Ix] — Men
 
-**sch** — [Sh] kabi o‘qiladi:
+sch — [Sh] kabi o‘qiladi:
 Schule [Shule] — Maktab
 
-**st va sp** — so‘z boshida [Sht] va [Shp] deb o‘qiladi:
+st va sp — so‘z boshida [Sht] va [Shp] deb o‘qiladi:
 Sprechen [Shprexen] — Gapirmoq
 Straße [Shtrasse] — Ko‘cha
 
-**5. 📝 Übungen (O‘qishni mashq qilamiz)**
+**5. O‘qishni mashq qilamiz (Amaliyot)**
 Quyidagi so‘zlarni qoidaga asosan ovoz chiqarib o‘qib ko‘ring:
 Nein [Nayn] — Yo‘q
 Deutsch [Doych] — Nemis tili
@@ -429,9 +429,7 @@ Sprechen [Shprexen] — Gapirmoq
 Freund [Froynd] — Do‘st
 Weiß [Vays] — Oq
 
-**6. 🎯 Leseaufgabe / Praktisches Aufgabe**
-Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bilasiz. 
-Yuqoridagi so'zlarni yana bir marta takrorlang. Agar talaffuzga qiynalsangiz, so'zni nusxalab olib "AI Tutor" ga yuboring, u sizga qanday aytilishini ovozli tarzda jo'natadi! Keyingi darsda biz 0 dan 20 gacha sanashni o‘rganamiz.
+Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bilasiz. Keyingi darsda biz 0 dan 20 gacha sanashni o‘rganamiz.
 """
         try:
             import website.a1_lessons as a1_mod
