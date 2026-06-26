@@ -725,31 +725,38 @@ Weiß [Vays] — Oq
 Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bilasiz. 
 Yuqoridagi so'zlarni yana bir marta takrorlang. Agar talaffuzga qiynalsangiz, so'zni nusxalab olib "AI Tutor" ga yuboring, u sizga qanday aytilishini ovozli tarzda jo'natadi! Keyingi darsda biz 0 dan 20 gacha sanashni o‘rganamiz.
 """
-        load_id = None
     else:
-        loading_msg = {
-            'ru': "⏳ Загрузка урока... Пожалуйста, подождите.",
-            'uz': "⏳ Dars yuklanmoqda... Iltimos, kuting.",
-            'en': "⏳ Loading lesson... Please wait.",
-            'de': "⏳ Lektion wird geladen... Bitte warten."
-        }.get(lang, "⏳ Загрузка урока... Пожалуйста, подождите.")
-        
-        load_id = send_msg(cid, loading_msg)
-        
-        lang_map = {'uz': "Uzbek", 'ru': "Russian", 'en': "English", 'de': "German"}
-        explain_lang = lang_map.get(lang, "Russian")
-        
-        prompt = (
-            f"Provide a structured, detailed German language lesson for Level {level}, Lesson {lesson_num} out of 60. "
-            f"The lesson explanations, grammar rules, and vocabulary translations must be in {explain_lang}. "
-            "Keep it highly educational, well-formatted, and easy to read. Structure it with these EXACT headers:\n"
-            f"📖 Lektion {lesson_num}: [Lesson Topic Name]\n\n"
-            "1. 💡 Grammatik (Detailed grammar explanation with examples)\n"
-            "2. 🗣️ Wortschatz (Vocabulary list with translations)\n"
-            "3. 📝 Übungen (3 quick practice exercises)\n\n"
-            "Provide solutions to the exercises at the very end of the lesson."
-        )
-        lesson_text = get_ai_resp(prompt, lang)
+        try:
+            from website.a1_lessons import A1_LESSONS
+        except ImportError:
+            A1_LESSONS = {}
+            
+        if str(lesson_num) in A1_LESSONS and u.get('selected_level', 'A1') in ['A1', 'A1_Prep']:
+            lesson_text = A1_LESSONS[str(lesson_num)]
+            load_id = None
+        else:
+            loading_msg = {
+                'ru': "⏳ Загрузка урока... Пожалуйста, подождите.",
+                'uz': "⏳ Dars yuklanmoqda... Iltimos, kuting.",
+                'en': "⏳ Loading lesson... Please wait.",
+                'de': "⏳ Lektion wird geladen... Bitte warten."
+            }.get(lang, "⏳ Загрузка урока... Пожалуйста, подождите.")
+            
+            load_id = send_msg(cid, loading_msg)
+            lang_map = {'uz': "Uzbek", 'ru': "Russian", 'en': "English", 'de': "German"}
+            explain_lang = lang_map.get(lang, "Russian")
+            
+            prompt = (
+                f"Provide a structured, detailed German language lesson for Level {level}, Lesson {lesson_num} out of 60. "
+                f"The lesson explanations, grammar rules, and vocabulary translations must be in {explain_lang}. "
+                "Keep it highly educational, well-formatted, and easy to read. Structure it with these EXACT headers:\n"
+                f"📖 Lektion {lesson_num}: [Lesson Topic Name]\n\n"
+                "1. 💡 Grammatik (Detailed grammar explanation with examples)\n"
+                "2. 🗣️ Wortschatz (Vocabulary list with translations)\n"
+                "3. 📝 Übungen (3 quick practice exercises)\n\n"
+                "Provide solutions to the exercises at the very end of the lesson."
+            )
+            lesson_text = get_ai_resp(prompt, lang)
     
     if load_id and load_id is not True:
         delete_msg(cid, load_id)
