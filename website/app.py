@@ -433,20 +433,30 @@ Weiß [Vays] — Oq
 Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bilasiz. 
 Yuqoridagi so'zlarni yana bir marta takrorlang. Agar talaffuzga qiynalsangiz, so'zni nusxalab olib "AI Tutor" ga yuboring, u sizga qanday aytilishini ovozli tarzda jo'natadi! Keyingi darsda biz 0 dan 20 gacha sanashni o‘rganamiz.
 """
-    else:
-        prompt = (
-            f"Provide a structured, detailed German language lesson for Level {selected_level}, Lesson {lesson_to_load} out of 60. "
-            f"The lesson explanations, grammar rules, and vocabulary translations must be entirely in {explain_lang}. "
-            "Keep it highly educational, comprehensive, well-formatted, and easy to read. Structure it with these EXACT headers:\n"
-            f"📖 Lektion {lesson_to_load}: [Lesson Topic Name]\n\n"
-            "1. 💡 Grammatik (Comprehensive grammar explanation with multiple examples. Include reading rules if applicable)\n"
-            "2. 🗣️ Wortschatz (Extensive vocabulary list including essential verbs, nouns, and phrases with translations)\n"
-            "3. 🎭 Dialog (A conversational dialogue demonstrating the topic)\n"
-            "4. 📝 Übungen (3 quick practice exercises)\n"
-            "5. 🎯 Leseaufgabe / Praktisches Aufgabe (Provide a dedicated, clear German text related to the topic. It MUST be a reading text like a story, a letter, or an article. Keep the text entirely in German. Underneath the text, add a note in {explain_lang} saying: 'If you don't understand this text, or want me to check your reading, copy the text and send it to the AI Chat Tutor. You can ask the tutor to explain it to you or listen to you read.')\n\n"
-            "Provide solutions to the exercises at the very end of the lesson."
-        )
-        lesson_text = get_ai_resp(prompt, lang)
+        try:
+            from .a1_lessons import A1_LESSONS
+        except ImportError:
+            try:
+                from a1_lessons import A1_LESSONS
+            except ImportError:
+                A1_LESSONS = {}
+                
+        if str(lesson_to_load) in A1_LESSONS and (selected_level == 'A1' or selected_level == 'A1_Prep'):
+            lesson_text = A1_LESSONS[str(lesson_to_load)]
+        else:
+            prompt = (
+                f"Provide a structured, detailed German language lesson for Level {selected_level}, Lesson {lesson_to_load} out of 60. "
+                f"The lesson explanations, grammar rules, and vocabulary translations must be entirely in {explain_lang}. "
+                "Keep it highly educational, comprehensive, well-formatted, and easy to read. Structure it with these EXACT headers:\n"
+                f"📖 Lektion {lesson_to_load}: [Lesson Topic Name]\n\n"
+                "1. 💡 Grammatik (Comprehensive grammar explanation with multiple examples. Include reading rules if applicable)\n"
+                "2. 🗣️ Wortschatz (Extensive vocabulary list including essential verbs, nouns, and phrases with translations)\n"
+                "3. 🎭 Dialog (A conversational dialogue demonstrating the topic)\n"
+                "4. 📝 Übungen (3 quick practice exercises)\n"
+                "5. 🎯 Leseaufgabe / Praktisches Aufgabe (Provide a dedicated, clear German text related to the topic. It MUST be a reading text like a story, a letter, or an article. Keep the text entirely in German. Underneath the text, add a note in {explain_lang} saying: 'If you don't understand this text, or want me to check your reading, copy the text and send it to the AI Chat Tutor. You can ask the tutor to explain it to you or listen to you read.')\n\n"
+                "Provide solutions to the exercises at the very end of the lesson."
+            )
+            lesson_text = get_ai_resp(prompt, lang)
         
     return {"lesson_text": lesson_text, "current_lesson": current_lesson, "loaded_lesson": lesson_to_load, "selected_level": selected_level}
 
