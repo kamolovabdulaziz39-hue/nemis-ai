@@ -240,14 +240,16 @@ def save_level():
     
     now_str = time.strftime('%Y-%m-%d %H:%M:%S')
     conn = get_db_connection()
-    user = conn.execute("SELECT selected_level FROM users WHERE id=?", (uid,)).fetchone()
+    user = conn.execute("SELECT selected_level, current_lesson FROM users WHERE id=?", (uid,)).fetchone()
     if user and user['selected_level'] == db_level:
         conn.execute("UPDATE users SET last_activity=? WHERE id=?", (now_str, uid))
+        current_lesson = user['current_lesson'] or 1
     else:
         conn.execute("UPDATE users SET selected_level=?, current_lesson=1, last_activity=? WHERE id=?", (db_level, now_str, uid))
+        current_lesson = 1
     conn.commit()
     conn.close()
-    return {"status": "ok", "last_activity": now_str, "selected_level": db_level}
+    return {"status": "ok", "last_activity": now_str, "selected_level": db_level, "current_lesson": current_lesson}
 
 @app.route('/api/complete_lesson', methods=['POST'])
 def complete_lesson():

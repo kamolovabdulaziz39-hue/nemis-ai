@@ -728,7 +728,11 @@ levelBtns.forEach(btn => {
                 const resData = await response.json();
                 selectedLevel = resData.selected_level;
                 welcomeModal.classList.add('hidden');
-                currentLesson = 1;
+                if (resData.current_lesson !== undefined) {
+                    currentLesson = resData.current_lesson;
+                } else {
+                    currentLesson = 1;
+                }
                 switchView('dashboard');
             }
         } catch (e) {
