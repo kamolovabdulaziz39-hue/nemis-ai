@@ -357,21 +357,23 @@ function updateWarningText(lang) {
     let template = `
         <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
             <strong>📜 Abdulaziz Nemis AI — Foydalanish Qoidalari va Ommaviy Oferta</strong><br><br>
-            DIQQAT! Botdan foydalanishni boshlashdan oldin ushbu qoidalar va shartlar bilan to‘liq tanishib chiqing. "Да, я согласен" tugmasini bosish orqali siz ushbu qoidalarga so‘zsiz rozilik bildirasiz va ularni buzmaslik majburiyatini olasiz.<br><br>
+            DIQQAT! Botdan foydalanishni boshlashdan oldin ushbu qoidalar bilan to‘liq tanishib chiqing. "Men roziman" tugmasini bosish orqali siz barcha shartlarga so‘zsiz rozilik bildirasiz.<br><br>
             
-            <strong>1. 🛡️ Kiberxavfsizlik va O‘zbekiston Respublikasi Qonunchiligi</strong><br>
-            Ushbu botning dasturiy kodi, ma'lumotlar bazasi va unga ulangan Gemini Pro sun'iy intellekt tizimi mualliflik huquqi hamda O‘zbekiston Respublikasi qonunlari bilan qattiq himoyalangan. Botni buzishga (vzlom), dekompilyatsiya qilishga, ma'lumotlar bazasiga ruxsatsiz kirishga, tizimni o‘zgartirishga yoki serverga zararli hujumlar (DDoS/Spam) uyushtirishga bo‘lgan har qanday urinish mutlaqo taqiqlanadi. Qoidabuzarlik aniqlangan taqdirda, foydalanuvchining hisobi (ID) hech qanday ogohlantirishsiz va to‘langan pul qaytarilmasdan butunlay bloklanadi, uning IP-manzili hamda barcha tarmoq ma'lumotlari qayd etilib, huquqni muhofaza qilish organlariga topshiriladi. O‘zbekiston Respublikasi Jinoyat Kodeksining 278-moddasi, 278-1-moddasi va 278-6-moddasiga muvofiq jiddiy jinoiy javobgarlikka tortiladilar.<br><br>
+            <strong>1. 🛡️ Kiberxavfsizlik va Qonunchilik</strong><br>
+            Botning dasturiy kodi, ma'lumotlar bazasi va Gemini Pro SI tizimi qonun bilan himoyalangan. Botni buzish (vzlom), serverga zararli hujumlar (DDoS/Spam) uyushtirish mutlaqo taqiqlanadi. Qoidabuzarlar hech qanday ogohlantirishsiz va puli qaytarilmasdan o‘chiriladi. Shuningdek, ma'lumotlar huquqni muhofaza qilish organlariga topshirilib, O‘zbekiston Respublikasi Jinoyat Kodeksining 278-moddasiga muvofiq jinoiy javobgarlikka tortiladi.<br><br>
 
-            <strong>2. 🎴 Temir Intizom, Progress Tizimi va Jarimalar</strong><br>
-            Nemis tilini noldan boshlab mukammal o‘rganish va real testlarga tayyorlanish faqat har kungi tinimsiz hamda tizimli mehnatni talab qiladi. Shu sababli, Abdulaziz Nemis AI botida qat'iy "Temir intizom" va jarima tizimi joriy etilgan. Agar siz 1 kun davomida kirmasa, darslarni qoldirsa yoki berilgan kunlik uy vazifasini topshirmasa, progress avtomatik raqishda 4 ta darsga orqaga qaytariladi. Masalan, 59-darajadan dars qoldirsangiz, progress darhol 55-darajaga tushirib yuboradi. Ushbu qoida barcha darajalar (A1, A2, B1, B2) uchun amal qiladi. Har bir bosqich yakunida faqat qattiq imtihon orqali keyingi darajaga o‘tiladi.<br><br>
+            <strong>2. 🎴 Temir Intizom va Jarimalar</strong><br>
+            Kursda qat'iy intizom tizimi joriy etilgan. Agar o‘quvchi 1 kun davomida botga kirmasa, darsni qoldirsa yoki uy vazifasini topshirmasa, uning natijasi avtomatik ravishda 4 ta darsga orqaga qaytariladi. Masalan, o‘quvchi 59-darsga kelib dars qoldirsa, progress darhol 55-darsga tushirib yuboriladi. Ushbu qoida barcha — A1, A2, B1 va B2 darajalarining hammasiga birdek amal qiladi. Keyingi darajaga faqat imtihon orqali o‘tiladi.<br><br>
 
-            <strong>3. 💳 Obuna bo‘lish va To‘lov Shartlari</strong><br>
-            Botdan to‘liq va cheksiz foydalanish muddati to‘lov tasdiqlangan kundan boshlab to‘g‘ri 1 oy (30 kun) etib belgilanadi. Oylik obuna narxi 100 000 so‘mni tashkil etadi. Hech qanday vositachilar va ortiqcha komissiyalarsiz, to‘lov to‘g‘ridan-to‘g‘ri Humo yoki Uzcard plastik kartasiga o‘tkaziladi hamda to‘lov amalga oshirilganligini tasdiqlovchi chek (skrinshot) tekshirish uchun botga yuboriladi. Intizomsizlik qilib belgilangan 30 kun ichida o‘z darajasini tugata olmagan o‘quvchilar keyingi oyga ham to‘lovni to‘liq amalga oshirishlari shart.
+            <strong>3. 💳 Obuna va To‘lov Shartlari</strong><br>
+            Botdan to‘liq foydalanish muddati — to‘lov tasdiqlangan kundan boshlab 1 oy (30 kun). Oylik obuna narxi 100 000 so‘m. To‘lov to‘g‘ridan-to‘g‘ri Uzcard/Humo kartasiga o‘tkaziladi va chek (skrinshot) botga yuboriladi. Belgilangan 30 kun ichida darajani tugata olmagan o‘quvchilar keyingi oy uchun ham to‘lovni to‘liq amalga oshiradilar.<br><br>
+            
+            ⚠️ Muhim eslatma: Bot ma'muriyati foydalanish qoidalariga istalgan vaqtda o‘zgartirishlar, tuzatishlar yoki qo‘shimchalar kiritish huquqini o‘zida saqlab qoladi. Foydalanuvchilar o‘zgarishlardan xabardor bo‘lish uchun qoidalarni vaqti-vaqti bilan tekshirib turishlari tavsiya etiladi.
         </div>
     `;
     
     warningTextContent.innerHTML = template;
-    document.getElementById('accept-btn-text').textContent = '🟢 Да, я согласен';
+    document.getElementById('accept-btn-text').textContent = '🟢 Men roziman';
     
     // Check if decline btn exists
     const declineBtnText = document.getElementById('decline-btn-text');
