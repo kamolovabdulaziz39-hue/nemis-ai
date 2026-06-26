@@ -1589,11 +1589,8 @@ def check_daily_regression():
                     penalty_applied = False
                     new_lesson = lesson
                     
-                    if 2 <= lesson <= 57:
-                        new_lesson = lesson - 1
-                        penalty_applied = True
-                    elif lesson in [58, 59]:
-                        new_lesson = 50
+                    if lesson > 1:
+                        new_lesson = max(1, lesson - 4)
                         penalty_applied = True
                         
                     if penalty_applied:
