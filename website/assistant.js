@@ -353,8 +353,8 @@ function updateWarningText(lang) {
         }
     });
 
-    // The user provided custom text in Uzbek/Russian hybrid
-    let template = `
+    const RULES_TEXT = {
+        'uz': `
         <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
             <strong>📜 Abdulaziz Nemis AI — Foydalanish Qoidalari va Ommaviy Oferta</strong><br><br>
             DIQQAT! Botdan foydalanishni boshlashdan oldin ushbu qoidalar bilan to‘liq tanishib chiqing. "Men roziman" tugmasini bosish orqali siz barcha shartlarga so‘zsiz rozilik bildirasiz.<br><br>
@@ -369,17 +369,57 @@ function updateWarningText(lang) {
             Botdan to‘liq foydalanish muddati — to‘lov tasdiqlangan kundan boshlab 1 oy (30 kun). Oylik obuna narxi 100 000 so‘m. To‘lov to‘g‘ridan-to‘g‘ri Uzcard/Humo kartasiga o‘tkaziladi va chek (skrinshot) botga yuboriladi. Belgilangan 30 kun ichida darajani tugata olmagan o‘quvchilar keyingi oy uchun ham to‘lovni to‘liq amalga oshiradilar.<br><br>
             
             ⚠️ Muhim eslatma: Bot ma'muriyati foydalanish qoidalariga istalgan vaqtda o‘zgartirishlar, tuzatishlar yoki qo‘shimchalar kiritish huquqini o‘zida saqlab qoladi. Foydalanuvchilar o‘zgarishlardan xabardor bo‘lish uchun qoidalarni vaqti-vaqti bilan tekshirib turishlari tavsiya etiladi.
-        </div>
-    `;
+        </div>`,
+        'ru': `
+        <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
+            <strong>📜 Abdulaziz Nemis AI — Правила использования и Публичная оферта</strong><br><br>
+            ВНИМАНИЕ! Перед началом использования бота, пожалуйста, полностью ознакомьтесь с данными правилами. Нажимая кнопку "Я согласен", вы безоговорочно принимаете все условия.<br><br>
+            
+            <strong>1. 🛡️ Кибербезопасность и Законодательство</strong><br>
+            Программный код бота, база данных и система ИИ Gemini Pro защищены законом. Взлом бота, организация вредоносных атак (DDoS/Spam) на сервер категорически запрещены. Нарушители удаляются без предупреждения и возврата средств. Кроме того, данные передаются в правоохранительные органы для привлечения к уголовной ответственности в соответствии со статьей 278 Уголовного кодекса Республики Узбекистан.<br><br>
+
+            <strong>2. 🎴 Железная дисциплина и Штрафы</strong><br>
+            На курсе введена система строгой дисциплины. Если ученик не заходит в бота в течение 1 дня, пропускает урок или не сдает домашнее задание, его результат автоматически откатывается на 4 урока назад. Например, если ученик пропустит занятие на 59-м уроке, прогресс сразу же упадет до 55-го урока. Это правило применяется одинаково ко всем уровням: A1, A2, B1 и B2. Переход на следующий уровень осуществляется только через экзамен.<br><br>
+
+            <strong>3. 💳 Условия подписки и оплаты</strong><br>
+            Срок полного использования бота — ровно 1 месяц (30 дней) с момента подтверждения оплаты. Стоимость ежемесячной подписки составляет 100 000 сумов. Оплата переводится напрямую на карту Uzcard/Humo, а чек (скриншот) отправляется в бота. Ученики, не сумевшие завершить уровень в течение отведенных 30 дней, обязаны полностью оплатить и следующий месяц.<br><br>
+            
+            ⚠️ Важное примечание: Администрация бота оставляет за собой право в любое время вносить изменения, исправления или дополнения в правила использования. Пользователям рекомендуется периодически проверять правила, чтобы быть в курсе изменений.
+        </div>`,
+        'de': `
+        <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
+            <strong>📜 Abdulaziz Nemis AI — Terms of Use & Public Offer</strong><br><br>
+            ATTENTION! Before using the bot, please fully read these rules. By clicking the "I agree" button, you unconditionally agree to all terms and conditions.<br><br>
+            
+            <strong>1. 🛡️ Cybersecurity & Law</strong><br>
+            The bot's source code, database, and Gemini Pro AI system are protected by law. Hacking the bot or organizing malicious attacks (DDoS/Spam) on the server is strictly prohibited. Violators will be removed without warning and without a refund. Additionally, information will be handed over to law enforcement agencies for criminal prosecution under Article 278 of the Criminal Code of the Republic of Uzbekistan.<br><br>
+
+            <strong>2. 🎴 Iron Discipline & Penalties</strong><br>
+            A strict discipline system is implemented in the course. If a student does not log into the bot for 1 day, misses a lesson, or fails to submit homework, their progress is automatically rolled back by 4 lessons. For example, if a student misses a class at lesson 59, their progress will immediately drop to lesson 55. This rule applies equally to all levels: A1, A2, B1, and B2. Advancing to the next level is only possible through an exam.<br><br>
+
+            <strong>3. 💳 Subscription & Payment Terms</strong><br>
+            The full usage period of the bot is exactly 1 month (30 days) from the date of payment confirmation. The monthly subscription fee is 100,000 UZS. Payment is made directly to a Uzcard/Humo card, and the receipt (screenshot) is sent to the bot. Students who fail to complete their level within the allotted 30 days must pay in full for the following month as well.<br><br>
+            
+            ⚠️ Important note: The bot administration reserves the right to make changes, corrections, or additions to the terms of use at any time. Users are advised to check the rules periodically to stay informed of any changes.
+        </div>`
+    };
+
+    const BTN_TEXT = {
+        'uz': { agree: '🟢 Men roziman', disagree: '❌ Yo\'q, rozimasman', disclaimer: 'Qoidalarni diqqat bilan o\'qing' },
+        'ru': { agree: '🟢 Я согласен', disagree: '❌ Нет, я не согласен', disclaimer: 'Внимательно прочитайте правила' },
+        'de': { agree: '🟢 I agree', disagree: '❌ No, I disagree', disclaimer: 'Read the rules carefully' }
+    };
     
-    warningTextContent.innerHTML = template;
-    document.getElementById('accept-btn-text').textContent = '🟢 Men roziman';
+    warningTextContent.innerHTML = RULES_TEXT[lang] || RULES_TEXT['de'];
+    
+    const txts = BTN_TEXT[lang] || BTN_TEXT['de'];
+    document.getElementById('accept-btn-text').textContent = txts.agree;
     
     // Check if decline btn exists
     const declineBtnText = document.getElementById('decline-btn-text');
-    if(declineBtnText) declineBtnText.textContent = '❌ Нет, я не согласен';
+    if(declineBtnText) declineBtnText.textContent = txts.disagree;
     
-    document.getElementById('warning-disclaimer-text').textContent = 'Qoidalarni diqqat bilan o\'qing';
+    document.getElementById('warning-disclaimer-text').textContent = txts.disclaimer;
 }
 
 // Bind language toggle buttons click
