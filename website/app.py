@@ -434,10 +434,12 @@ Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bil
 Yuqoridagi so'zlarni yana bir marta takrorlang. Agar talaffuzga qiynalsangiz, so'zni nusxalab olib "AI Tutor" ga yuboring, u sizga qanday aytilishini ovozli tarzda jo'natadi! Keyingi darsda biz 0 dan 20 gacha sanashni o‘rganamiz.
 """
         try:
-            from .a1_lessons import A1_LESSONS
+            import website.a1_lessons as a1_mod
+            A1_LESSONS = a1_mod.A1_LESSONS
         except ImportError:
             try:
-                from a1_lessons import A1_LESSONS
+                import a1_lessons as a1_mod
+                A1_LESSONS = a1_mod.A1_LESSONS
             except ImportError:
                 A1_LESSONS = {}
                 
