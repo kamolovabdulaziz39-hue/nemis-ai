@@ -467,11 +467,7 @@ def get_ai_resp(prompt, lang="ru"):
         return err_msgs.get(lang, err_msgs['ru'])
 
 def get_main_kb(uid, lang):
-    web_app_url = (os.getenv("WEB_APP_URL") or "https://nemis-ai.onrender.com/assistant").strip()
-    rows = [
-        [{"text": "🇩🇪 Nemis tilini o'rganish / Начать обучение", "web_app": {"url": web_app_url}}]
-    ]
-    return {"keyboard": rows, "resize_keyboard": True}
+    return {"remove_keyboard": True}
 
 ENTRANCE_EXAMS = {
     'A2': [
