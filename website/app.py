@@ -431,6 +431,7 @@ Weiß [Vays] — Oq
 
 Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bilasiz. Keyingi darsda biz 0 dan 20 gacha sanashni o‘rganamiz.
 """
+    else:
         try:
             import website.a1_lessons as a1_mod
             A1_LESSONS = a1_mod.A1_LESSONS
@@ -457,6 +458,7 @@ Dars yakuni: Barakalla! Endi siz nemischa so‘zlarni to‘g‘ri o‘qishni bil
                 "Provide solutions to the exercises at the very end of the lesson."
             )
             lesson_text = get_ai_resp(prompt, lang)
+
         
     return {"lesson_text": lesson_text, "current_lesson": current_lesson, "loaded_lesson": lesson_to_load, "selected_level": selected_level}
 
