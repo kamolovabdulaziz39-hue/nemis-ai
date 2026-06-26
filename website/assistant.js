@@ -1143,26 +1143,26 @@ function renderLessonsList() {
         btn.textContent = i;
         
         if (i < currentLesson) {
-            btn.style.background = 'rgba(0, 150, 255, 0.15)';
-            btn.style.borderColor = '#0096ff';
-            btn.style.color = '#0096ff';
+            btn.style.background = 'rgba(16, 185, 129, 0.15)'; // Green
+            btn.style.borderColor = '#10b981';
+            btn.style.color = '#10b981';
             btn.onclick = () => {
                 switchView('lesson');
                 loadLesson(i);
             };
         } else if (i === currentLesson) {
-            btn.style.background = 'linear-gradient(135deg, var(--accent-gold) 0%, #cc9900 100%)';
+            btn.style.background = 'linear-gradient(135deg, var(--accent-gold) 0%, #3b82f6 100%)';
             btn.style.borderColor = 'var(--accent-gold)';
-            btn.style.color = '#000';
-            btn.style.boxShadow = '0 0 10px rgba(255, 204, 0, 0.4)';
+            btn.style.color = '#ffffff';
+            btn.style.boxShadow = '0 0 10px rgba(59, 130, 246, 0.4)';
             btn.onclick = () => {
                 switchView('lesson');
                 loadLesson(i);
             };
         } else {
-            btn.style.background = 'rgba(255, 255, 255, 0.05)';
-            btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            btn.style.color = 'rgba(255, 255, 255, 0.3)';
+            btn.style.background = '#f1f5f9';
+            btn.style.borderColor = '#e2e8f0';
+            btn.style.color = '#94a3b8';
             btn.style.cursor = 'not-allowed';
         }
         grid.appendChild(btn);
