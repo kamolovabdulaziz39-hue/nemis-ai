@@ -232,6 +232,7 @@ def save_level():
     data = request.get_json(silent=True) or {}
     uid = str(data.get('user_id', '')).strip()
     level = data.get('level', '').strip()
+    lang = data.get('lang', 'ru').strip()
     if not uid or not level:
         return {"error": "Missing parameters"}, 400
     
@@ -242,10 +243,10 @@ def save_level():
     conn = get_db_connection()
     user = conn.execute("SELECT selected_level, current_lesson FROM users WHERE id=?", (uid,)).fetchone()
     if user and user['selected_level'] == db_level:
-        conn.execute("UPDATE users SET last_activity=? WHERE id=?", (now_str, uid))
+        conn.execute("UPDATE users SET last_activity=?, lang=? WHERE id=?", (now_str, lang, uid))
         current_lesson = user['current_lesson'] or 1
     else:
-        conn.execute("UPDATE users SET selected_level=?, current_lesson=1, last_activity=? WHERE id=?", (db_level, now_str, uid))
+        conn.execute("UPDATE users SET selected_level=?, current_lesson=1, last_activity=?, lang=? WHERE id=?", (db_level, now_str, lang, uid))
         current_lesson = 1
     conn.commit()
     conn.close()
@@ -294,7 +295,7 @@ def get_lesson():
         
     current_lesson = user['current_lesson'] or 1
     selected_level = user['selected_level'] or 'A1'
-    lang = user['lang'] or 'ru'
+    lang = data.get('lang') or user['lang'] or 'ru'
     conn.close()
     
     requested_lesson = data.get('lesson_number')

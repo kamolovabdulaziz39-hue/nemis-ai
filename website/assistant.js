@@ -622,7 +622,7 @@ async function loadLesson(lessonNum = null) {
         const response = await fetch(API_BASE + '/api/get_lesson', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId, lesson_number: loadNum })
+            body: JSON.stringify({ user_id: userId, lesson_number: loadNum, lang: userLang })
         });
         
         if (response.ok) {
@@ -723,7 +723,8 @@ levelBtns.forEach(btn => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: userId,
-                    level: levelVal
+                    level: levelVal,
+                    lang: userLang
                 })
             });
             if (response.ok) {
