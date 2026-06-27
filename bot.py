@@ -612,6 +612,10 @@ def send_lesson(cid, uid, lang):
         from website.b1_lessons import B1_LESSONS
     except ImportError:
         B1_LESSONS = {}
+    try:
+        from website.b2_lessons import B2_LESSONS
+    except ImportError:
+        B2_LESSONS = {}
         
     if str(lesson_num) in A1_LESSONS and u.get('selected_level', 'A1') in ['A1', 'A1_Prep']:
         lesson_text = A1_LESSONS[str(lesson_num)]
@@ -621,6 +625,9 @@ def send_lesson(cid, uid, lang):
         load_id = None
     elif str(lesson_num) in B1_LESSONS and u.get('selected_level', 'A1') == 'B1':
         lesson_text = B1_LESSONS[str(lesson_num)]
+        load_id = None
+    elif str(lesson_num) in B2_LESSONS and u.get('selected_level', 'A1') == 'B2':
+        lesson_text = B2_LESSONS[str(lesson_num)]
         load_id = None
     else:
         loading_msg = {

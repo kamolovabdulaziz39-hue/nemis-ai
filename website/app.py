@@ -340,12 +340,24 @@ def get_lesson():
         except ImportError:
             B1_LESSONS = {}
             
+    try:
+        import website.b2_lessons as b2_mod
+        B2_LESSONS = b2_mod.B2_LESSONS
+    except ImportError:
+        try:
+            import b2_lessons as b2_mod
+            B2_LESSONS = b2_mod.B2_LESSONS
+        except ImportError:
+            B2_LESSONS = {}
+            
     if str(lesson_to_load) in A1_LESSONS and (selected_level == 'A1' or selected_level == 'A1_Prep'):
         lesson_text = A1_LESSONS[str(lesson_to_load)]
     elif str(lesson_to_load) in A2_LESSONS and selected_level == 'A2':
         lesson_text = A2_LESSONS[str(lesson_to_load)]
     elif str(lesson_to_load) in B1_LESSONS and selected_level == 'B1':
         lesson_text = B1_LESSONS[str(lesson_to_load)]
+    elif str(lesson_to_load) in B2_LESSONS and selected_level == 'B2':
+        lesson_text = B2_LESSONS[str(lesson_to_load)]
     else:
         prompt = (
             f"Provide a structured, detailed German language lesson for Level {selected_level}, Lesson {lesson_to_load} out of 60. "
