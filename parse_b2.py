@@ -3,239 +3,185 @@ import re
 import os
 import sys
 
-text = """🇩🇪 B2: 21-Dars: Sifatdosh iboralarining rangi - "Partizipialkonstruktionen"
-B2 darazhasida uzun nisbiy haplarni kiskartirish sifatdosh iboralari uchun. Bunda haraqat asosiy gapdagi ega bilan bir vaktda sodir bulayotgan buladi.
+text = """🇩🇪 B2: 41-Dars: Rasmiy uslub – Nominalstil (Otlar orqali ifodalash)
+B2 darajasida va nemis matbuotida gaplarni fe'llar bilan emas, o'tlar va predloglar orqali ifodalash juda keng tarqalgan. Bu uslub gapni qisqa va rasmiy qiladi.
 
-Laut singend kam er ins Zimmer.
+Fe'l uslubi:  Weil es regnet, bleiben wir zu Hause. (Yom'ir yog'ayotgani tufayli...)
 
-Aytilishi: [Laut zingend kam er ins tsimmer.]
+Nominal uslub:  Wegen des Regens bleiben wir zu Hause.
 
-Tarjimasi: U baland ovozda qoʻshiq kuylagancha (kuylab) xonaga kirdi.
+Aytilishi: [Vegen des regens blayben vir tsu xauze.]
 
-Den Fehler bemerkend, korrigierte er la rejalashtirilgan.
+Tarjimasi: Yomg'ir tufayli biz uyda qolamiz.
 
-Aytilishi: [Den feler bemerkend, korrigierte er das proyekt.]
+Bei der Ankunft in Berlin (= Als ich in Berlin ankam) [Bay der ankundt in Berlin] - Berlinga yetib kelganda.
 
-Tarjimasi: Khatoni sezgan zagoti, u tartibga solishni tug'iladi.
+🇩🇪 B2: 42-Dars: Murakab Nismbiylik - "wer" va "was" bilan gap boshlovchi
+A1-B1 darajalarida nisbiy gaplar otning orqasidan kelgan bo'lsa, B2 da umumiy qoidani gapga shaxsiysiz ifodalashni o'rganamiz.
 
-🇩🇪 B2: 22-Dars: Passiv muqobillari - "sein + zu + Infinitiv"
-Nemis tilida Passiv + modal fe'l (müssen / können) o'rnini bosuvchi zhuda mashur rasmiy kurilma. Gap faol (faol) ko'rinishda b'lsa-da, mazhul (passiv) mano beradi.
+Wer fleißig lernt, besteht die Prüfung.
 
-Die Aufgabe ist bis morgen zu erledigen.  (muss erledigt werden manosida)
+Aytilishi: [Ver flayssix lernt, beshteyt di pryufung.]
 
-Aytilishi: [Di aufgabe ist bis morgen tsu erledigen.]
+Tarjimasi: Kimki tirishib o'qisa, imtihondan o'tadi.
 
-Tarjimasi: Vozifa ertagacha bazharilishi shart.
+Was du sagst, ist absolut richtig.
 
-Das Buch ist überall zu finden.  (kann gefunden werden manosida)
+Aytilishi: [Vas du zagst, ist absolut rixtix.]
 
-Aytilishi: [Das bux ist uberall tsu finden.]
+Tarjimasi: Sen aytayotgan narsa mutloq to'g'ridir.
 
-Tarjimasi: Bu kitobni hamma erdan topish mumkin.
+🇩🇪 B2: 43-Dars: Shartli cheklov - "es sei denn,..." (Istisno holat)
+40-darsgacha bo'lgan qismda buni dass bilan o'rgangan edik. Agar dass ishlatilmasa, es sei denn iborasidan keyin to'g'ri gap tartibi (Ega + Fe'l 2-o'rinda) keladi.
 
-🇩🇪 B2: 23-Dars: Passiv muqobillari - "-bar" va "-lich" qo'shimchalari
-Swz ohiriga -bar yoki -lich qo'shimchalarini qo'yish orkali "qila olsa bo'ladigan" (kann... werden) degan Passive manosidagi sifatlar yasaladi.
+Ich komme morgen, es sei denn, ich muss arbeiten.
 
-trinken (ichmoq) -> trinkbar [trinkbar] — ichsa bo'lgan / ichishga yaroqli.
+Aytilishi: [Ix komme morgen, es zay denn, ix muss arbayten.]
 
-Das Wasser ist trinkbar.
+Tarjimasi: Men ertaga kelaman, faqat yordamm kerak bo'lib qolmasa bo'ldi (agar ishlasam kelolmayman).
 
-Aytilishi: [Das vasser ist trinkbar.]
+🇩🇪 B2: 44-Dars: Sifatdosh qurilishlarini yoyish (Dekodieren)
+2-darsda o‘rganilgan murakkab va uzun sifatdosh iboralarini oddiy, tushunarli nisbiy gaplarga (Relativsatz) tuzatishli mashqi. Bu imtihonda matnni oshirish uchun hal qiluvchi rol o'ynaydi.
 
-Tarjimasi: Bu suvni ichsa bo'ladi (ichish mumkin).
+Konstruktsiya:  die vom Chef unterschriebene Urkunde
 
-lesen (o'qkћmoq) -> leserlich [lezerlix] - o'qisa bo'ladigan (khat hakida).
+Yoyilmasi:  die Urkunde, die vom Chef unterschrieben wurde
 
-Deine Schrift ist ne leserlich. [Dayne shrift ist nixt lezerlix.] — Sening xatingni o'qish bo'lmaydi.
+Aytilishi: [di urkunde, di fom shef untershriben vurde.]
 
-🇩🇪 B2: 24-Dars: Rasmiy til usuli - Fel-ot birikmalari (Nomen-Ferb-Verbindungen I)
-B2 darazhasining eng muxim belgisi. Bunda oddiy bir fe'l urniga From + Fe'l birikmasi keladi va u rasmiy/business tili keladi.
+Tarjimasi: imzolangan guvohnoma.
 
-Fragen stellen (= fragen) - savol bermok / savol chikarmok.
+🇩🇪 B2: 45-Dars: Sub'ektiv modal fe'llar - "sollen" va "wollen" (Mish-mishlar)
+B2 darajasida bu fe'llar o'zining asosiy ma'nosidan tashqari, birovning gapi yoki mish-mishlarni ifodalash uchun keladi.
 
-Sie können jederzeit Fragen stellen.
+sollen - ularning soni (mish-mishlarga ko'ra).
 
-Aytilishi: [Zi kynnen yedertsayt fragen shtellen.]
+Er soll sehr reich sein.
 
-Tarjimasi: Siz xolagan vaktda savollar berishingiz mumkin.
+Aytilishi: [Er zoll zer rayx zayn.]
 
-eine Rolle spielen (= wichtig sein) - o'ynamok / muhim bwlmok roli.
+Tarjimasi: Eshitishlariga qaraganda, u juda boy emish.
 
-Das keine Rolle. [Das shpilt kayne rolle.] — Buning yoki yo'q (rol o'ynamaydi).
+wollen - o'zining da'vo qilishi bo'yicha (lekin odamlar ishonmaydi).
 
-🇩🇪 B2: 25-Dars: Fe'l-ot birikmalari (Nomen-Ferb-Verbindungen II)
-in Erfüllung gehen (= sich erfüllen) - amalga oshmoq / ushalmoq (orzular xakida).
+Er will la ixtiyorini yolg'iz o'zi qilgan. [Er vill das proyekt alayn gemaxt xaben.] - U rejasini yolg'iz o'zi qilganini da'vo qilyapti.
 
-Mein Traum Erfullung gegangen shahrida.
+🇩🇪 B2: 46-Dars: O'rin-joy ko'rsatuvchi murakkab predloglar (Genitiv)
+außerhalb [auzerxalb] - tashqarisida, ichida:  innerhalb [innerxalb], bo'ylab:  entlang [entlang].
 
-Aytilishi: [Mayn travma ist in erfyullung gegangen.]
+Außerhalb der Stadt gibt es einen großen Wald.
 
-Tarjimasi: Mening orzum amalga oshdi (ushaldi).
+Aytilishi: [Auzerxalb der shtadt gibt es aynen grosen vald.]
 
-Unterstützung finden (= unterstützt werden) - qullab-quvvatlanish / erdam topmoq.
+Tarjimasi: Shahar ustida katta o'rmon bor.
 
-Das Projekt shapka Unterstützung gefunden. [Das proyekt xat untershpropsyutsung gefunden.] - Loyiha qullab-quvvatlandi.
+entlang so'zi otdan keyin kelsa, Akkusativ talab qiladi:
 
-🇩🇪 B2: 26-Dars: Germany so'g' saklash tizimi va Tibbiyot (Medizin)
-Shifohonalarda, suhurta ishlarida va tibbiyoty kirikda kerak buladigan B2 darazhasidagi murakkab atamalar.
+den Fluss entlang [den fluss entlang] - daryo bo'ylab.
 
-die Diagnoz [diagnoz] - tashhis, davolashno retsept:  das Reze davolash [  retsept] die Behandlung [bexandlung].
+🇩🇪 B2: 47-Dars: Kelishuv va Kontraktlar (Vertragswesen)
+Germaniyada rasmiy huquqlar, ijaraga olish (Mietvertrag) shaxsiy yuridik yuridik iboralar.
 
-Der Arzt shapka o'lib tashxis gestellt.
+einen Vertrag kündigen [aynen vertrag kyundigen] - shartnomani bekor qilmoq (rastorgnut).
 
-Aytilishi: [Der artst xat di diagnoze gheshtelt.]
+die Kündigungsfrist [ kyundigung-frist] - shartnomani bekor qilish haqida rasman saqlash muddati.
 
-Tarjimasi: Shifokor tashkhis qo'ydi.
+Ich muss den Mietvertrag fristgerecht kündigen.
 
-Behandlung urush erfolgreich Die. [Di bexandlung var erfolgrayx.] - Davolanish muwaffakiyatli o'tdi.
+Aytilishi: [Ix muss den mit-vertrag frist-gerext kyundigen.]
 
-🇩🇪 B2: 27-Dars: Sabab-natija bog'lovchilar — "insofern" va "insoweit"
-“Shu manodaki”, “shu darazhadaki” mazmunini va boshqa fikrni tekshirish yoki tushuntirib keluvchi B2 bog'lovchilari.
+Tarjimasi: Men ijaraga bekor qilish muddatiga amal qilgan holdaim kerak.
 
-Ich stimme dir insofern zu, als o'z firk yo'q.
+🇩🇪 B2: 48-Dars: Nemis korporativ madaniyati va Muloqot (Berufliche Communikation)
+Ishxonada hamkasblar bilan professional muloqot va taqdimotlar qilish.
 
-Aytilishi: [Ix shtimme dir inzofern tsu, als dayne argumente rixtix zind.]
+das Meeting leiten [das meet layten] - majlisni boshqarmoq.
 
-Tarjimasi: Men senga shu manoda qushilamanki, senning dallylaring tugri.
+Ich danke Ihnen für Ihre Aufmerksamkeit.
 
-Insoweit hato yök, beraylik. [Inzovayt qayn feler ist, maxen vir vayter.] - Shu darazada hato ywk ekan, davom etadi.
+Aytilishi: [Ix danke Inen fyr Ire aufmerkzamkayt.]
 
-🇩🇪 B2: 28-Dars: Ortda kolgan shart boglovchisi - "ansonsten" (Aks holda)
-"Aks Holda", "Bulmasa" Mazmunidagi Bog'lovchi. Koida: ansonsten soʻzidan keyin darhol tuslangan feʼl keladi (Tezkor tartib).
+Tarjimasi: E'tiboringiz uchun rahmat. (Taqdimotga aytiladi)
 
-Du musst fleißig lernen, ansonsten bestehst du die Prüfung nicht.
+🇩🇪 B2: 49-Dars: Ishga ariza va Kuzatuv xati (Bewerbungsschreiben)
+B2 darajasi eng yuqori yozma amaliyoti - Germaniyada ishga kirish uchun "Anschreiben" (Kuzatuv xati) formati.
 
-Aytilishi: [Du musst flayssix lernen, anzonsten beshteyst du di pryufung nixt.]
+Boshlanishi:  Sehr geehrte Damen und Herren, mit großem Interesse habe ich Ihre Stellenanzeige gelesen...
 
-Tarjimasi: Sen tirishib o'qishing kerak, aks holda imtihondan o'ta olmaisan.
+Ilova:  Men Anhang Sie meinen Lebenslaufni topdim.
 
-Beeil dich, ansonsten kommen wir zu spät. [Be-ayl dix, anzonsten kommen vir tsu shpet.] - Tezrok bwl, aks holda kechikib qolamiz.
+Aytilishi: [Im anxang finden Zi maynen lebenslauf.]
 
-🇩🇪 B2: 29-Dars: Murakkab Genitiv predlogi - "mithilfe" va "zwecks"
-Faqat Genitiv kelishigi bilan oliy uslubdagi preloglar.
+Tarjimasi Ilovada mening rezumni (CV) oson.
 
-mithilfe (erdamida / k'magida) - mithilfe des Computers [mit-xilfe des kompyuters] - kompyuter erdamida.
+🇩🇪 B2: 50-Dars: Oltinchi bo'lim takrori (Wiederholung)
+Javob: Anschreiben shon fristgerecht verschickt bormi? [Xast du das anshrayben shon frist-gerext fershikt?] - Kuzatuv xatini belgilangan muddat ichida jo'natdingmi?
 
-zwecks (maqsadida) - zwecks der Weiterbildung [tsveks der vayterbildung] - malaka qobiliyati.
+B: Ja, im Anhang habe ich alle Dokumente beigefügt. [Ya, im anxang xabe ix alle dokumente bay-gefuygt.] - Ha, ilovada hamma hujjatlarni biriktirdim.
 
-Er hat mithilfe seines Freundes la loyichani tugatdi.
+🇩🇪 B2: 51-Dars: Xalqaro B2 Imtihoni Umumiy formati (Goethe-Zertifikat B2)
+B2 imtihoni to'rtta moduldan iborat bo'lib, o'tish balli har bir modul uchun kamida 60 ball etarli etib.
 
-Aytilishi: [Er xat mit-xilfe zaynes froyndes das proyekt bedet.]
+Lesen: 5 ta qism (Teil), 65 daqiqa.
 
-Tarjimasi: U o'stining yordamini yakunladi.
+Hören: 4 ta qism, 40 daqiqa.
 
-🇩🇪 B2: 30-Dars: Uchinchi modul takrori (Wiederholung)
-Rasmiy fe'l-ot birikmalari va murakkab Passiv muqobillarini mustaxkamlash.
+Schreiben: 2 ta topshiriq (Aufgabe), 75 daqiqa.
 
-Javob: Diagnose schon zu topildimi? [Ist di diagnoze shon tsu finden?] - Tashkhisni topsa b'ladimi (tayermi)?
+Sprechen: 2 ta topshiriq, 15 daqiqa.
 
-B: Ja, doktor savollar berdi va tashkhisni qo'ydi. [Ya, der Arzt hat Fragen gestellt und die Diagnose mitgeteilt.] - HA, savollar berdi va tashkhisni ma'lum qildi .
+🇩🇪 B2: 52-Dars: B2 Imtihon sirlari — Lesen (1 va 2-qismlar)
+1-qism: To'rtta odamning fikriga ko'ra 5 ta sarlavhani to'g'ri moslashtirish.
 
-🇩🇪 B2: 31-Dars: Sifatdosh kurilmalari - Gerundy va haraqat nomi (Substantivierte Adjektive)
-Sifatlarning otga ailanishi va sud tugri tuslanishi (masalan: kattalar, bemorlar, ishchilar).
+Sir: Paragraflardagi gaplarni so'zma-so'z tarjima. asosiy maqsad - muallifning yaratish (pozitiv) yoki zarar (negativ) pozitsiyasini baholash.
 
-krank (kasal) -> der Kranke / die Kranke [der kranke / di kranke] - bemor odam.
+🇩🇪 B2: 53-Dars: B2 Imtihon sirlari — Lesen (3, 4 va 5-qismlar)
+3-qism: Matndan olib tashlangan gaplarni (AH) o'z joyiga qo'yish.
 
-Der Kranke muss im Bett bleiben.
+Sir: Bo'sh joydan oldin va keyingi gapdagi bog'lovchilarga ( deshalb, aber, tarafdorlar ) qarang. Agar keyingi gapda "Er" yoki "Das" kelsa, demak olib ketan gap ichida o'sha ot qatnashgan bo'ladi.
 
-Aytilishi: [Der kranke muss im bett blayben.]
+🇩🇪 B2: 54-Dars: B2 Imtihon sirlari — Hören (1 va 2-qismlar)
+1-qism: Kundalik hayotiy va qisqa audio xabarlar (5 ta savol, faqat 1 marta qo'yiladi).
 
-Tarjimasi: Bemor twshakda qolishi shart.
+Sir: Audiodan keyin 30 soniya ichida faqat variantlarni tez ko'rib chiqing. Variantlar bir-biridan qaysi kalit so'z orqali farqni aniqlang.
 
-die Erwachsenen [di ervaxsenen] - kattalar (yoshi kattalar).
+🇩🇪 B2: 55-Dars: B2 Imtihon sirlari — Hören (3 va 4-qismlar)
+4-qism: Radio-shou yoki diskussiya (2 marta qo'yiladi). Uchta odam gapiradi.
 
-🇩🇪 B2: 32-Dars: Twldiruvchi nisbiy haplar - "was baroi" va "wovon"
-Butun bir gap mazmuniga nisbatan nisbiy bog'lovchi yasash (masalan: “bu menga zhuda yokdi” deb butun gapni ulash).
+Sir: Kim rozilik bildiryapti ( zustimmen ), kim qarshi chiqyapti ( widersprechen ) - shuni boshqarish shart. Gap uchun "Da o'z fikringiz to'g'ri, lekin..." degan gaplarga juda ehtiyot bo'ling.
 
-Er hat die Prüfung bestanden, mich sehr freut edi.
+🇩🇪 B2: 56-Dars: B2 Imtihon sirlari — Schreiben (1-Aufgabe: Forumsbeitrag)
+Onlayn forumda ijtimoiy mavzu bo'yicha o'z fikrini (150 ta so'z).
 
-Aytilishi: [Er xat di pryufung bestanden, vas mix zer froyt.]
+Sir: Berilgan 4 ta punktning hammasini ochib berish shart. Strukturada albatta B2 darajadagi murakkab bo'lgan Je... desto , Nicht nur... sondern auch va Obwohl kabi bog'lovchilarni qo'llang. Bu grammatika uchun yuqori ball beradi.
 
-Tarjimasi: U imtihondan o'tdi, bu esa meni zhuda xursand kiladi. (was butun oldin haraqatga tegishli)
+🇩🇪 B2: 57-Dars: B2 Imtihon sirlari — Schreiben (2-Aufgabe: Rasmiy xat)
+Ish joyiga yoki biron bir tashkilotga rasmiy xat/so'rovnoma ilovasi (kamida 100 ta so'z).
 
-🇩🇪 B2: 33-Dars: Joy va makon nisbiy boglovchisi — "wohin" va "woher"
-Nisbiy haplarda o'shnini anik ko'rsatib kelish.
+Sir: Muloyimlik formasi ( Konjunktiv II - Könnten Sie bitte... ) juda ko'p foydalanish kerak. Xat strukturasini buzmang: Sehr geehrte Damen und Herren va ustoz Mit freundlichen Grüßen .
 
-Das Land, wohin ich reise, ist Deutschland.
+🇩🇪 B2: 58-Dars: B2 Imtihon sirlari — Sprechen (1-Teil: Vortrag)
+Berilgan ikki mavzudan biridan tanlab, 3-4 daqiqada qisqa taqdimot qilish.
 
-Aytilishi: [Das land, voxin ix rayse, ist Doychland.]
+Tuzilishi:
 
-Tarjimasi: Men sayohat qilish (kayergaki uchyapman) davlat Germaniyadir.
+Einleitung (Kirish):  Das Thema mog'or taqdimotlari...
 
-Die Stadt, woher ya kelaman, juda chiroli.
+Vorteile/Nachteile (Sodda va zaif tomonlari).
 
-Aytilishi: [Di shtadt, voxer ix komme, ist shyon.]
+Eigene Meinung & Usbekistan (Shaxsiy fikr va O'zbekistondagi holat).
 
-Tarjimasi: Menga (kelib chikishim bulgan) shahar chiroilidir.
+Schluss (Yakun).
 
-🇩🇪 B2: 34-Dars: Ishtiyok va maksad preloglar orqali - “aus” va “vor” (hissiyyotlar uchun)
-Biror isni kaisi hissiyot tufayli bajarilganligini atish.
+🇩🇪 B2: 59-Dars: B2 Imtihon sirlari — Sprechen (2-Teil: Munozara)
+Sherik bilan berilgan muammo diskussiya (munozara) qilish va umumiy qarorga kelish.
 
-aus (katyy/ongli ravish) - aus Liebe [aus libe] - sevgidan / muhabbat tufayli.
+Sir: Sherigingizning fikrini eshitib turmang. Agar u gapini tugatsa, darhol munosabat bildiring: "Ich verstehe, was du meinst, aber ich sehe das etwas anders..." [Ix fershte-e, vas du maynst, aber ixze-e das etvas anders...] - Nima demoqchingni tushunaman, lekin men biroz boshqacha qarayman.
 
-vor (zhismoniy/beikhtiyor ravish) - vor Angst [vor angst] - qo'rquvdan.
+🇩🇪 B2: 60-Dars: B2 Yakuniy Katta Imtixon (B2 Sertifikat Yakuniy Test)
+Muvaffaqiyatli yakun! Ush darsda foydalanuvchi jami 180 ta dars (A1-B2) olgan barcha bilimlarini xalqaro standartdagi B2 model testi orqali sinovdan o'tkazadi.
 
-Er hat vor Angst gezittert.
-
-Aytilishi: [Er xat vor angst getsittert.]
-
-Tarjimasi: U quurkuvdan titrab ketdi.
-
-Ich tue das aus reinem Interesse. [Ix tue das aus raynem interesse.] - Men buni sof kiziqish tufayli kilyapman.
-
-🇩🇪 B2: 35-Dars: Ikki kismli boglovchilar - "nicht destotrotz" (Shunga karamai)
-Trotzdem suzining oliy, rasmiy va kuchlirok varianti. Orkasidan darhol fe'l keladi.
-
-Es gab viele Probleme, nichtsdestotrotz haben wir gewonnen.
-
-Aytilishi: [Es gab file probleme, nixts-desto-trots xaben vir gevonnen.]
-
-Tarjimasi: Kwp muammolar bwldi, shunga karamai biz galaba kozondik.
-
-🇩🇪 B2: 36-Dars: Turtinchi model takrori (Wiederholung)
-Javob: Warum hat der Kranke vor Angst gezittert? [Varum xat der kranke vor angst getsittert?] — Nima uchun bemor qo'rquvdan titrab ketdi?
-
-B: Angst vor der Operation, nichtsdestotrotz ist alles gut gelaufen. [Er xatte angst vor der operatsyon, nixts-desto-trots ist alles gut gelaufen.] - U operatsiyadan qo'rqqan edi, shunga karamai hammasi yaxshi o'tdi.
-
-🇩🇪 B2: 37-Dars: Ilmiy tadqiqotlar va Technology (Wissenschaft)
-Ilmiy makolalarda va subatlarda yuzaga kelgan yukori sokhaviy suzlar.
-
-die Forschung [forhung] - tadqiqot, kashfiyot:  die Entdeckung [entdekkung] - ichtiro / kashfiyot, rivozhlantirmok:  entwickeln [entvikkeln].
-
-Wissenschaftler haben eine neue Entdeckung gemacht.
-
-Aytilishi: [Vissenshaftler xaben ayne noye entdekkung gemaxt.]
-
-Tarjimasi: Olimlar yangi kashfiyot aniqlandi.
-
-🇩🇪 B2: 38-Dars: Murakab sifatli yasalishi — Qushma sifatlar (Zusammengesetzte Adjektive)
-Ikkita so'zni qo'shib, ko'tarilgan manodagi sifatlar yasash.
-
-weltweit [velt-vayt] - dunyo mikoshidagi / butun dunyo bo'ylab.
-
-umweltfreundlich [umvelt-froyndlix] - atrof-muhit uchun hafsiz (ekologik toza).
-
-Wir mussen umweltfreundliche Autos kaufen.
-
-Aytilishi: [Vir myssen umvelt-froyndlixe autos kaufen.]
-
-Tarjimasi: Biz ecologists toza machinelar sotib olishimiz kerak.
-
-🇩🇪 B2: 39-Dars: Gumon va Shart maili - "Konjunktiv II" murakkab zamonlarda.
-O'tmishdagi bir voqea mumkinga nisbatan "beams u o'shanda kilgan bulishi edi" deb takhmin bildirish kurilmasi.
-
-Er hätte das wissen müssen.
-
-Aytilishi: [Er xatte das vissen myssen.]
-
-Tarjimasi: U buni bilishi kerak edi (lekin bilmagan).
-
-To'lovni amalga oshirish uchun. [Das vere toll gevezen.] - Bu zhuda z'r b'lgan b''lardi (lekin b'lmadi).
-
-🇩🇪 B2: 40-Dars: Beshinchi modul takrori (Wiederholung)
-Javob: Die weltweite Forschung entwickelt sich schnell. [Di velt-vayte forshung entvikselt zix shnell.] - Butun dunyo bo'ylab tadqiqot tez rivozhlanmokda.
-
-B: Das stimmt, atrof-muhit uchun yangi ichtirolar qilinmoqda. [Das stimmt, es werden neue umweltfreundliche Entdeckungen gemacht.] - Tugri, atroph-muhit uchun yangi ekolog ichtirolar yaratilyapti.
+Tabrik xabari: SIZ buni uddaladingiz! Nemis tilining eng yuqori professional darajalaridan biri bo'lgan B2 to'liq tugatdingiz. Endi Germaniyada oliy ta'lim olish yoki yuqori daromad olish uchun eshiklar sizga to'liq ochiq!
 """
 
 B2_LESSONS = {}
