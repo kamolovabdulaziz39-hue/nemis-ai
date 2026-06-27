@@ -3,233 +3,181 @@ import re
 import os
 import sys
 
-text = """🇩🇪 B1: 21-Dars: O'tmishdagi armon va ushalmagan orzular - "Konjunktiv II" (O'tgan zamon)
-Agar o'tmishda b'lib o'tgan ishga nisbatan "Agar unday b''lganida, bunday b''lardi (lekin b''lmadi)" deb afsuslanish ifodalansa, hätte / wäre + Partizip II kurylmasi islatiladi.
+text = """🇩🇪 B1: 41-Dars: Mazhul nisbatning uzoq o'tmish zamoni (Plusquamperfekt Passiv)
+otmishda sodir bulgan bir haraqatdan ham oldinroq bazharilib bulingan ishni Mazhul (Passiv) shaklda ifodalash. Bunda waren fe'li tuslanadi va gap ohirida Partizip II + worden o'zgarmay turadi.
 
-Wenn ich mehr gelernt hätte, hätte ich die Prüfung bestanden.
+Das Auto war repariert worden, bevor ich es abholte.
 
-Aytilishi: [Ven ix mer gelernt xatte, xatte ix di pryufung bestanden.]
+Aytilishi: [Das auto var repariert vorden, bevor ix es abxolte. ]
 
-Tarjimasi: Agar kwprok o'qiganimda edi, imtihondan o'tgan bwlardim. (Afsus, o'ta olmadim)
+Tarjimasi: Men machinani olib ketishga borishimdan oldin, u tamirlab bulingan edi.
 
-Wenn ich pünktlich gewesen wäre, wäre ich nicht zu spät gekommen.
+Die Briefe waren schon geschrieben worden.
 
-Aytilishi: [Ven ix pyunktlix gevezen vere, vere ix nixt tsu shpet gekommen.]
+Aytilishi: [Di brife varen shon geshriben vorden. ]
 
-Tarjimasi: Agar vaktida bulganimda edi, kechikmagan bulardim.
+Tarjimasi: Xatlar allakachon yozib bulingan edi.
 
-🇩🇪 B1: 22-Dars: Mazhul nisbatning o'tgan tugallangan zamoni (Perfekt Passiv)
-Ish-harakatning yaqin o'tmishda bazharilib keyinligini Mazhul (Pasive) shaklda aitish. Koida: sein (tuslanadi) + Partizip II + worden (gap ohirida uzgarmaydi).
+🇩🇪 B1: 42-Dars: Quchirma haplar va OAV tili - "Konjunktiv I"
+Germaniyada gazeta va rasmiy baenotlarda boshka birovning gapini ("uning aitishicha", "deb takidladi") u o'zgartirmasdan, betaraf tiklanish uchun xavfsizlik.
 
-Avtomatik so'zni qayta tiklash.
+Vazir sagten, er helfe der Wirtschaft.
 
-Aytilishi: [Das auto ist reparent vorden.]
+Aytilishi: [Der vazir zagte, er xelfe der virtshaft. ]
 
-Tarjimasi: Machine tamirlab bwlindi.
+Tarjimasi: Vazir iqtisodiyotga yordam berishini (uning o'z gapiga ko'ra). (er uchun 'helfe' b'ladi, 'hilft' emas) 
 
-Ich bin angerufen worden.
+Sie sagten, sie seien bereit.
 
-Aytilishi: [Ix bin angerufen vorden.]
+Aytilishi: [Zi zagten, zi zayen berayt. ]
 
-Tarjimasi: Menga qo'ng'iroq qilib o'lindi.
+Tarjimasi: Ular tayer ekanliklarini aytishdi.
 
-🇩🇪 B1: 23-Dars: Shartli qarshilik bogʻlovchisi - “tushadi” (Agar mabodo)
-Wenn boglovchi uhshaidi, lekinsiga zhuda kam bulgan, "mabodo, twsatdan sodir bulib kolsa" degan shartlar uchun javob. Fel gap ohiriga boradi.
+🇩🇪 B1: 43-Dars: Sabab preloglari - "aufgrund" va "dank" (Genitiv / Dativ)
+aufgrund (tufayli / asosan) - Genitiv faculty of talab qiladi:
 
-Falls es regnet, kutamiz tark.
+aufgrund des wetters [aufgrund des vetters] - tufayli haqida.
 
-Aytilishi: [Falls es regnet, blayben vir tsu xauze.]
+dank (sharofati bilan / tufaili - izhobiy manoda) - asosan Dativ talab qiladi:
 
-Tarjimasi: Mabodo yomgir yogib kolsa, qolamiz.
+dank o'z yordam [dank dayner xilfe] - sening yordaming sharofati bilan.
 
-Falls du Hilfe Brauchst, Ruf Mich an.
+Aufgrund des Staus bin ich zu spät gekommen.
 
-Aytilishi: [Falls du xilfe brauxst, ruf mix an.]
+Aytilishi: [Aufgrund des shtaus bin ix tsu shpet gekommen. ]
 
-Tarjimasi: Mabodo yerdam kerak bo'lib kolsa, menga qo'ng'irok kil.
+Tarjimasi: Cork tufayli men kechikib keldim.
 
-🇩🇪 B1: 24-Dars: Sifatdosh I - Hozirgi zamon sifatdoshi (Partizip I)
-Ayni vaqtda bazhar qilinayotgan haraqatni sifat sifatida otning oldida kullash. Buni yasash uchun fe'l boslangich shakli (infinitiv) ohiriga -d harfi va kelishik qo'shimchasi qo'shiladi.
+🇩🇪 B1: 44-Dars: karama-qarshilik bogʻlovchisi - “während” (Gaplar aro)
+23-darsda o'rganilgan "davomida" prelogidan tashkari, während ikkita gapni bir-biriga solistirib, "vaholanki", "... gan bir vaqtda" degan zidlik ma'nosini ham beradi. Fel gap ohiriga boradi. 
 
-weinen (yiglamok) -> das weinende Kind [das vaynende kind] - yiglayotgan bola.
+Anvar lernt viel, während Max nur spielt.
 
-Ich sehe das weinende Kind.
+Aytilishi: [Anvar lernt fil, verd Maks nur shpilt. ]
 
-Aytilishi: [Ix ze-e das vaynende kind.]
+Tarjimasi: Anvar kwp o'qiidi, vaholanki Max faqat o'yin o'ynaydi.
 
-Tarjimasi: Men yiglayotgan bolani kuryapman.
+🇩🇪 B1: 45-Dars: Sifatdoshlarning tulik takrori va mustakamlash
+Partizip I (hozirgi zamon) va Partizip II (o'tgan zamon) formatni matnlarda tugri qo'llash masklari.
 
-das lachende Mädchen [das laxende medxen] - kulayotgan kiz.
+der fliegende Vogel [der fliegende vogel] - uchayotgan qush (HHozir bölayotgan ish)
 
-🇩🇪 B1: 25-Dars: Sifatdosh II - O'tgan zamon sifatdoshi (Partizip II)
-Bazharilib bulingan haraqatni sifat sifatida otning oldida qullash. Bunda felning Partizip II shakli otning oldiga qo'yilib, sifatdek tuslanadi.
+das reparierte Auto [das reparierte auto] — ta'mirlangan mashina (Bajaib bo'lgan ish)
 
-kaufen (sobit olmoq) -> das gekaufte Auto [das gekaufte auto] — sobit oblingan mashina.
+Ich mag das kochende Wasser nicht.
 
-Das gekaufte Auto ist sehr neu.
+Aytilishi: [Ix mag das koxende vasser nixt. ]
 
-Aytilishi: [Das gekaufte auto ist zer noy.]
+Tarjimasi: Men qayinayotgan suvni yo'qtirmayman.
 
-Tarjimasi: Sotib olingan mashina juda yangi.
+🇩🇪 B1: 46-Dars: Rasmiy muzokara odobi va rad etish iboralari
+Ish beruvchi yoki sheriklarning fikriga hushmuomalalik bilan qarshi chikish.
 
-die geschriebene E-Mail [di geshribene i-meyl] - ezilgan elektron hut.
+Ich verstehe stand, aber... [Ix fershte-e daynen shtandpunkt, aber] - Sening nuktai nazaringni tushunaman, lekin...
 
-🇩🇪 B1: 26-Dars: Ish joyida suhbat va muzokaralar (Berufsleben)
-Germanyda hamkasblar yoki boshlik bilan loyixalarni muhokama qilish iboralari.
+Da muss ich Ihnen leider widersprechen.
 
-die Besprechung [beshprexung] - Majlis / yigilish, u xizmat:  verschieben [fershiben] - koldirmok (boshqa vaqtga).
+Aytilishi: [Da muss ix Inen layder vidershprexen. ]
 
-Wir mussen termdan kutisch Verschieben.
+Tarjimasi: Bu masalada sizga (afsuski) qarshi chikishga mazhburman.
 
-Aytilishi: [Vir myssen den termin verschiben.]
+🇩🇪 B1: 47-Dars: Germanyda suhurta tizimi (Versicherung)
+Germaniyada yashash uchun eng muxim bulgan tibbiyoty va izhtimoiy suhurta turlari.
 
-Tarjimasi: Biz uchrashuv vaktini boshka kunga koldirishimiz kerak.
+die Krankenversicherung [kranken-fershixerung] - Tibbiy suhurta.
 
-Ich bin für diesen Vorschlag. [Ix bin fyr dizen forshlag.] - Men bu taklifni yo'qlayman.
+die Haftpflichtversicherung [xaft-pflix-fershixerung] —uchichchi shaxsga etkailgan zararni koplash joyi.
 
-🇩🇪 B1: 27-Dars: Ketma-ketlik vaqt bogʻlovchisi - “nachdem” (...dan keyin)
-Agar bir ish tugagandan sungi boshlansa va gap gozirgi/kelasi zamonda bulsa, nachdem kelgan gapda Perfekt zamoni islatiladi. asosiy gap oddiy hozirgi zamonda koladi.
+Ich bin bei dieser Krankenkasse versichert.
 
-Nachdem ich gegessen habe, gehe ich arbeiten.
+Aytilishi: [Ix bin bay dizer kranken-kasse fershixert. ]
 
-Aytilishi: [Naxdem ix gegessen xabe, ge-e ix arbayten.]
+Tarjimasi: Men ushbu tibbiyoty suhurta company sida suhurtalanganman.
 
-Tarjimasi: Ovqatlanib bulganimdan keyin, ishga ketaman.
+🇩🇪 B1: 48-Dars: Oliy talim va Universitetga huzhat topshirish (Studium)
+Germaniya oligogulariga kirish zharayoni va atamalari.
 
-Nachdem ya doich o'rganim, flge ya v Germaniya.
+die Zulassung [tsulassung] - o'qishga qabul qilinganlik xakida huzhzhat (qabul).
 
-Aytilishi: [Naxdem ix doych gelernt xabe, flige ix nax Doychland.]
+die Bewerbungsfrist [beverbungs-frist]
 
-Tarjimasi: Nemis tilini o'rganib bulganimdan keyin, Germaniyaga uchib ketaman.
+Ich habe mich um einen Studienplatz beworben.
 
-🇩🇪 B1: 28-Dars: Davriylik vakt boglovchisi - “solange” (...gan muddatda / vaqt)
-Ikkita harakat bir vaktda, bir hil vakt natijasida sodir bo'layotganligini kw. Fel gap ohirida turadi.
+Aytilishi: [Ix xabe mix um aynen shtudien-plats bevorben. ]
 
-Solange ich hier wohne, lerne ich Deutsch.
+Tarjimasi: Men universitetidan o'quv zhoyi olish uchun huzhat topshirdim.
 
-Aytilishi: [Zolange ix xir vone, lerne ix doych.]
+🇩🇪 B1: 49-Dars: Rasmiy yarim-shikoyat xati (Halboffizielle Beschwerde)
+Izhara beruvchi yoki qo'shnilarga qanday qilib yozma shaklda.
 
-Tarjimasi: Shu erda yashayotgan muddatim nemis tilini o'rganaman.
+Sehr geehrter Herr Myuller, ich schreibe Ihnen, weil ... — Hurmatli janob Myuler, sizga yozayotganimning birinchi...
 
-Bleib hier, solange es regnet. [Blayb xir, zolange es regnet.] - Yomgir yogayotgan vaktda shu erda tour.
+Ich bitte Sie, das Problem so passend zu lösen.
 
-🇩🇪 B1: 29-Dars: Cheklovchi boglovchilar - "soft" va "sobald"
-sobald (hamonok / zakhotiok) - Sobald ich anrufen, kelaman. [Sobald ix anrufe, komme ix.] - Men qo'ng'irok qilgan zatem kelaman.
+Aytilishi: [Ix bitte Zi, das problem zo shnell vi myoglix tsu lyozen. ]
 
-sooft (har gal / necha marta bulsa ham) - Soft ich dikh sehen, xursand belaman. [Sooft ix dix ze-e, froye ix mix.] - Seni kar gal ko'rganimda, xursand bo'laman.
+Tarjimasi: Sizdan ushbu muammoni ilozhi qanday tezrok hal qilishni iltimos qiling.
 
-🇩🇪 B1: 30-Dars: Uchinchi modul takrori (Wiederholung)
-Partizip I, Partizip II va murakkab vakt boglovchilarini suxbatda mustakamlash.
+🇩🇪 B1: 50-Dars: Oltinci modul takrori (Wiederholung)
+Javob: Trotz des Problems habe ich die Zulassung bekommen! [Trots des Problems xabe ix di tsulassung bekommen!] - Muammoga karamai, men o'kishga kabul huzhzhatini oldim! 
 
-Javob: Machst du, sobald du nach Hause kommst edimi? [Vas maxst du, sobald du nax xauze kommst?] - Uyga kelgan zahoting nima qilasan?
+B: Das ist wunderbar! Navbatdagi qadam nima? [Das ist vunderbar! Was ist der nächste Schritt?] - Bu zhuda ajoyib! Navbatdagi qadam nima? 
 
-B: Nachdem ich gegessen habe, lese ich das gekaufte Buch. [Naxdem ix gegessen xabe, leze ix das gekaufte bux.] - Ovqatlanib bulganimdan keyin, sotib olingan kitobni o'qiyman.
+🇩🇪 B1: 51-Dars: B1 Xalqaro Imtigoni umumiy tuzilish (Goethe / Telc)
+Imtihon 4 ta asosiy blokdan (Module) iborat va har biridan alohida 60 balldan yukori to'plash kerak.
 
-🇩🇪 B1: 31-Dars: Junatma olish va Bozhxona (Zoll)
-Germaniada halkaro posilka olish va bozhona ishlari.
+Lesen (okish) - 65 dak.
 
-der Zoll [soll] — bojxona, boj:  die Zollgebühr [tsoll-gebyur] — bojxona to‘lovi, partin nazorati:  die Passkontrolle [pass-kontrolle].
+Hören (Tinglash) - 40 dak.
 
-Ich muss mein Paket beim Zoll abholen.
+Shrayben (Yozish) - 60 dollar.
 
-Aytilishi: [Ix muss mayn paket baym tsoll abxolen.]
+Sprechen (Gapirish) - 15 kun.
 
-Tarjimasi: Men posilkamni bozhonadan olib ketishim kerak.
+🇩🇪 B1: 52-Dars: B1 Imtixon sirlari – Lesen (Oʻqish) 1 va 2-qismlar
+Blog va gazeta makolalari bilan ishlash.
 
-🇩🇪 B1: 32-Dars: Voz kechish predloglari — "statt" (Genitiv)
-"...ning o'rniga" manosini beruvchi va faqat Genitiv kelishuvini talab qiluvchi muhim pretext.
+Siri: Birinchi bo'lib matnni emas, savollarni o'qing. Savoldagi kalit so'zlarni (raqam, nomlar) matn ichidan qidiring. Matnda huddi shu so'z sinonimlari (boshqacha turi) sotib olish mumkin.
 
-statt des Autos [shtatt des autos] — mashining urniga.
+🇩🇪 B1: 53-Dars: B1 Īmtihon sirlagi — Lesen (Oʻqish) 3, 4 va 5-qismlar
+Elonlar va rasmiy koidalarni bir-biriga moslash.
 
-Statt des Kaffees trinke ich heute Tee.
+Siri: 3-qismda odamlarning istaklariga karab elonlarni moslash kerak. Agar hech kaisi elon tugri kelmasa, zhavob varakasiga X belgisini qo'yishni yo'qotish (kamida bitta yoki ikkita zhavob doim X b'ladi).
 
-Aytilishi: [Shtatt des kafees trinke ix xoyte tee.]
+🇩🇪 B1: 54-Dars: B1 Imtihon sirlari — Hören (Tinglash) 1 va 2-qismlar
+Radio xabarlar va elonlarni tinglab, Tggri/Noto'g'ri (Richtig/Falsch) testlarini echish.
 
-Tarjimasi: Bugun kofe urniga choy ichapman.
+Siri: 1-qismdagi audiolar ikki marta qo'yib beriladi. Birinchi jamoadayoq umumiy manoni ulang va martada anik kalit so'zga etibor bering.
 
-Statt meiner Schwester kommt mein Bruder. [Shtatt mayner shvester kommt mayn bruder.] - Opamning o'rniga ukam kelapti.
+🇩🇪 B1: 55-Dars: B1 Imtihon sirlari – Hören (Tinglash) 3 va 4-qismlar
+Muhokama (intervyu) eshitib, kim qayisi fikrni o'z ichiga olganligini topish.
 
-🇩🇪 B1: 33-Dars: Noanik nisbiy olmoshlar - "was" wa "wo"
-Agar gapda biror aniq from emas, beams butun bir fikr yoki alles, etwas, nichts so'zlari aniqlab kelinsa, nisbiy gap was yoki wo orkali boshlanadi.
+Siri: 4-qismda boshlovchi va ikkita mehon gaplashadi. Ularning ovozini (erkak/ael) darhol azhratib oling varakka ismlarini yozib qying, chalkashib ketmas uchun.
 
-Das ist alles, was ich weiß.
+🇩🇪 B1: 56-Dars: B1 Imtixon sirlari – Shrayben (Yozish) 1-Aufgabe
+Do'stga shakhsiy khat mahsulot (kamida 80 ta s'z).
 
-Aytilishi: [Das ist alles, vas ix vays.]
+Siri: Twrtta berylgan puntning (Hukt) hammasiga albatta 2-3 tadan gap shart. Agar bitta nuqta qolib ketsa, nuqta juda paste tushadi. Xatni suti Liebe/Liber bilan boslab, Viele Grüßebilan tortish.
 
-Tarjimasi: Bu men bilgan hamma narsa.
+🇩🇪 B1: 57-Dars: B1 Imtixon sirlari – Schreiben (Yozish) 2 va 3-Aufgabe
+Forumda o'z fikrini bildirish (80 swz) va rasmiy qiska khat (40 swz).
 
-Dort, vo men yashayman, juda chiroili.
+Siri:3-vazifada (rasmiy hat) albatta albattaSehr geehrte Damen und Herren,va ohiriniMit freundlichen Grüßendeb yozing.Bu structuring uzig alohida nuqta beriladi.
 
-Aytilishi: [Dort, vo ix vone, ist es zer shyon.]
+🇩🇪 B1: 58-Dars: B1 Imtixon sirlari – Sprechen (Gapirish) 1-Teil
+Sherik bilan birgalikda biror tadbirni (sayohat,Bayram) qayta tiklash.
 
-Tarjimasi: Men yashayotgan joy juda chiroili.
+Siri:Faqat o'zingiz gapiravermang,sherigingizni ham eshiting.Uning fikriga munosabat building: "Das ist ein guter Vorschlag, aber..."(Bu yahshi taklif,Lekin...) yokiki"Was meinst du dazu?"(Bunga nima deisan?).
 
-🇩🇪 B1: 34-Dars: Taxmin va gumon manolari - “scheinen” (Gyoki / Tuyulmoq)
-Biror narsa huddi shundayidek tuyishini ifodalash uchun scheinen ... zu + infinitiv kurylmasi islatiladi.
+🇩🇪 B1: 59-Dars: B1 Imtixon sirlari – Sprechen (Gapirish) 2 va 3-Teil
+Berilgan mavzu bo'yicha Presentation (Takdimot) qilish va sherikning takdimotiga savol berish.
 
-Er scheint krank zu sein.
+Tuzilishi:Takdimotni doim kirish suzi bilan qarab: Ich möchte heute über das Thema... sprechen.Keyin uz tazhribangis,O'zbekistondagi holat,mavzuning izhobiy/salbiy tomonlarini itib,Yakunda Rahamat Aiting.
 
-Aytilishi: [Er shaynt krank tsu zayn.]
+🇩🇪 B1: 60-Dars: B1 Yakuniy Katta Imtixon (B1 Sertifikat Testi)
+Ush darsimizda foydalanuvchi haqiqiy Gyote instituti va B1 model testini (Modellsatz) twlik ish va o'z darazhasini aniklaydi.
 
-Tarjimasi: U g'o'yoki kasaldek tushyapti (kasal b'lsa kerak).
-
-Du scheinst viel zu arbeiten. [Du shaynt fil tsu arbayten.] - Sen kwp islayotganga okhshaisan.
-
-🇩🇪 B1: 35-Dars: Ikki kismli boglovchilar - “je...desto” (kanchalik...shunchalik)
-Zhuftlikda islatiladigan eng chiroili boglovchilardan biri. Koida: je sifatli sifat darazhasi kelib, fe'l gap ohiriga ketadi. desto asosiy sifat darazhasidan keyin darhol fe'l keladi.
-
-Je mehr du lernst, desto besser sprichst du.
-
-Aytilishi: [Ye mer du lernst, desto besser shprixst du.]
-
-Tarjimasi: Kanchalik kwp oqisang, shunchalik yakhshi gapirasan.
-
-Je schneller, desto besser. [Ye shneller, desto besser.] — Qanchalik tez bo'lsa, shunchalik yaxshi.
-
-🇩🇪 B1: 36-Dars: To'rtinchi modul takrori (Wiederholung)
-Javob: Je länger ich Deutsch lerne, desto einfacher finde ich es . [Ye lenger ix doych lerne, desto aynfaxer finde ix es.] — Nemis tivini qanchalik uzoq o'rgansam, shunchalik oson tuyulyapti.
-
-B: Das stimmt. Dunyoda hech bir til qiyin emas. [Das shtimmt. Keine Sprache ist zu schwer.] - Tugri. Chech kaisi til o'ta qiyin emas.
-
-🇩🇪 B1: 37-Dars: Silent huquqlari va xavfsizligini saqlang (Garie)
-Technique va buyumlar sotib olish uchun hal qilish.
-
-die Garantie [garanti] - kafolat, yurish:  umtauschen [umtauschen] - ayirboshlash (boshkasiga), qaytarish:  zurückgeben [tsyuryukgeben].
-
-Ich möchte dieses Handy umtauschen, ich habe noch Garantie.
-
-Aytilishi: [Ix myoxte dizes xendi umtauschen, ix xabe nox garanti.]
-
-Tarjimasi: Men bu telefon yordamkchiman, hali kafolati bor.
-
-🇩🇪 B1: 38-Dars: Murakkab predloglar — "innerhalb" va "außerhalb" (Genitiv)
-Makon va vaqt chegaralarini kushish uchun faqat va faqat Genitiv kelishuv bilan keladi.
-
-innerhalb (ichida / inner) - innerhalb einer Woche - bir hafta ichida.
-
-außerhalb (tashkarisida) - außerhalb der Arbeitszeit [auzerxalb der arbayts-tsayt] - ish vaktidan tashkarida.
-
-Sie mussen innerhalb von 3 Tagen bezahlen.
-
-Aytilishi: [Zi myssen innerxalb fon dray tagen bessalen.]
-
-Tarjimasi: Siz 3 kun ichida to'xtash shart.
-
-🇩🇪 B1: 39-Dars: To'ldiruvchi predlog - “ohne” va “mit” (Mustahkamlash)
-A2 dagi mavzuni murakkab shaklda predlog va kelishiklar koidasi bilan B1 darazhasiga moslab chukur o'rganish.
-
-Ohne sizning yordam men kila olmasdim.
-
-Aytilishi: [Ohne dayne Xilfe xatte ix das nixt geschafft.]
-
-Tarjimasi: Sening yordamingsiz men buni uddalai olmasdim. (ohne milk Akkusativ)
-
-Mit moy dest men sayohat kilaman. [Mit maynem Freund reise ich.] - Men dustim bilan sayohat kilaman. (mit sut dativ)
-
-🇩🇪 B1: 40-Dars: Beshinchi modul takrori (Wiederholung)
-Javob: Kann ich das Produkt innerhalb einer Woche zurückgeben? [Kann ix das produkt innerxalb ayner voxe tsyuryukgeben?] - Mahsulotni bir hfta ichida qaytarib bersam bwladimi?
-
-B: Ja, agar kafolat qo'g'ozi bo'lsa, muammo o'q. [Ya, wenn Sie die Garantie haben, kein Problem.] - Ha, agar kafolatingiz bo'lsa, muammo o'q.
+Tabrik:Kursni muvaffakiyatli tugatdingiz!Siz andi nemis tilini mustakil va erkin bilasiz.Oldinda life Germaniyada katta katta kutmoqda!
 """
 
 B1_LESSONS = {}
