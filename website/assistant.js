@@ -735,10 +735,19 @@ async function loadUserData() {
                 userDetails.is_admin = true;
                 userDetails.sub = 'vip';
             }
-            
-            // Har doim avval qoidalar (warning) oynasini ko'rsat
-            welcomeModal.classList.remove('hidden');
-            showWarningScreen();
+            if (userDetails.is_admin || userDetails.webapp_registered) {
+                welcomeModal.classList.add('hidden');
+                if (userDetails.is_admin) {
+                    document.getElementById('admin-menu-grid').classList.remove('hidden');
+                    switchView('dashboard');
+                } else {
+                    document.getElementById('login-view').style.display = 'flex';
+                }
+            } else {
+                // Har doim avval qoidalar (warning) oynasini ko'rsat
+                welcomeModal.classList.remove('hidden');
+                showWarningScreen();
+            }
         }
     } catch (e) {
         console.error("Error fetching user data", e);
