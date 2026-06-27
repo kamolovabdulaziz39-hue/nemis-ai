@@ -3,263 +3,239 @@ import re
 import os
 import sys
 
-text = """🇩🇪 B2: 1-Dars: Ikki qismli murakkab boglovchilar - “je ... desto” (Mustahkamlash)
-B2 darazhasida ushbu bogʻlovchining sifat va ravishlar bilan bogʻliq murakkab va uzun haplar ichida qʼ tarbiyasini taʼminlaymiz.
+text = """🇩🇪 B2: 21-Dars: Sifatdosh iboralarining rangi - "Partizipialkonstruktionen"
+B2 darazhasida uzun nisbiy haplarni kiskartirish sifatdosh iboralari uchun. Bunda haraqat asosiy gapdagi ega bilan bir vaktda sodir bulayotgan buladi.
 
-Bu B2 ni yanada kuchaytiradi, buning uchun siz o'z ichiga oladi.
+Laut singend kam er ins Zimmer.
 
-Aytilishi: [Ye intensiver du dix auf be-tsvay vorberaytest, desto felerfrayer virst du shprexen.]
+Aytilishi: [Laut zingend kam er ins tsimmer.]
 
-Tarjimasi: Sep B2 darazhasig kanchalik zhiddiy tayorgarlik kursang, shunchalik hatosiz gapiradigan belasan.
+Tarjimasi: U baland ovozda qoʻshiq kuylagancha (kuylab) xonaga kirdi.
 
-Je mehr Fachwörter du kennst, desto besser verstehst du die Nachrichten.
+Den Fehler bemerkend, korrigierte er la rejalashtirilgan.
 
-Aytilishi: [Ye mer faxvorter du kennst, desto besser fershteyst du di naxrixten.]
+Aytilishi: [Den feler bemerkend, korrigierte er das proyekt.]
 
-Tarjimasi: Kanchalik kwp professional (sohaviy) swzlarni bilsang, yangiliklarni shunchalik yakhshi tushunasan.
+Tarjimasi: Khatoni sezgan zagoti, u tartibga solishni tug'iladi.
 
-🇩🇪 B2: 2-Dars: Sifatdosh kurilmalari sifatida aniklovchilar (Erweiterte Partizipialattribute)
-B2 darazhasida sifatdoshlar oddiygina from oldid kelmaydi, beams uzi bilan butun bir haraqatni ergashtirib keladi. Bu nemis tilining eng qiyin va oliy darajasidan biridir.
+🇩🇪 B2: 22-Dars: Passiv muqobillari - "sein + zu + Infinitiv"
+Nemis tilida Passiv + modal fe'l (müssen / können) o'rnini bosuvchi zhuda mashur rasmiy kurilma. Gap faol (faol) ko'rinishda b'lsa-da, mazhul (passiv) mano beradi.
 
-die gestern vom Lehrer korrigierten Hausaufgaben
+Die Aufgabe ist bis morgen zu erledigen.  (muss erledigt werden manosida)
 
-Aytilishi: [di gestern fom lerer korrigierten xausaufgaben.]
+Aytilishi: [Di aufgabe ist bis morgen tsu erledigen.]
 
-Tarjimasi Kecha o'kituvchi tomonidan tekshirilgan (tugrilangan) uy mashinasi. (Hausaufgaben s'zini sifat darajasi uchun butun bir gap b''lib kelyapti)
+Tarjimasi: Vozifa ertagacha bazharilishi shart.
 
-Noutbuklar uchun dasturchi
+Das Buch ist überall zu finden.  (kann gefunden werden manosida)
 
-Aytilishi: [der am laptop arbaytende programmer.]
+Aytilishi: [Das bux ist uberall tsu finden.]
 
-Tarjimasi: Laptopda ishlayotgan dasturchi.
+Tarjimasi: Bu kitobni hamma erdan topish mumkin.
 
-🇩🇪 B2: 3-Dars: So'z yasalishi — Nomdosh mahsulotlar (Nominalisierung von Verben)
-B2 darazhasida nutkni kiskartiris va rasmiylashtirish uchun fe'lardan yasash zhuda mukhim o'rin tutada. Kwp hollarda fellar das articles bilan otga ailanadi.
+🇩🇪 B2: 23-Dars: Passiv muqobillari - "-bar" va "-lich" qo'shimchalari
+Swz ohiriga -bar yoki -lich qo'shimchalarini qo'yish orkali "qila olsa bo'ladigan" (kann... werden) degan Passive manosidagi sifatlar yasaladi.
 
-lernen (o'rganmoq) -> das Lernen [das lernen] - o'rganish (qovurilgan)
+trinken (ichmoq) -> trinkbar [trinkbar] — ichsa bo'lgan / ichishga yaroqli.
 
-Das Lernen einer Fremdsprache erfordert viel Geduld.
+Das Wasser ist trinkbar.
 
-Aytilishi: [Das lernen ayner fremdshpraxe erfordert fil geduld.]
+Aytilishi: [Das vasser ist trinkbar.]
 
-Tarjimasi: Chet tilini o'rganish zhuda kwp sabr-toqat talab qiladi.
+Tarjimasi: Bu suvni ichsa bo'ladi (ichish mumkin).
 
-leben (yashamok) -> das Leben [das leben] - deydi.
+lesen (o'qkћmoq) -> leserlich [lezerlix] - o'qisa bo'ladigan (khat hakida).
 
-🇩🇪 B2: 4-Dars: Pasi zamonaviy shakllari — Moal mahsulotlar bilan Pasif (Passiv mit Modalverben)
-Ish-harakatning mazhburiiligi yoki uni Mazhul (Passiv) shaklda ifodalash. Koida: Modal fe'l (2-o'rinda tuslanadi) + Partizip II + werden (o'zgarmay gap ohirida turadi) .
+Deine Schrift ist ne leserlich. [Dayne shrift ist nixt lezerlix.] — Sening xatingni o'qish bo'lmaydi.
 
-Die Dokumente müssen sofort unterschrieben werden.
+🇩🇪 B2: 24-Dars: Rasmiy til usuli - Fel-ot birikmalari (Nomen-Ferb-Verbindungen I)
+B2 darazhasining eng muxim belgisi. Bunda oddiy bir fe'l urniga From + Fe'l birikmasi keladi va u rasmiy/business tili keladi.
 
-Aytilishi: [Di dokumente myssen zofort untershriben vorden.]
+Fragen stellen (= fragen) - savol bermok / savol chikarmok.
 
-Tarjimasi: Huzhatlar zudlik bilan imzolanishi shart (kerak).
+Sie können jederzeit Fragen stellen.
 
-Das Problem kann schnell gelöst werden.
+Aytilishi: [Zi kynnen yedertsayt fragen shtellen.]
 
-Aytilishi: [Das problem kann shnell gellyost vorden.]
+Tarjimasi: Siz xolagan vaktda savollar berishingiz mumkin.
 
-Tarjimasi: muammoni tezda hal qilish mumkin.
+eine Rolle spielen (= wichtig sein) - o'ynamok / muhim bwlmok roli.
 
-🇩🇪 B2: 5-Dars: Chegaralovchi boglovchilar - “solange” va “sofern” (Mustahkamlash)
-sofern (agar mabodo / basharti) - shartli bog'lovchi bo'lib, falls so'zining rasmiyrok turidir.
+Das keine Rolle. [Das shpilt kayne rolle.] — Buning yoki yo'q (rol o'ynamaydi).
 
-Sofern Sie keine Fragen haben, wir das Gespräch edi.
+🇩🇪 B2: 25-Dars: Fe'l-ot birikmalari (Nomen-Ferb-Verbindungen II)
+in Erfüllung gehen (= sich erfüllen) - amalga oshmoq / ushalmoq (orzular xakida).
 
-Aytilishi: [Zofern Zi kayne fragen xaben, be-enden vir das geshprax.]
+Mein Traum Erfullung gegangen shahrida.
 
-Tarjimasi: Basharti sizda savollar bulmasa, subatni yakunlaymiz.
+Aytilishi: [Mayn travma ist in erfyullung gegangen.]
 
-Solange du hier bist, bist du sicher.
+Tarjimasi: Mening orzum amalga oshdi (ushaldi).
 
-Aytilishi: [Zolange du xir bist, bist du zixer.]
+Unterstützung finden (= unterstützt werden) - qullab-quvvatlanish / erdam topmoq.
 
-Tarjimasi: Modomiki shu erda ekansan, hafsizlikdasan.
+Das Projekt shapka Unterstützung gefunden. [Das proyekt xat untershpropsyutsung gefunden.] - Loyiha qullab-quvvatlandi.
 
-🇩🇪 B2: 6-Dars: Kelajakda tugallangan zamon – Futur II
-Kelazhak bir vaktga borib bazharilib bulinadigan harakatni yoki o'tmishdagi bir ish khaqida gumon/tahmin qilishni ifodalaidi. Koida: werden (tuslanadi) + Partizip II + haben/sein (bo'shliq ohirida) .
+🇩🇪 B2: 26-Dars: Germany so'g' saklash tizimi va Tibbiyot (Medizin)
+Shifohonalarda, suhurta ishlarida va tibbiyoty kirikda kerak buladigan B2 darazhasidagi murakkab atamalar.
 
-Biz B2-Zertifikat bekommen haben bor.
+die Diagnoz [diagnoz] - tashhis, davolashno retsept:  das Reze davolash [  retsept] die Behandlung [bexandlung].
 
-Aytilishi: [Bis nexstes yar verde ix das be-tsvay sertifikat bekommen xaben.]
+Der Arzt shapka o'lib tashxis gestellt.
 
-Tarjimasi: Kelasi ishlab men B2 sertifikatini olib bulgan bulaman.
+Aytilishi: [Der artst xat di diagnoze gheshtelt.]
 
-Er wird wohl schon nach Hause gegangen sein.
+Tarjimasi: Shifokor tashkhis qo'ydi.
 
-Aytilishi: [Er virt vohl shon nax xauze gegangen zayn.]
+Behandlung urush erfolgreich Die. [Di bexandlung var erfolgrayx.] - Davolanish muwaffakiyatli o'tdi.
 
-Tarjimasi: U allakaxon uyga ketib bulgan bulsa kerak (taxmin).
+🇩🇪 B2: 27-Dars: Sabab-natija bog'lovchilar — "insofern" va "insoweit"
+“Shu manodaki”, “shu darazhadaki” mazmunini va boshqa fikrni tekshirish yoki tushuntirib keluvchi B2 bog'lovchilari.
 
-🇩🇪 B2: 7-Dars: Swz o'rni va inkor - "nicht"ning gapdagi pozitsiyasi (Inkor qilish)
-B2 darazhasida haplar uzunlashgani tufayli, nicht swzini tugri zhoiga quyish zhuda muhim. nicht nimaning oldiga qo'yilsa, ainan o'sha swzni inkor qiladi.
+Ich stimme dir insofern zu, als o'z firk yo'q.
 
-Ich habe not bu kitobni sotib oldim, beams unikini.
+Aytilishi: [Ix shtimme dir inzofern tsu, als dayne argumente rixtix zind.]
 
-Aytilishi: [Ix xabe nixt dizes bux gekauft, sondern yenes.]
+Tarjimasi: Men senga shu manoda qushilamanki, senning dallylaring tugri.
 
-Tarjimasi: Men ainan bu kitobni sotib olmadim, beams ana unikini oldim.
+Insoweit hato yök, beraylik. [Inzovayt qayn feler ist, maxen vir vayter.] - Shu darazada hato ywk ekan, davom etadi.
 
-Ich kann heute kelaman emas. [Ix kann xoyte nixt kommen.] - Men bugun kela olmayman. (Butun gapni inkor kilsa, gap ohirida yoki fe'l oldida keladi)
+🇩🇪 B2: 28-Dars: Ortda kolgan shart boglovchisi - "ansonsten" (Aks holda)
+"Aks Holda", "Bulmasa" Mazmunidagi Bog'lovchi. Koida: ansonsten soʻzidan keyin darhol tuslangan feʼl keladi (Tezkor tartib).
 
-🇩🇪 B2: 8-Dars: Rasmiy suhbat va fikrni himoya qilish — Argumentation
-Munozaralarda uz fikrini isbot bilan isbotlash va boshqa fikrini inkor qilish.
+Du musst fleißig lernen, ansonsten bestehst du die Prüfung nicht.
 
-Ich bin der festen Überzeugung, dass... [Ix bin der festen uberzeugung, dass] - Men katyy ishonamanki...
+Aytilishi: [Du musst flayssix lernen, anzonsten beshteyst du di pryufung nixt.]
 
-Ein schlagendes Argument dafür ist... [Ayn shlagendes argument dafyr ist] — Buning uchun eng kuchli dail shundaki...
+Tarjimasi: Sen tirishib o'qishing kerak, aks holda imtihondan o'ta olmaisan.
 
-Ich kann etu firga qushilmaman.
+Beeil dich, ansonsten kommen wir zu spät. [Be-ayl dix, anzonsten kommen vir tsu shpet.] - Tezrok bwl, aks holda kechikib qolamiz.
 
-Aytilishi: [Ix kann dizer moynung nixt zustimmen.]
+🇩🇪 B2: 29-Dars: Murakkab Genitiv predlogi - "mithilfe" va "zwecks"
+Faqat Genitiv kelishigi bilan oliy uslubdagi preloglar.
 
-Tarjimasi: Men bu fikrga qo'shila olmayman.
+mithilfe (erdamida / k'magida) - mithilfe des Computers [mit-xilfe des kompyuters] - kompyuter erdamida.
 
-🇩🇪 B2: 9-Dars: Sifatdosh kurillmalari - Gerundy ornida "zu" + Partizip I (Gerundivum)
-Mazhburiyat yoki imkoniyatlarni ifodalaydi va faqat Passiv ma'nosini beradigan sifatdosh shakli.
+zwecks (maqsadida) - zwecks der Weiterbildung [tsveks der vayterbildung] - malaka qobiliyati.
 
-das zu lösende Problem
+Er hat mithilfe seines Freundes la loyichani tugatdi.
 
-Aytilishi: [das tsu lyozende muammosi.]
+Aytilishi: [Er xat mit-xilfe zaynes froyndes das proyekt bedet.]
 
-Tarjimasi: Halol kerak bulgan muammo. (Problem das gelöst werden muss manosida)
+Tarjimasi: U o'stining yordamini yakunladi.
 
-die zu erledigenden Aufgaben
+🇩🇪 B2: 30-Dars: Uchinchi modul takrori (Wiederholung)
+Rasmiy fe'l-ot birikmalari va murakkab Passiv muqobillarini mustaxkamlash.
 
-Aytilishi: [di tsu erledigenden aufgaben.]
+Javob: Diagnose schon zu topildimi? [Ist di diagnoze shon tsu finden?] - Tashkhisni topsa b'ladimi (tayermi)?
 
-Tarjimasi: Bajarilishi lozim bulgan.
+B: Ja, doktor savollar berdi va tashkhisni qo'ydi. [Ya, der Arzt hat Fragen gestellt und die Diagnose mitgeteilt.] - HA, savollar berdi va tashkhisni ma'lum qildi .
 
-🇩🇪 B2: 10-Dars: Birinchi modul takrori (Wiederholung)
-B2 darazhasining birinchi murakkab Passive va sifatdosh kurilmalarini amaliy subatda mustakamlash.
+🇩🇪 B2: 31-Dars: Sifatdosh kurilmalari - Gerundy va haraqat nomi (Substantivierte Adjektive)
+Sifatlarning otga ailanishi va sud tugri tuslanishi (masalan: kattalar, bemorlar, ishchilar).
 
-A: Sind die zu erledigenden Aufgaben schon fertig? [Zind di tsu erledigenden aufgaben shon fertig?] - Bazharilishi kerak bulgan mashina tajormi?
+krank (kasal) -> der Kranke / die Kranke [der kranke / di kranke] - bemor odam.
 
-B: Ja, hama huzhatlar imzolanib bulindi. [Ya, alle Dokumente sind schon unterschrieben worden.] - Ha, hhamma hujjatlar allakachon imzolab belindi.
+Der Kranke muss im Bett bleiben.
 
-🇩🇪 B2: 11-Dars: Fellarning barkaror predloglar bilan kelishilgan (Verben mit Präpositionen)
-B2 darazhasida fellarning preloglarini va ular Akkusativ yoki Dativ talab qilishini yodlash shart.
+Aytilishi: [Der kranke muss im bett blayben.]
 
-abhängen von + Dativ [apxengen fon] - ...ga bo'g'lik bwlmok.
+Tarjimasi: Bemor twshakda qolishi shart.
 
-Das hängt vom Wetter ab.
+die Erwachsenen [di ervaxsenen] - kattalar (yoshi kattalar).
 
-Aytilishi: [Das xengt fom vetter ap.]
+🇩🇪 B2: 32-Dars: Twldiruvchi nisbiy haplar - "was baroi" va "wovon"
+Butun bir gap mazmuniga nisbatan nisbiy bog'lovchi yasash (masalan: “bu menga zhuda yokdi” deb butun gapni ulash).
 
-Tarjimasi: Bu ob-havoga boglik.
+Er hat die Prüfung bestanden, mich sehr freut edi.
 
-sich beschweren über + Akkusativ [zix beshveren uber] - ...ustidan shikoyat qilmoq.
+Aytilishi: [Er xat di pryufung bestanden, vas mix zer froyt.]
 
-Er beschwert sich über den Lärm. [Er beshvert zix uber den lerm.] — U shovqin ustidan shkoyyat qilyapti.
+Tarjimasi: U imtihondan o'tdi, bu esa meni zhuda xursand kiladi. (was butun oldin haraqatga tegishli)
 
-🇩🇪 B2: 12-Dars: Sifatlarning barkaror predloglar bilan kelishilgan (Adjektive mit Präpositionen)
-stolz sein auf + Akkusativ [shtolts zayn auf] - ...bilan fahrlanmok.
+🇩🇪 B2: 33-Dars: Joy va makon nisbiy boglovchisi — "wohin" va "woher"
+Nisbiy haplarda o'shnini anik ko'rsatib kelish.
 
-Ich bin stolz auf dich.
+Das Land, wohin ich reise, ist Deutschland.
 
-Aytilishi: [Ix bin shtolts auf dix.]
+Aytilishi: [Das land, voxin ix rayse, ist Doychland.]
 
-Tarjimasi: Men sen bilan fahrlanaman.
+Tarjimasi: Men sayohat qilish (kayergaki uchyapman) davlat Germaniyadir.
 
-zufrieden sein mit + Dativ [tsufrieden zayn mit] - ...dan konikmok / mamnun bolmok.
+Die Stadt, woher ya kelaman, juda chiroli.
 
-Bist du mit deiner Arbeit zufrieden? [Bist du mit dayner arbayt tsufriden?] - Ishingdan mamnunmisan?
+Aytilishi: [Di shtadt, voxer ix komme, ist shyon.]
 
-🇩🇪 B2: 13-Dars: Predloglar o'rnini bosuvchi olmoshlar — "woran", "daran", "wovon", "davon"
-Agar was suggest savol zhonsiz buyumga nisbatan berils, wo(r)- qo'shimchasi, zhavobda esa da(r)- qo'shimchasied ilova.
+Tarjimasi: Menga (kelib chikishim bulgan) shahar chiroilidir.
 
-Woran denkst du?  (denken an + Akkusativ fe'lidan)
+🇩🇪 B2: 34-Dars: Ishtiyok va maksad preloglar orqali - “aus” va “vor” (hissiyyotlar uchun)
+Biror isni kaisi hissiyot tufayli bajarilganligini atish.
 
-Aytilishi: [Voran denkst du?]
+aus (katyy/ongli ravish) - aus Liebe [aus libe] - sevgidan / muhabbat tufayli.
 
-Tarjimasi: Nima xakida o'ylayapsan?
+vor (zhismoniy/beikhtiyor ravish) - vor Angst [vor angst] - qo'rquvdan.
 
-Ich denke daran.
+Er hat vor Angst gezittert.
 
-Aytilishi: [Ix denke daran.]
+Aytilishi: [Er xat vor angst getsittert.]
 
-Tarjimasi: Men o'sha xakida o'ylayapman.
+Tarjimasi: U quurkuvdan titrab ketdi.
 
-Wovon sprecht ihr? [Vofon shprext ir?] - Nima hkida haplashyapsizlar?
+Ich tue das aus reinem Interesse. [Ix tue das aus raynem interesse.] - Men buni sof kiziqish tufayli kilyapman.
 
-🇩🇪 B2: 14-Dars: Ikki qismli murakkab boglovchilar - "zwar...aber"
-“Tugri... lekin”, “Garchi... bulsa-da, ammo” mazmunidagi zhuft bog‘lovchi.
+🇩🇪 B2: 35-Dars: Ikki kismli boglovchilar - "nicht destotrotz" (Shunga karamai)
+Trotzdem suzining oliy, rasmiy va kuchlirok varianti. Orkasidan darhol fe'l keladi.
 
-Deutsch ist zwar schwer, aber es ist sehr interessant.
+Es gab viele Probleme, nichtsdestotrotz haben wir gewonnen.
 
-Aytilishi: [Doych ist tsvar shver, aber es ist zer interessant.]
+Aytilishi: [Es gab file probleme, nixts-desto-trots xaben vir gevonnen.]
 
-Tarjimasi: Nemis tili tugri qiyin, lekin u zhuda kizikarli.
+Tarjimasi: Kwp muammolar bwldi, shunga karamai biz galaba kozondik.
 
-Er hat zwar Geld, aber er kauft kein Auto. [Er xat tsvar geld, aber er kauft qayn auto.] — Uning puli bo-u, lekin mashina sotib olmayapti.
+🇩🇪 B2: 36-Dars: Turtinchi model takrori (Wiederholung)
+Javob: Warum hat der Kranke vor Angst gezittert? [Varum xat der kranke vor angst getsittert?] — Nima uchun bemor qo'rquvdan titrab ketdi?
 
-🇩🇪 B2: 15-Dars: Ikki qismli murakkab boglovchilar - "solange... bis"
-"...guncha", "...guniga qadar" vakt chegarasini ifodalovchi bogʻlovchi. Fel gap ohiriga boradi.
+B: Angst vor der Operation, nichtsdestotrotz ist alles gut gelaufen. [Er xatte angst vor der operatsyon, nixts-desto-trots ist alles gut gelaufen.] - U operatsiyadan qo'rqqan edi, shunga karamai hammasi yaxshi o'tdi.
 
-Ich werde Deutsch lernen, bis ich perfect spreche.
+🇩🇪 B2: 37-Dars: Ilmiy tadqiqotlar va Technology (Wissenschaft)
+Ilmiy makolalarda va subatlarda yuzaga kelgan yukori sokhaviy suzlar.
 
-Aytilishi: [Ix verde doych lernen, bis ix perfect shprexe.]
+die Forschung [forhung] - tadqiqot, kashfiyot:  die Entdeckung [entdekkung] - ichtiro / kashfiyot, rivozhlantirmok:  entwickeln [entvikkeln].
 
-Tarjimasi: Men mukammal gapirgunimga qadar nemis tilini o'rganaman.
+Wissenschaftler haben eine neue Entdeckung gemacht.
 
-Warte hier, bis ich zurückkomme. [Varte xir, bis ix tsyuryukkomme.] - Men qayitgunimcha shu erda kutib tur.
+Aytilishi: [Vissenshaftler xaben ayne noye entdekkung gemaxt.]
 
-🇩🇪 B2: 16-Dars: Nisbiy haplarning murakkab turlari - Predloglar bilan (Relativsätze)
-Nisbiy olmoshlar o'zidan oldin kelgan preposition ta'sirida Akkusativ yoki Dativ shaklga qiradi.
+Tarjimasi: Olimlar yangi kashfiyot aniqlandi.
 
-Der Freund, mit dem ich reise, ist Arzt.  (mit sutli Dativ - dem)
+🇩🇪 B2: 38-Dars: Murakab sifatli yasalishi — Qushma sifatlar (Zusammengesetzte Adjektive)
+Ikkita so'zni qo'shib, ko'tarilgan manodagi sifatlar yasash.
 
-Aytilishi: [Der froynd, mit dem ix rayse, ist artst.]
+weltweit [velt-vayt] - dunyo mikoshidagi / butun dunyo bo'ylab.
 
-Tarjimasi: birga sayohat kilayotgan dostim Men foydalanishdir.
+umweltfreundlich [umvelt-froyndlix] - atrof-muhit uchun hafsiz (ekologik toza).
 
-Das Thema, über das wir sprechen, ist wichtig.  (über shu erda Akkusativ - das)
+Wir mussen umweltfreundliche Autos kaufen.
 
-Aytilishi: [Das tema, uber das vir shprexen, ist vixtix.]
+Aytilishi: [Vir myssen umvelt-froyndlixe autos kaufen.]
 
-Tarjimasi: Biz gaplashayotgan mavzu zhuda mukhim.
+Tarjimasi: Biz ecologists toza machinelar sotib olishimiz kerak.
 
-🇩🇪 B2: 17-Dars: Germany mehnat bozori va "Anerkennung" (Diplom qilish)
-Germaniyada xorizhiy diplomlarni tan oldirish zharajoni va rasmiy atamalar.
+🇩🇪 B2: 39-Dars: Gumon va Shart maili - "Konjunktiv II" murakkab zamonlarda.
+O'tmishdagi bir voqea mumkinga nisbatan "beams u o'shanda kilgan bulishi edi" deb takhmin bildirish kurilmasi.
 
-die Anerkennung [anerkennung] - diplom yoki hujjatning tan olinishi (tasdiqlanishi).
+Er hätte das wissen müssen.
 
-die Urkunde [urkunde] - Rasmiy guvonoma / diplom.
+Aytilishi: [Er xatte das vissen myssen.]
 
-einen Antrag stellen [aynen antrag shtellen] - ariza topshirmoq.
+Tarjimasi: U buni bilishi kerak edi (lekin bilmagan).
 
-Ich muss einen Antrag auf Anerkennung meines Diploms stellen.
+To'lovni amalga oshirish uchun. [Das vere toll gevezen.] - Bu zhuda z'r b'lgan b''lardi (lekin b'lmadi).
 
-Aytilishi: [Ix muss aynen antrag auf anerkennung maynes diploms shtellen.]
+🇩🇪 B2: 40-Dars: Beshinchi modul takrori (Wiederholung)
+Javob: Die weltweite Forschung entwickelt sich schnell. [Di velt-vayte forshung entvikselt zix shnell.] - Butun dunyo bo'ylab tadqiqot tez rivozhlanmokda.
 
-Tarjimasi: Men diplomamni tasdiqlash uchun ariza topshirishim kerak.
-
-🇩🇪 B2: 18-Dars: Ishxonadagi nizolar va ularni hal qilish (Konflikte am Arbeitsplatz)
-Ish zhoyidagi kelishmovchiliklarni bartaraf etish va professional muloqot.
-
-der Konflikt [konflikt] - past / kelishmovchilik, murosa:  der Kompromiss [kompromiss], hal kilmok:  lösen [lyozen].
-
-Wir mussen einen Kompromiss topildi.
-
-Aytilishi: [Vir myssen aynen kompromiss finden.]
-
-Tarjimasi: Biz o'zaro paydo (compromise) topishimiz kerak.
-
-Lassen uns das Problem ruhig besprechen. [Lassen uns das problem ruix beshprexen.] — Keling, muammoni tinggina muxokama qilaylik.
-
-🇩🇪 B2: 19-Dars: Shartley istisno boglovchisi - “es sei denn, dass” (... masalan / faqat ... gina bulsa)
-Agar bolishi qiyin bulgan yagona bir istisno shart koldirilsa sodir bo'lgan. Fel gap ohiriga boradi.
-
-Ich gehe heute spazieren, es sei denn, dass es stark regnet.
-
-Aytilishi: [Ix ge-e xoyte shpatsiren, es zay denn, dass es shtark regnet.]
-
-Tarjimasi: Men bugunga boraman, faqat qattiq yomg'ir yog'ib qolmasagina (agar yog'sa bormaiman).
-
-🇩🇪 B2: 20-Dars: Ikkinci modul takrori (Wiederholung)
-Javob: Bist du mit der Anerkennung deines Diploms zufrieden? [Bist du mit der anerkennung daynes diploms tsufriden?] - Diploming maktabidan mamnunmisan?
-
-B: Ja, das hat zwar lange gedauert, aber jetzt ist alles erledigt. [Ya, das xat tsvar lange gedauert, aber yetst ist alles erledigt.] - HA, bu garchi uzok vakt olgan bulsa-da, lekin hozir hammasi tayer .
+B: Das stimmt, atrof-muhit uchun yangi ichtirolar qilinmoqda. [Das stimmt, es werden neue umweltfreundliche Entdeckungen gemacht.] - Tugri, atroph-muhit uchun yangi ekolog ichtirolar yaratilyapti.
 """
 
 B2_LESSONS = {}
