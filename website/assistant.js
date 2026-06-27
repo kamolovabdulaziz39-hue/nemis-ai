@@ -331,6 +331,7 @@ const submitExamBtn = document.getElementById('submit-exam-btn');
 
 // Modal Warning Screen helper
 let currentWarningLang = userLang; // default to tg language
+let isDeclinedState = false;
 
 function showWarningScreen() {
     if (tg.HapticFeedback && typeof tg.HapticFeedback.notificationOccurred === 'function') {
@@ -422,13 +423,60 @@ function updateWarningText(lang) {
     document.getElementById('warning-disclaimer-text').textContent = txts.disclaimer;
 }
 
+function updateDeclinedText(lang) {
+    const DECLINE_TEXT = {
+        'uz': `
+            <div style="text-align: center; font-size: 1.1rem; line-height: 1.6; padding: 20px 0; color: #f87171;">
+                Biz tushunib turibmiz, shunday qilib dangasalik qilyapsiz. Lekin yordam, bu xizmatning hammasi faqat sizning foydangiz uchun!<br><br>
+                Nemis tilini temir intizomsiz o'rganib bo'lmaydi. Qachonki o'zingizda kuch topib, dangasalikni yengib, natijaga erishishni chin dildan xoxlasangiz - ortga qaytsangiz, sizga yordam beramiz
+            </div>
+        `,
+        'ru': `
+            <div style="text-align: center; font-size: 1.1rem; line-height: 1.6; padding: 20px 0; color: #f87171;">
+                Мы понимаем, что вам просто лень. Но помните, все эти правила существуют исключительно для вашей пользы!<br><br>
+                Выучить немецкий без железной дисциплины невозможно. Когда вы найдете в себе силы побороть лень и по-настоящему захотите достичь результата — возвращайтесь, мы вам поможем!
+            </div>
+        `,
+        'de': `
+            <div style="text-align: center; font-size: 1.1rem; line-height: 1.6; padding: 20px 0; color: #f87171;">
+                We understand you might just be feeling lazy. But remember, all these rules are strictly for your benefit!<br><br>
+                Learning German is impossible without iron discipline. When you find the strength to overcome laziness and truly desire to achieve results — come back, and we will help you!
+            </div>
+        `
+    };
+
+    const TITLES = {
+        'uz': '❌ RAD ETILDI',
+        'ru': '❌ ОТКЛОНЕНО',
+        'de': '❌ DECLINED'
+    };
+    
+    const BTN = {
+        'uz': 'Chiqish',
+        'ru': 'Выход',
+        'de': 'Exit'
+    };
+
+    document.getElementById('warning-title-text').textContent = TITLES[lang] || TITLES['de'];
+    
+    warningTextContent.innerHTML = (DECLINE_TEXT[lang] || DECLINE_TEXT['de']) + `
+        <button onclick="tg.close()" style="margin-top: 20px; background: #3b82f6; border: none; color: white; border-radius: 12px; padding: 14px; width: 100%; font-weight: bold; cursor: pointer;">
+            ${BTN[lang] || BTN['de']}
+        </button>
+    `;
+}
+
 // Bind language toggle buttons click
 const langToggleBtns = document.querySelectorAll('.modal-lang-btn');
 langToggleBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const selectedLang = btn.getAttribute('data-lang');
         currentWarningLang = selectedLang;
-        updateWarningText(currentWarningLang);
+        if (isDeclinedState) {
+            updateDeclinedText(currentWarningLang);
+        } else {
+            updateWarningText(currentWarningLang);
+        }
         // Apply the language choice globally for the bot
         applyLanguage(selectedLang);
         // Optional: save to local storage so it remembers next time
@@ -824,6 +872,8 @@ if (declineChallengeBtn) {
             try { tg.HapticFeedback.notificationOccurred('error'); } catch(e){}
         }
         
+        isDeclinedState = true;
+        
         // Hide the action buttons and replace the content with the rejection text
         const warningActions = document.querySelector('.warning-actions');
         if (warningActions) warningActions.style.display = 'none';
@@ -831,18 +881,9 @@ if (declineChallengeBtn) {
         const disclaimer = document.getElementById('warning-disclaimer-text');
         if (disclaimer) disclaimer.style.display = 'none';
         
-        document.getElementById('warning-title-text').textContent = "❌ RAD ETILDI";
         document.getElementById('warning-title-text').style.color = "#ef4444";
         
-        warningTextContent.innerHTML = `
-            <div style="text-align: center; font-size: 1.1rem; line-height: 1.6; padding: 20px 0; color: #f87171;">
-                Biz tushunib turibmiz, shunday qilib dangasalik qilyapsiz. Lekin yordam, bu xizmatning hammasi faqat sizning foydangiz uchun!<br><br>
-                Nemis tilini temir intizomsiz o'rganib bo'lmaydi. Qachonki o'zingizda kuch topib, dangasalikni yengib, natijaga erishishni chin dildan xoxlasangiz - ortga qaytsangiz, sizga yordam beramiz
-            </div>
-            <button onclick="tg.close()" style="margin-top: 20px; background: #3b82f6; border: none; color: white; border-radius: 12px; padding: 14px; width: 100%; font-weight: bold; cursor: pointer;">
-                Chiqish
-            </button>
-        `;
+        updateDeclinedText(currentWarningLang);
     });
 }
 
