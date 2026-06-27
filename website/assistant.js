@@ -836,8 +836,8 @@ if (declineChallengeBtn) {
         
         warningTextContent.innerHTML = `
             <div style="text-align: center; font-size: 1.1rem; line-height: 1.6; padding: 20px 0; color: #f87171;">
-                Biz tushunamiz, sizga shunchaki dangasalik qilyapti. Lekin unutmang, bu qoidalarning barchasi faqat va faqat sizning foydangiz uchun!<br><br>
-                Nemis tilini temir intizomsiz o‘rganib bo‘lmaydi. Qachonki o‘zingizda kuch topib, dangasalikni yengib, natijaga erishishni chin dildan xohlasangiz — qaytib keling va qoidalarni qabul qiling!
+                Biz tushunib turibmiz, shunday qilib dangasalik qilyapsiz. Lekin yordam, bu xizmatning hammasi faqat sizning foydangiz uchun!<br><br>
+                Nemis tilini temir intizomsiz o'rganib bo'lmaydi. Qachonki o'zingizda kuch topib, dangasalikni yengib, natijaga erishishni chin dildan xoxlasangiz - ortga qaytsangiz, sizga yordam beramiz
             </div>
             <button onclick="tg.close()" style="margin-top: 20px; background: #3b82f6; border: none; color: white; border-radius: 12px; padding: 14px; width: 100%; font-weight: bold; cursor: pointer;">
                 Chiqish
