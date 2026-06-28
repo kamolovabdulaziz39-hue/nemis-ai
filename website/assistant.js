@@ -784,18 +784,19 @@ async function loadUserData() {
                 userDetails.sub = 'vip';
             }
             // If user has active subscription OR already has a selected level, skip registration/login wall
-            const hasActiveSub = userDetails.sub && userDetails.sub !== 'none';
-            const isReturningUser = hasActiveSub || (selectedLevel && selectedLevel !== '');
-            
-            if (userDetails.is_admin || isReturningUser) {
+            if (userDetails.is_admin) {
                 welcomeModal.classList.add('hidden');
-                if (userDetails.is_admin) {
-                    document.getElementById('admin-menu-grid').classList.remove('hidden');
-                }
+                document.getElementById('admin-menu-grid').classList.remove('hidden');
                 switchView('dashboard');
             } else if (userDetails.webapp_registered) {
-                welcomeModal.classList.add('hidden');
-                document.getElementById('login-view').style.display = 'flex';
+                const isSessionAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+                if (isSessionAuthenticated) {
+                    welcomeModal.classList.add('hidden');
+                    switchView('dashboard');
+                } else {
+                    welcomeModal.classList.add('hidden');
+                    document.getElementById('login-view').style.display = 'flex';
+                }
             } else {
                 // Har doim avval qoidalar (warning) oynasini ko'rsat
                 welcomeModal.classList.remove('hidden');
@@ -861,17 +862,16 @@ acceptChallengeBtn.addEventListener('click', () => {
         userDetails.sub = 'vip';
     }
     
-    // If user has active subscription or is a returning user, go straight to dashboard
-    const hasActiveSub2 = userDetails.sub && userDetails.sub !== 'none';
-    const isReturningUser2 = hasActiveSub2 || (selectedLevel && selectedLevel !== '');
-    
-    if (userDetails.is_admin || isReturningUser2) {
-        if (userDetails.is_admin) {
-            document.getElementById('admin-menu-grid').classList.remove('hidden');
-        }
+    if (userDetails.is_admin) {
+        document.getElementById('admin-menu-grid').classList.remove('hidden');
         switchView('dashboard');
     } else if (userDetails.webapp_registered) {
-        document.getElementById('login-view').style.display = 'flex';
+        const isSessionAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+        if (isSessionAuthenticated) {
+            switchView('dashboard');
+        } else {
+            document.getElementById('login-view').style.display = 'flex';
+        }
     } else {
         document.getElementById('registration-view').style.display = 'flex';
     }
@@ -1376,6 +1376,7 @@ document.getElementById('reg-form').addEventListener('submit', async (e) => {
         
         if(response.ok) {
             const data = await response.json();
+            sessionStorage.setItem('authenticated', 'true');
             userDetails.name = name;
             userDetails.webapp_registered = true;
             if (data.sub) {
@@ -1425,6 +1426,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         });
         
         if(response.ok) {
+            sessionStorage.setItem('authenticated', 'true');
             document.getElementById('login-view').style.display = 'none';
             switchView('dashboard');
             renderDashboard();
