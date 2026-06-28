@@ -1128,25 +1128,28 @@ def handle_update(upd):
                 return
             elif txt == "🚨 Ataka":
                 # Fetch recent hackers from hacker_logs
-                logs = db.conn.execute("SELECT user_id, action, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 10").fetchall()
+                _c = db.get_conn()
+                logs = _c.execute("SELECT user_id, reason, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 10").fetchall()
+                _c.close()
                 if not logs:
                     send_msg(cid, "Hech qanday hujum (ataka) qayd etilmagan.")
                 else:
                     res = "🚨 *So'nggi 10 ta Hujum (Ataka):*\n\n"
                     for l in logs:
-                        res += f"👤 ID: `{l[0]}`\n🕒 {l[2]}\n⚠️ Harakat: {l[1]}\n\n"
+                        res += f"👤 ID: `{l[0]}`\n🕒 {l[2]}\n⚠️ Sabab: {l[1]}\n\n"
                     send_msg(cid, res)
                 return
             elif txt == "🔍 Ataka batafsil":
                 # Fetch detailed logs (what exactly they wrote)
-                logs = db.conn.execute("SELECT user_id, action, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 5").fetchall()
+                _c2 = db.get_conn()
+                logs = _c2.execute("SELECT user_id, bad_text, reason, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 5").fetchall()
+                _c2.close()
                 if not logs:
                     send_msg(cid, "Hech qanday hujum (ataka) qayd etilmagan.")
                 else:
                     res = "🔍 *Batafsil Hujumlar:*\n\n"
                     for l in logs:
-                        # Sometimes they upload a fake receipt or write something
-                        res += f"👤 Hacker ID: `{l[0]}`\n🕒 Vaqt: {l[2]}\n💬 Tafsilot:\n_{l[1]}_\n\n"
+                        res += f"👤 Hacker ID: `{l[0]}`\n🕒 Vaqt: {l[3]}\n💬 Yozgan: _{str(l[1])[:200]}_\n🛡️ Sabab: {l[2]}\n\n"
                     send_msg(cid, res)
                 return
             elif txt == "🎁 VIP Sovg'a qilish":

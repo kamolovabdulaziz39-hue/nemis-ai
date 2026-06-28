@@ -222,6 +222,36 @@ function saveHistory() {
     } catch (e) {
         console.error("Error saving to localStorage", e);
     }
+    // Also persist privately to the server DB (per-user)
+    if (userId) {
+        fetch(API_BASE + '/api/save_chat_history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, history })
+        }).catch(() => {});
+    }
+}
+
+// Load chat history from server DB (private per-user)
+async function loadServerHistory() {
+    if (!userId) return;
+    try {
+        const resp = await fetch(API_BASE + '/api/get_chat_history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data.history && data.history.length > 0) {
+                history = data.history;
+                // Sync to localStorage too
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch(e) {}
+            }
+        }
+    } catch (e) {
+        console.warn('Could not load server history:', e);
+    }
 }
 
 function scrollToBottom() {
@@ -269,17 +299,27 @@ async function handleSubmit() {
     showTyping();
     
     try {
-        const response = await fetch('/assistant/query', {
+        const response = await fetch(API_BASE + '/assistant/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question, lang: userLang })
+            body: JSON.stringify({ question, lang: userLang, user_id: userId })
         });
         
         hideTyping();
+        const data = await response.json();
         
-        if (response.ok) {
-            const data = await response.json();
-            addMessage(data.answer || 'Fehler beim Laden der Antwort.', 'bot');
+        if (data.banned) {
+            // Permanent ban - show message and disable input
+            addMessage(data.error || '🚫 Заблокировано системой безопасности.', 'bot');
+            if (messageInput) messageInput.disabled = true;
+            if (sendBtn) sendBtn.disabled = true;
+            if (tg.HapticFeedback) try { tg.HapticFeedback.notificationOccurred('error'); } catch(e) {}
+        } else if (data.warning) {
+            // Profanity warning - show warning message
+            addMessage(data.answer, 'bot');
+            if (tg.HapticFeedback) try { tg.HapticFeedback.notificationOccurred('warning'); } catch(e) {}
+        } else if (response.ok && data.answer) {
+            addMessage(data.answer, 'bot');
         } else {
             addMessage('Fehler bei der Verbindung mit dem Server.', 'bot');
         }
@@ -1590,12 +1630,14 @@ document.getElementById('btn-read-lesson').addEventListener('click', () => {
     renderLessonsList();
 });
 
-document.getElementById('btn-chat-tutor').addEventListener('click', () => {
+document.getElementById('btn-chat-tutor').addEventListener('click', async () => {
     if (userDetails.sub === 'none' && !window.FORCE_ADMIN) {
         document.getElementById('payment-modal').style.display = 'flex';
         return;
     }
     switchView('chat');
+    // Load private history from DB, then render
+    await loadServerHistory();
     renderChat();
 });
 
@@ -1988,3 +2030,65 @@ if (btnAdminProgress) btnAdminProgress.addEventListener('click', () => fetchAdmi
 
 const btnAdminSkipped = document.getElementById('btn-admin-skipped');
 if (btnAdminSkipped) btnAdminSkipped.addEventListener('click', () => fetchAdminStats('skipped'));
+
+// --- NEW: Security Attack Log Buttons ---
+const btnAdminAttacks = document.getElementById('btn-admin-attacks');
+if (btnAdminAttacks) btnAdminAttacks.addEventListener('click', async () => {
+    switchView('adminStats');
+    const content = document.getElementById('admin-stats-content');
+    if (!content) return;
+    content.innerHTML = '<div style="text-align:center;padding:30px;color:#f43f5e;"><i class="fa-solid fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+    try {
+        const resp = await fetch(API_BASE + '/api/admin_attacks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { content.innerHTML = `<p style="color:#f43f5e;">❌ ${data.error || 'Xato'}</p>`; return; }
+        const logs = data.attacks || [];
+        if (logs.length === 0) {
+            content.innerHTML = '<p style="text-align:center;padding:20px;opacity:0.6;">✅ Hech qanday hujum qayd etilmagan.</p>';
+        } else {
+            content.innerHTML = `<h3 style="color:#f43f5e;margin-bottom:15px;font-family:var(--font-display);">🚨 SO'NGGI HUJUMLAR (${logs.length})</h3>` +
+                logs.map(l => `<div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.25);border-radius:10px;padding:12px;margin-bottom:10px;">
+                    <div style="font-size:0.8rem;opacity:0.6;">🕒 ${l.timestamp || '—'}</div>
+                    <div style="font-weight:700;margin:4px 0;">👤 ID: <code>${l.user_id}</code></div>
+                    <div style="font-size:0.9rem;color:#f43f5e;">⚠️ ${l.reason || '—'}</div>
+                </div>`).join('');
+        }
+    } catch(e) {
+        content.innerHTML = '<p style="color:#f43f5e;">❌ Tarmoq xatosi.</p>';
+    }
+});
+
+const btnAdminAttacksDetail = document.getElementById('btn-admin-attacks-detail');
+if (btnAdminAttacksDetail) btnAdminAttacksDetail.addEventListener('click', async () => {
+    switchView('adminStats');
+    const content = document.getElementById('admin-stats-content');
+    if (!content) return;
+    content.innerHTML = '<div style="text-align:center;padding:30px;color:#e11d48;"><i class="fa-solid fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+    try {
+        const resp = await fetch(API_BASE + '/api/admin_attacks_detail', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { content.innerHTML = `<p style="color:#e11d48;">❌ ${data.error || 'Xato'}</p>`; return; }
+        const logs = data.attacks || [];
+        if (logs.length === 0) {
+            content.innerHTML = '<p style="text-align:center;padding:20px;opacity:0.6;">✅ Batafsil hujum yo\'q.</p>';
+        } else {
+            content.innerHTML = `<h3 style="color:#e11d48;margin-bottom:15px;font-family:var(--font-display);">🔍 BATAFSIL HUJUMLAR (${logs.length})</h3>` +
+                logs.map(l => `<div style="background:rgba(225,29,72,0.08);border:1px solid rgba(225,29,72,0.3);border-radius:10px;padding:12px;margin-bottom:10px;">
+                    <div style="font-size:0.8rem;opacity:0.6;">🕒 ${l.timestamp || '—'}</div>
+                    <div style="font-weight:700;margin:4px 0;">👤 ID: <code>${l.user_id}</code></div>
+                    <div style="font-size:0.85rem;background:rgba(0,0,0,0.2);border-radius:6px;padding:8px;margin:6px 0;word-break:break-all;">💬 <em>${(l.bad_text || '—').substring(0, 300)}</em></div>
+                    <div style="font-size:0.9rem;color:#f43f5e;">🛡️ ${l.reason || '—'}</div>
+                </div>`).join('');
+        }
+    } catch(e) {
+        content.innerHTML = '<p style="color:#e11d48;">❌ Tarmoq xatosi.</p>';
+    }
+});

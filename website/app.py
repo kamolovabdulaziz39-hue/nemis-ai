@@ -89,10 +89,170 @@ def assistant_query():
     data = request.get_json(silent=True) or {}
     question = data.get('question', '').strip()
     lang = data.get('lang', 'ru')
+    uid = str(data.get('user_id', '')).strip()
+
     if not question:
         return {"error": "Empty question"}, 400
+
+    admin_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
+    is_admin = (uid == admin_id)
+
+    if uid and not is_admin:
+        conn = get_db_connection()
+        user = conn.execute(
+            "SELECT banned, violations, name, username, phone FROM users WHERE id=?", (uid,)
+        ).fetchone()
+        conn.close()
+
+        # --- 1. Ban check ---
+        if user and user['banned']:
+            msgs = {
+                'uz': "🚫 Siz xavfsizlik tizimi tomonidan bloklangansiz.",
+                'ru': "🚫 Вы заблокированы системой безопасности.",
+                'en': "🚫 You have been blocked by the security system.",
+                'de': "🚫 Sie wurden vom Sicherheitssystem gesperrt."
+            }
+            return {"error": msgs.get(lang, msgs['ru']), "banned": True}, 403
+
+        # --- 2. Security threat check (instant ban) ---
+        threat = check_for_security_threats(question, uid)
+        if threat:
+            ts = time.strftime('%Y-%m-%d %H:%M:%S')
+            name = user['name'] if user else 'Unknown'
+            username = user['username'] if user else 'None'
+            phone = user['phone'] if user else '-'
+            conn2 = get_db_connection()
+            conn2.execute("UPDATE users SET banned=1, step='banned' WHERE id=?", (uid,))
+            conn2.execute(
+                "INSERT INTO hacker_logs (user_id, name, username, phone, bad_text, reason, timestamp) VALUES (?,?,?,?,?,?,?)",
+                (uid, name, username, phone, question, threat, ts)
+            )
+            conn2.commit()
+            conn2.close()
+            alert = (
+                f"🚨 *SECURITY: WEB APP ATTACK!*\n\n"
+                f"👤 *User:* {name} (@{username})\n"
+                f"🆔 *ID:* `{uid}`\n"
+                f"💬 *Message:* `{question[:200]}`\n"
+                f"🛡️ *Threat:* `{threat}`\n"
+                f"📅 *Time:* {ts}"
+            )
+            send_telegram_msg(admin_id, alert)
+            msgs = {
+                'uz': "🚫 Xavfsizlik tizimi tomonidan bloklangansiz.",
+                'ru': "🚫 Вы заблокированы системой безопасности.",
+                'en': "🚫 Blocked by security system.",
+                'de': "🚫 Vom Sicherheitssystem gesperrt."
+            }
+            return {"error": msgs.get(lang, msgs['ru']), "banned": True}, 403
+
+        # --- 3. Profanity 3-strike system ---
+        if user and detect_profanity(question):
+            v = (user['violations'] or 0) + 1
+            remaining = 3 - v
+            conn3 = get_db_connection()
+            conn3.execute("UPDATE users SET violations=? WHERE id=?", (v, uid))
+            if v >= 3:
+                conn3.execute("UPDATE users SET banned=1, step='banned' WHERE id=?", (uid,))
+                ts2 = time.strftime('%Y-%m-%d %H:%M:%S')
+                conn3.execute(
+                    "INSERT INTO hacker_logs (user_id, name, username, phone, bad_text, reason, timestamp) VALUES (?,?,?,?,?,?,?)",
+                    (uid, user['name'], user['username'], user['phone'], question, "3 profanity violations", ts2)
+                )
+                conn3.commit()
+                conn3.close()
+                alert2 = (
+                    f"🚫 *BAN (3 ogohlantirish):*\n"
+                    f"👤 {user['name']} (@{user['username']})\n🆔 `{uid}`\n💬 `{question[:150]}`"
+                )
+                send_telegram_msg(admin_id, alert2)
+                ban_msgs = {
+                    'uz': "🚫 Siz 3 marta qoidani buzganingiz uchun abadiy bloklangansiz!",
+                    'ru': "🚫 Вы заблокированы навсегда за 3 нарушения правил!",
+                    'en': "🚫 You have been permanently banned after 3 violations!",
+                    'de': "🚫 Sie wurden nach 3 Verstößen dauerhaft gesperrt!"
+                }
+                return {"error": ban_msgs.get(lang, ban_msgs['ru']), "banned": True}, 403
+            else:
+                conn3.commit()
+                conn3.close()
+                warn_msgs = {
+                    'uz': f"⚠️ *OGOHLANTIRISH #{v}/3!*\n\nSiz bot qoidalarini buzdingiz (so'kinish).\n🚫 Qolgan ogohlantirishlar: {remaining}\nYana {remaining} marta buzarsangiz — hisobingiz *abadiy bloklanadi!*",
+                    'ru': f"⚠️ *ПРЕДУПРЕЖДЕНИЕ #{v}/3!*\n\nВы нарушили правила (нецензурная лексика).\n🚫 Осталось предупреждений: {remaining}\nЕщё {remaining} раз — аккаунт *заблокирован навсегда!*",
+                    'en': f"⚠️ *WARNING #{v}/3!*\n\nYou violated bot rules (profanity).\n🚫 Remaining warnings: {remaining}\n{remaining} more violations → *permanent ban!*",
+                    'de': f"⚠️ *WARNUNG #{v}/3!*\n\nSie haben gegen die Regeln verstoßen.\n🚫 Verbleibende Warnungen: {remaining}"
+                }
+                return {"warning": True, "violations": v, "remaining": remaining,
+                        "answer": warn_msgs.get(lang, warn_msgs['ru'])}
+
     answer = get_ai_resp(question, lang)
     return {"answer": answer}
+
+# --- Chat History API (per-user, stored in DB) ---
+@app.route('/api/get_chat_history', methods=['POST'])
+def get_chat_history():
+    data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
+    if not uid:
+        return {"history": []}
+    conn = get_db_connection()
+    user = conn.execute("SELECT ai_history FROM users WHERE id=?", (uid,)).fetchone()
+    conn.close()
+    if not user or not user['ai_history']:
+        return {"history": []}
+    try:
+        h = json.loads(user['ai_history'])
+        return {"history": h if isinstance(h, list) else []}
+    except Exception:
+        return {"history": []}
+
+@app.route('/api/save_chat_history', methods=['POST'])
+def save_chat_history():
+    data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
+    history_list = data.get('history', [])
+    if not uid:
+        return {"error": "Missing user_id"}, 400
+    if not isinstance(history_list, list):
+        return {"error": "History must be a list"}, 400
+    # Keep last 200 messages to avoid bloat
+    history_list = history_list[-200:]
+    conn = get_db_connection()
+    user = conn.execute("SELECT id FROM users WHERE id=?", (uid,)).fetchone()
+    if user:
+        conn.execute("UPDATE users SET ai_history=? WHERE id=?", (json.dumps(history_list), uid))
+    conn.commit()
+    conn.close()
+    return {"status": "ok"}
+
+# --- Admin: Attack Logs ---
+@app.route('/api/admin_attacks', methods=['POST'])
+def admin_attacks():
+    data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
+    admin_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
+    if uid != admin_id:
+        return {"error": "Unauthorized"}, 401
+    conn = get_db_connection()
+    logs = conn.execute(
+        "SELECT user_id, reason, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 20"
+    ).fetchall()
+    conn.close()
+    return {"attacks": [dict(l) for l in logs]}
+
+@app.route('/api/admin_attacks_detail', methods=['POST'])
+def admin_attacks_detail():
+    data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
+    admin_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
+    if uid != admin_id:
+        return {"error": "Unauthorized"}, 401
+    conn = get_db_connection()
+    logs = conn.execute(
+        "SELECT user_id, bad_text, reason, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 10"
+    ).fetchall()
+    conn.close()
+    return {"attacks": [dict(l) for l in logs]}
 
 @app.route('/api/user_data', methods=['POST'])
 def get_or_create_user_data():

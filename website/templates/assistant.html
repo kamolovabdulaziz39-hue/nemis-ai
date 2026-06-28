@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,7 +8,9 @@
     <!-- Google Fonts for premium typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom styling -->
@@ -15,6 +18,7 @@
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
+
 <body>
     <!-- Registration View -->
     <div class="auth-container" id="registration-view" style="display: none;">
@@ -34,7 +38,8 @@
                     <label>Parol</label>
                     <input type="password" id="reg-password" required placeholder="Kuchli parol o'ylab toping">
                 </div>
-                <button type="submit" class="auth-btn">Ro'yxatdan o'tish <i class="fa-solid fa-arrow-right"></i></button>
+                <button type="submit" class="auth-btn">Ro'yxatdan o'tish <i
+                        class="fa-solid fa-arrow-right"></i></button>
             </form>
         </div>
     </div>
@@ -49,10 +54,12 @@
                     <label>Parol</label>
                     <input type="password" id="login-password" required placeholder="Parolingizni kiriting">
                 </div>
-                <button type="submit" class="auth-btn">Tizimga kirish <i class="fa-solid fa-right-to-bracket"></i></button>
+                <button type="submit" class="auth-btn">Tizimga kirish <i
+                        class="fa-solid fa-right-to-bracket"></i></button>
             </form>
             <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-color);">
-                Parolni unutdingizmi? <a href="#" id="forgot-password-link" style="color: var(--accent-gold); text-decoration: none;">Tiklash</a>
+                Parolni unutdingizmi? <a href="#" id="forgot-password-link"
+                    style="color: var(--accent-gold); text-decoration: none;">Tiklash</a>
             </p>
         </div>
     </div>
@@ -70,7 +77,8 @@
                 <button type="submit" class="auth-btn">Saqlash <i class="fa-solid fa-check"></i></button>
             </form>
             <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-color);">
-                <a href="#" id="back-to-login-link" style="color: var(--accent-gold); text-decoration: none;">Orqaga qaytish</a>
+                <a href="#" id="back-to-login-link" style="color: var(--accent-gold); text-decoration: none;">Orqaga
+                    qaytish</a>
             </p>
         </div>
     </div>
@@ -82,7 +90,7 @@
             <h2 class="payment-title">Kurs yopiq</h2>
             <p class="payment-desc">Nemis tili kurslarini to'liq ochish uchun to'lov qiling.</p>
             <div class="payment-price">100,000 UZS</div>
-            
+
             <div class="payment-card-box">
                 <p>To'lov uchun karta raqami:</p>
                 <div class="card-number" onclick="navigator.clipboard.writeText('8888014490626927')">
@@ -90,13 +98,13 @@
                 </div>
                 <p class="card-owner">Qabul qiluvchi: <b>Камолов Абдулазиз</b></p>
             </div>
-            
+
             <div class="payment-instruction">
                 <p>1. Yuqoridagi kartaga 100,000 so'm o'tkazing.</p>
                 <p>2. To'lov chekini skrinshot qiling.</p>
                 <p>3. Skrinshotni ushbu botga qaytib yuboring.</p>
             </div>
-            
+
             <button class="action-btn primary-btn w-100" id="close-payment-modal">Tushundim, to'lov qilaman</button>
         </div>
     </div>
@@ -125,7 +133,8 @@
             </div>
         </header>
 
-        <main class="dashboard-content" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <main class="dashboard-content"
+            style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
             <!-- Profile & Rating Card -->
             <div class="profile-card">
                 <div class="profile-header">
@@ -149,7 +158,8 @@
                 </div>
                 <div class="profile-level-selector">
                     <button class="change-level-btn" id="change-level-btn">
-                        <i class="fa-solid fa-layer-group"></i> <span id="change-level-btn-text">Darajalar / Уровни</span>
+                        <i class="fa-solid fa-layer-group"></i> <span id="change-level-btn-text">Darajalar /
+                            Уровни</span>
                     </button>
                 </div>
             </div>
@@ -182,7 +192,9 @@
 
                 <!-- Action 2: Chat with AI Tutor -->
                 <button class="menu-card" id="btn-chat-tutor">
-                    <div class="card-icon" style="background-color: rgba(0, 150, 255, 0.15); color: #0096ff; box-shadow: 0 0 10px rgba(0, 150, 255, 0.2);"><i class="fa-solid fa-comments"></i></div>
+                    <div class="card-icon"
+                        style="background-color: rgba(0, 150, 255, 0.15); color: #0096ff; box-shadow: 0 0 10px rgba(0, 150, 255, 0.2);">
+                        <i class="fa-solid fa-comments"></i></div>
                     <div class="card-details">
                         <h3 id="card-chat-title">AI Repetitor bilan suhbat</h3>
                         <p id="card-chat-desc">Savol-javob va mashq qilish</p>
@@ -190,40 +202,64 @@
                     <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                 </button>
 
-                
-            <!-- Admin Actions Grid -->
-            <div class="menu-grid hidden" id="admin-menu-grid" style="margin-top: 20px;">
-                <h3 style="color: #8b5cf6; margin-bottom: 10px; font-family: var(--font-display); border-bottom: 1px solid #334155; padding-bottom: 5px;">ADMIN PANEL</h3>
-                <button class="menu-card" id="btn-admin-courses" style="border-left: 4px solid #3b82f6;">
-                    <div class="card-icon" style="background-color: rgba(59, 130, 246, 0.15); color: #3b82f6;"><i class="fa-solid fa-book"></i></div>
-                    <div class="card-details"><h3>Курсы (Darslar)</h3><p>View standard courses</p></div>
-                    <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                </button>
-                <button class="menu-card" id="btn-admin-users" style="border-left: 4px solid #10b981;">
-                    <div class="card-icon" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981;"><i class="fa-solid fa-users"></i></div>
-                    <div class="card-details"><h3>Список пользователей</h3><p>All registered users</p></div>
-                    <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                </button>
-                <button class="menu-card" id="btn-admin-paid" style="border-left: 4px solid #f59e0b;">
-                    <div class="card-icon" style="background-color: rgba(245, 158, 11, 0.15); color: #f59e0b;"><i class="fa-solid fa-credit-card"></i></div>
-                    <div class="card-details"><h3>Оплатившие</h3><p>Paid subscribers</p></div>
-                    <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                </button>
-                <button class="menu-card" id="btn-admin-progress" style="border-left: 4px solid #8b5cf6;">
-                    <div class="card-icon" style="background-color: rgba(139, 92, 246, 0.15); color: #8b5cf6;"><i class="fa-solid fa-chart-line"></i></div>
-                    <div class="card-details"><h3>Прогресс студентов</h3><p>Students levels & lessons</p></div>
-                    <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                </button>
-                <button class="menu-card" id="btn-admin-skipped" style="border-left: 4px solid #ef4444;">
-                    <div class="card-icon" style="background-color: rgba(239, 68, 68, 0.15); color: #ef4444;"><i class="fa-solid fa-user-clock"></i></div>
-                    <div class="card-details"><h3>Пропустившие урок</h3><p>Inactive users (>24h)</p></div>
-                    <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                </button>
-            </div>
+
+                <!-- Admin Actions Grid -->
+                <div class="menu-grid hidden" id="admin-menu-grid" style="margin-top: 20px;">
+                    <h3
+                        style="color: #8b5cf6; margin-bottom: 10px; font-family: var(--font-display); border-bottom: 1px solid #334155; padding-bottom: 5px;">
+                        ADMIN PANEL</h3>
+                    <button class="menu-card" id="btn-admin-courses" style="border-left: 4px solid #3b82f6;">
+                        <div class="card-icon" style="background-color: rgba(59, 130, 246, 0.15); color: #3b82f6;"><i
+                                class="fa-solid fa-book"></i></div>
+                        <div class="card-details">
+                            <h3>Курсы (Darslar)</h3>
+                            <p>View standard courses</p>
+                        </div>
+                        <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </button>
+                    <button class="menu-card" id="btn-admin-users" style="border-left: 4px solid #10b981;">
+                        <div class="card-icon" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981;"><i
+                                class="fa-solid fa-users"></i></div>
+                        <div class="card-details">
+                            <h3>Список пользователей</h3>
+                            <p>All registered users</p>
+                        </div>
+                        <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </button>
+                    <button class="menu-card" id="btn-admin-paid" style="border-left: 4px solid #f59e0b;">
+                        <div class="card-icon" style="background-color: rgba(245, 158, 11, 0.15); color: #f59e0b;"><i
+                                class="fa-solid fa-credit-card"></i></div>
+                        <div class="card-details">
+                            <h3>Оплатившие</h3>
+                            <p>Paid subscribers</p>
+                        </div>
+                        <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </button>
+                    <button class="menu-card" id="btn-admin-progress" style="border-left: 4px solid #8b5cf6;">
+                        <div class="card-icon" style="background-color: rgba(139, 92, 246, 0.15); color: #8b5cf6;"><i
+                                class="fa-solid fa-chart-line"></i></div>
+                        <div class="card-details">
+                            <h3>Прогресс студентов</h3>
+                            <p>Students levels & lessons</p>
+                        </div>
+                        <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </button>
+                    <button class="menu-card" id="btn-admin-skipped" style="border-left: 4px solid #ef4444;">
+                        <div class="card-icon" style="background-color: rgba(239, 68, 68, 0.15); color: #ef4444;"><i
+                                class="fa-solid fa-user-clock"></i></div>
+                        <div class="card-details">
+                            <h3>Пропустившие урок</h3>
+                            <p>Inactive users (>24h)</p>
+                        </div>
+                        <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </button>
+                </div>
 
                 <!-- Action 3: Homework -->
                 <button class="menu-card" id="btn-homework">
-                    <div class="card-icon" style="background-color: rgba(34, 197, 94, 0.15); color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);"><i class="fa-solid fa-pencil"></i></div>
+                    <div class="card-icon"
+                        style="background-color: rgba(34, 197, 94, 0.15); color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">
+                        <i class="fa-solid fa-pencil"></i></div>
                     <div class="card-details">
                         <h3 id="card-homework-title">Uy Vazifa</h3>
                         <p id="card-homework-desc">AI tomonidan berilgan uy topshirig'ingiz</p>
@@ -233,7 +269,9 @@
 
                 <!-- Action 4: Take Level Exam -->
                 <button class="menu-card" id="btn-take-exam" disabled>
-                    <div class="card-icon" style="background-color: rgba(255, 204, 0, 0.15); color: var(--accent-gold); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <div class="card-icon"
+                        style="background-color: rgba(255, 204, 0, 0.15); color: var(--accent-gold); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);">
+                        <i class="fa-solid fa-graduation-cap"></i></div>
                     <div class="card-details">
                         <h3 id="card-exam-title">Daraja Imtihonini topshirish</h3>
                         <p id="card-exam-desc">60 ta dars tugagandan so'ng faollashadi</p>
@@ -251,11 +289,13 @@
                 <h2 style="font-family: var(--font-display); color: #22c55e; font-size: 1.4rem; margin: 0;">
                     <i class="fa-solid fa-pencil"></i> <span id="hw-modal-title">UY VAZIFA</span>
                 </h2>
-                <button id="hw-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color);">✕</button>
+                <button id="hw-close-btn"
+                    style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color);">✕</button>
             </div>
 
             <!-- Homework content area -->
-            <div id="hw-content-area" style="min-height: 120px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; font-size: 0.97rem; line-height: 1.6; color: var(--text-color); white-space: pre-wrap;">
+            <div id="hw-content-area"
+                style="min-height: 120px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; font-size: 0.97rem; line-height: 1.6; color: var(--text-color); white-space: pre-wrap;">
                 <div id="hw-loading" style="display:flex; align-items:center; gap:10px; color:#22c55e;">
                     <i class="fa-solid fa-spinner fa-spin"></i> Uy vazifa yuklanmoqda...
                 </div>
@@ -264,19 +304,24 @@
 
             <!-- Answer input -->
             <div id="hw-answer-section" style="display:none;">
-                <p style="font-weight: 700; margin-bottom: 8px; font-size: 0.95rem;" id="hw-answer-label">📝 Javobingizni yozing:</p>
+                <p style="font-weight: 700; margin-bottom: 8px; font-size: 0.95rem;" id="hw-answer-label">📝
+                    Javobingizni yozing:</p>
                 <textarea id="hw-answer-input" rows="5" placeholder="Uy vazifa javobingizni shu yerga yozing..."
                     style="width: 100%; border: 1px solid rgba(34,197,94,0.3); border-radius: 10px; padding: 12px; font-size: 0.97rem; resize: vertical; background: #f8fafc; color: #1e293b; outline: none; box-sizing: border-box;"></textarea>
-                <button id="hw-submit-btn" style="margin-top: 12px; width: 100%; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: white; border-radius: 12px; padding: 14px; font-size: 1rem; font-weight: 700; cursor: pointer;">
+                <button id="hw-submit-btn"
+                    style="margin-top: 12px; width: 100%; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: white; border-radius: 12px; padding: 14px; font-size: 1rem; font-weight: 700; cursor: pointer;">
                     <i class="fa-solid fa-paper-plane"></i> <span id="hw-submit-label">Javobni Topshirish</span>
                 </button>
             </div>
 
             <!-- Result area -->
-            <div id="hw-result-area" style="display:none; margin-top: 15px; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.25); border-radius: 12px; padding: 15px; white-space: pre-wrap; font-size: 0.97rem; line-height: 1.6;"></div>
+            <div id="hw-result-area"
+                style="display:none; margin-top: 15px; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.25); border-radius: 12px; padding: 15px; white-space: pre-wrap; font-size: 0.97rem; line-height: 1.6;">
+            </div>
 
             <!-- Close / new homework -->
-            <button id="hw-new-btn" style="display:none; margin-top: 12px; width: 100%; background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.2); color: var(--text-color); border-radius: 12px; padding: 13px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+            <button id="hw-new-btn"
+                style="display:none; margin-top: 12px; width: 100%; background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.2); color: var(--text-color); border-radius: 12px; padding: 13px; font-size: 1rem; font-weight: 600; cursor: pointer;">
                 <i class="fa-solid fa-rotate-right"></i> <span id="hw-new-label">Yangi uy vazifa olish</span>
             </button>
         </div>
@@ -286,7 +331,8 @@
     <div class="chat-container hidden" id="lessons-list-view">
         <header class="chat-header">
             <div class="header-left">
-                <button class="action-btn back-btn" id="lessons-list-back-btn" title="Back to Menu" style="margin-right: 10px; font-size: 1.3rem;">
+                <button class="action-btn back-btn" id="lessons-list-back-btn" title="Back to Menu"
+                    style="margin-right: 10px; font-size: 1.3rem;">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <div class="header-info">
@@ -310,7 +356,8 @@
     <div class="chat-container hidden" id="chat-view">
         <header class="chat-header">
             <div class="header-left">
-                <button class="action-btn back-btn" id="chat-back-btn" title="Back to Menu" style="margin-right: 10px; font-size: 1.3rem;">
+                <button class="action-btn back-btn" id="chat-back-btn" title="Back to Menu"
+                    style="margin-right: 10px; font-size: 1.3rem;">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <div class="header-info">
@@ -333,9 +380,11 @@
         </main>
 
         <footer class="chat-input-bar">
-            
+
             <div class="input-wrapper">
-                <button class="send-btn" id="voice-btn" style="background-color: #3b82f6; width: 36px; height: 36px; color: #fff; margin-right: 5px;" title="Hold to record">
+                <button class="send-btn" id="voice-btn"
+                    style="background-color: #3b82f6; width: 36px; height: 36px; color: #fff; margin-right: 5px;"
+                    title="Hold to record">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
                 <textarea id="message-input" placeholder="Schreibe eine Nachricht..." rows="1"></textarea>
@@ -352,7 +401,8 @@
     <div class="chat-container hidden" id="lesson-view">
         <header class="chat-header">
             <div class="header-left">
-                <button class="action-btn back-btn" id="lesson-back-btn" title="Back to Menu" style="margin-right: 10px; font-size: 1.3rem;">
+                <button class="action-btn back-btn" id="lesson-back-btn" title="Back to Menu"
+                    style="margin-right: 10px; font-size: 1.3rem;">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <div class="header-info">
@@ -364,7 +414,8 @@
                 </div>
             </div>
             <div class="header-right">
-                <div class="timer-badge" id="lesson-timer-badge" style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: bold; color: var(--accent-gold); display: none;">
+                <div class="timer-badge" id="lesson-timer-badge"
+                    style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: bold; color: var(--accent-gold); display: none;">
                     <i class="fa-regular fa-clock"></i> <span id="lesson-timer-text">10:00</span>
                 </div>
             </div>
@@ -372,15 +423,21 @@
 
         <main class="chat-history" id="lesson-content-area" style="padding: 20px; overflow-y: auto;">
             <!-- Loading indicator -->
-            <div class="loading-spinner-container" id="lesson-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; height: 100%;">
-                <div class="spinner" style="width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--accent-gold); border-radius: 50%; animation: spin 1s infinite linear;"></div>
-                <p id="lesson-loading-text" style="font-weight: bold; color: var(--accent-gold); letter-spacing: 1px;">Dars yuklanmoqda...</p>
+            <div class="loading-spinner-container" id="lesson-loading"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; height: 100%;">
+                <div class="spinner"
+                    style="width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--accent-gold); border-radius: 50%; animation: spin 1s infinite linear;">
+                </div>
+                <p id="lesson-loading-text" style="font-weight: bold; color: var(--accent-gold); letter-spacing: 1px;">
+                    Dars yuklanmoqda...</p>
             </div>
-            <div class="lesson-text-content" id="lesson-text-content" style="color: var(--text-color); font-size: 1.05rem; line-height: 1.6; display: none;"></div>
+            <div class="lesson-text-content" id="lesson-text-content"
+                style="color: var(--text-color); font-size: 1.05rem; line-height: 1.6; display: none;"></div>
         </main>
 
         <footer class="chat-input-bar" id="lesson-footer" style="display: none;">
-            <button class="complete-btn" id="lesson-complete-btn" style="width: 100%; background: linear-gradient(135deg, var(--accent-gold) 0%, #cc9900 100%); border: none; color: #000; padding: 15px; font-size: 1.1rem; font-weight: 700; border-radius: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <button class="complete-btn" id="lesson-complete-btn"
+                style="width: 100%; background: linear-gradient(135deg, var(--accent-gold) 0%, #cc9900 100%); border: none; color: #000; padding: 15px; font-size: 1.1rem; font-weight: 700; border-radius: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
                 <i class="fa-solid fa-check"></i> <span id="complete-btn-lbl">Darsni yakunlash</span>
             </button>
         </footer>
@@ -393,7 +450,7 @@
             <div id="screen-warning" class="modal-screen">
                 <div class="warning-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <h2 class="modal-title warning-title" id="warning-title-text">ACHTUNG // DIQQAT</h2>
-                
+
                 <!-- Language Toggle Buttons inside warning modal -->
                 <div class="modal-lang-toggle">
                     <button class="modal-lang-btn" data-lang="uz">🇺🇿 O'zbekcha</button>
@@ -404,17 +461,20 @@
                 <div class="warning-text" id="warning-text-content">
                     <!-- Dynamic warning content will be populated here -->
                 </div>
-                
+
                 <!-- Disclaimer note -->
-                <div class="warning-disclaimer" id="warning-disclaimer-text" style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; text-align: center; font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                <div class="warning-disclaimer" id="warning-disclaimer-text"
+                    style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; text-align: center; font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
                     Правила бота могут измениться / Bot qoidalari o'zgarishi mumkin
                 </div>
 
                 <div class="warning-actions" style="display: flex; flex-direction: column; gap: 10px;">
-                    <button class="accept-btn" id="accept-challenge-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <button class="accept-btn" id="accept-challenge-btn"
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                         <span id="accept-btn-text">🟢 Да, я согласен</span>
                     </button>
-                    <button class="decline-btn" id="decline-challenge-btn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 12px; padding: 14px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s;">
+                    <button class="decline-btn" id="decline-challenge-btn"
+                        style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 12px; padding: 14px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s;">
                         <span id="decline-btn-text">❌ Нет, я не согласен</span>
                     </button>
                 </div>
@@ -441,15 +501,18 @@
                     <button class="modal-lang-btn exam-lang-btn" data-lang="en">🇬🇧 EN</button>
                     <button class="modal-lang-btn exam-lang-btn active" data-lang="de">🇩🇪 DE</button>
                 </div>
-                <h2 class="modal-title" style="color: var(--accent-gold);"><i class="fa-solid fa-graduation-cap"></i> <span id="exam-title-text">PRÜFUNG // IMTIHON</span></h2>
-                <p class="modal-desc" id="exam-desc-text">Wähle die richtige Antwort und steige auf das nächste Niveau auf!</p>
+                <h2 class="modal-title" style="color: var(--accent-gold);"><i class="fa-solid fa-graduation-cap"></i>
+                    <span id="exam-title-text">PRÜFUNG // IMTIHON</span></h2>
+                <p class="modal-desc" id="exam-desc-text">Wähle die richtige Antwort und steige auf das nächste Niveau
+                    auf!</p>
                 <div class="exam-questions" id="exam-questions-content" style="text-align: left; margin: 15px 0;">
                     <!-- Questions will be dynamically loaded here -->
                 </div>
                 <button class="accept-btn" id="submit-exam-btn" style="margin-bottom: 12px;">
                     <span id="submit-exam-btn-text">PRÜFUNG ABGEBEN</span>
                 </button>
-                <button id="exam-back-btn" style="width:100%; background: rgba(100,100,100,0.15); border: 1px solid rgba(100,100,100,0.3); color: var(--text-color); border-radius: 12px; padding: 13px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <button id="exam-back-btn"
+                    style="width:100%; background: rgba(100,100,100,0.15); border: 1px solid rgba(100,100,100,0.3); color: var(--text-color); border-radius: 12px; padding: 13px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                     <i class="fa-solid fa-chevron-left"></i> <span id="exam-back-btn-text">Zurück zum Menü</span>
                 </button>
             </div>
@@ -457,19 +520,22 @@
     </div>
 
 
-    
+
     <!-- Admin Stats View -->
     <div class="chat-container hidden" id="admin-stats-view">
-        <header class="chat-header" style="background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); border-bottom: 2px solid #8b5cf6;">
+        <header class="chat-header"
+            style="background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); border-bottom: 2px solid #8b5cf6;">
             <div class="header-left">
-                <button class="action-btn back-btn" id="admin-back-btn" title="Back to Menu" style="margin-right: 10px; font-size: 1.3rem;">
+                <button class="action-btn back-btn" id="admin-back-btn" title="Back to Menu"
+                    style="margin-right: 10px; font-size: 1.3rem;">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <div class="header-info">
                     <h1 class="header-title" id="admin-title-text" style="color: #a78bfa;">ADMIN DASHBOARD</h1>
                     <div class="header-status">
                         <span class="status-dot" style="background-color: #a78bfa; box-shadow: 0 0 8px #a78bfa;"></span>
-                        <span class="status-text" id="admin-status-text" style="color: #c4b5fd;">STATISTICS & USERS</span>
+                        <span class="status-text" id="admin-status-text" style="color: #c4b5fd;">STATISTICS &
+                            USERS</span>
                     </div>
                 </div>
             </div>
@@ -485,4 +551,5 @@
     <!-- Custom Script -->
     <script src="/assistant.js?v=1782418413"></script>
 </body>
+
 </html>
