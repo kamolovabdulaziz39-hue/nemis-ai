@@ -899,89 +899,204 @@ if (declineChallengeBtn) {
     });
 }
 
+// --- EXAM LOCALIZATION ---
+const EXAM_LOCALIZATION = {
+    'uz': {
+        title: 'IMTIHON // PRÜFUNG',
+        desc: "To'g'ri javobni tanlang va yangi darajaga o'ting!",
+        submit: "IMTIHONNI TOPSHIRISH",
+        back: "Menyuga qaytish"
+    },
+    'ru': {
+        title: 'ЭКЗАМЕН // PRÜFUNG',
+        desc: "Выберите правильный ответ и перейдите на следующий уровень!",
+        submit: "СДАТЬ ЭКЗАМЕН",
+        back: "Вернуться в меню"
+    },
+    'en': {
+        title: 'EXAM // PRÜFUNG',
+        desc: "Choose the correct answer and advance to the next level!",
+        submit: "SUBMIT EXAM",
+        back: "Back to Menu"
+    },
+    'de': {
+        title: 'PRÜFUNG // IMTIHON',
+        desc: "Wähle die richtige Antwort und steige auf das nächste Niveau auf!",
+        submit: "PRÜFUNG ABGEBEN",
+        back: "Zurück zum Menü"
+    }
+};
+
+let currentExamLang = userLang === 'de' ? 'de' : (userLang === 'ru' ? 'ru' : (userLang === 'uz' ? 'uz' : 'de'));
+
+function applyExamLang(lang) {
+    currentExamLang = lang;
+    const loc = EXAM_LOCALIZATION[lang] || EXAM_LOCALIZATION['de'];
+    const titleEl = document.getElementById('exam-title-text');
+    const descEl = document.getElementById('exam-desc-text');
+    const submitEl = document.getElementById('submit-exam-btn-text');
+    const backEl = document.getElementById('exam-back-btn-text');
+    if (titleEl) titleEl.textContent = loc.title;
+    if (descEl) descEl.textContent = loc.desc;
+    if (submitEl) submitEl.textContent = loc.submit;
+    if (backEl) backEl.textContent = loc.back;
+    // Update active state on exam lang buttons
+    document.querySelectorAll('.exam-lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+}
+
+// Bind exam language switcher buttons
+document.querySelectorAll('.exam-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        applyExamLang(btn.getAttribute('data-lang'));
+    });
+});
+
+// Back button: close exam, go to dashboard
+const examBackBtn = document.getElementById('exam-back-btn');
+if (examBackBtn) {
+    examBackBtn.addEventListener('click', () => {
+        welcomeModal.classList.add('hidden');
+        screenExam.classList.add('hidden');
+        switchView('dashboard');
+    });
+}
+
+// --- EXAM QUESTIONS (All in German) ---
 const EXAM_QUESTIONS = {
-    'A1': [
+    'A1_Prep': [
         {
-            q: "1. What does 'Guten Morgen' mean?",
-            options: ["Good morning", "Good evening", "Good night"],
-            correct: 0
-        },
-        {
-            q: "2. How do you say 'Thank you' in German?",
-            options: ["Bitte", "Danke", "Tschüss"],
+            q: "1. Was bedeutet 'Guten Morgen'?",
+            options: ["Guten Abend", "Guten Morgen", "Auf Wiedersehen"],
             correct: 1
         },
         {
-            q: "3. What is 'Wasser'?",
-            options: ["Bread", "Water", "Milk"],
+            q: "2. Wie heißt 'Wasser' auf Deutsch?",
+            options: ["Milch", "Saft", "Wasser"],
+            correct: 2
+        },
+        {
+            q: "3. Welcher Artikel gehört zu 'Buch'?",
+            options: ["der", "die", "das"],
+            correct: 2
+        },
+        {
+            q: "4. Was ist die richtige Antwort? 'Wie heißt du?' — '____'",
+            options: ["Ich heiße Anna.", "Ich bin gut.", "Ich komme aus Berlin."],
+            correct: 0
+        },
+        {
+            q: "5. Welches Wort bedeutet 'Haus'?",
+            options: ["Auto", "Haus", "Baum"],
             correct: 1
         }
     ],
     'A1': [
         {
-            q: "1. Translate: 'Ich wohne in Berlin.'",
-            options: ["I live in Berlin", "I work in Berlin", "I am visiting Berlin"],
-            correct: 0
-        },
-        {
-            q: "2. Which is the correct article for 'Apfel' (Apple)?",
-            options: ["der", "die", "das"],
-            correct: 0
-        },
-        {
-            q: "3. Translate: 'Wie alt bist du?'",
-            options: ["How are you?", "How old are you?", "What is your name?"],
+            q: "1. Übersetze: 'Ich wohne in Berlin.'",
+            options: ["Ich arbeite in Berlin.", "Ich wohne in Berlin.", "Ich reise nach Berlin."],
             correct: 1
+        },
+        {
+            q: "2. Welcher Artikel ist richtig für 'Apfel'?",
+            options: ["die", "das", "der"],
+            correct: 2
+        },
+        {
+            q: "3. Was bedeutet 'Wie alt bist du?'",
+            options: ["Wie geht es dir?", "Wie alt bist du?", "Wie heißt du?"],
+            correct: 1
+        },
+        {
+            q: "4. Wähle das richtige Verb: 'Er ____ Deutsch.'",
+            options: ["lernen", "lerne", "lernt"],
+            correct: 2
+        },
+        {
+            q: "5. Was ist das Gegenteil von 'groß'?",
+            options: ["klein", "alt", "schnell"],
+            correct: 0
         }
     ],
     'A2': [
         {
-            q: "1. What is the past participle of 'machen'?",
-            options: ["gemacht", "gemach", "gemachen"],
+            q: "1. Was ist das Partizip II von 'machen'?",
+            options: ["gemacht", "machen", "machte"],
             correct: 0
         },
         {
-            q: "2. Complete: 'Ich habe ein ____ Auto gekauft.'",
-            options: ["neues", "neu", "neuen"],
-            correct: 0
+            q: "2. Ergänze: 'Ich habe ein ____ Auto gekauft.' (neu)",
+            options: ["neue", "neues", "neuen"],
+            correct: 1
         },
         {
-            q: "3. Which preposition requires the dative case?",
-            options: ["mit", "für", "ohne"],
-            correct: 0
+            q: "3. Welche Präposition verlangt den Dativ?",
+            options: ["durch", "mit", "für"],
+            correct: 1
+        },
+        {
+            q: "4. Wie lautet die Vergangenheit von 'gehen'?",
+            options: ["geht", "gegangen", "ging"],
+            correct: 2
+        },
+        {
+            q: "5. Welcher Satz ist grammatisch richtig?",
+            options: ["Ich habe gestern gekauft Brot.", "Ich habe gestern Brot gekauft.", "Ich kaufte gestern Brot haben."],
+            correct: 1
         }
     ],
     'B1': [
         {
-            q: "1. Which conjunction requires subordinate clause word order (verb at the end)?",
-            options: ["weil", "aber", "denn"],
-            correct: 0
+            q: "1. Welche Konjunktion erfordert die Verbendstellung?",
+            options: ["aber", "weil", "denn"],
+            correct: 1
         },
         {
-            q: "2. Complete: 'Wenn ich reich ____, würde ich ein Haus kaufen.'",
-            options: ["wäre", "bin", "wurde"],
-            correct: 0
+            q: "2. Ergänze: 'Wenn ich reich ____, würde ich ein Haus kaufen.'",
+            options: ["bin", "wurde", "wäre"],
+            correct: 2
         },
         {
-            q: "3. Translate: 'Ich freue mich auf die B1-Prüfung.'",
-            options: ["I am looking forward to the B1 exam", "I am afraid of the B1 exam", "I passed the B1 exam"],
+            q: "3. Was bedeutet 'Ich freue mich auf die Prüfung.'?",
+            options: ["Ich habe Angst vor der Prüfung.", "Ich freue mich auf die Prüfung.", "Ich habe die Prüfung bestanden."],
+            correct: 1
+        },
+        {
+            q: "4. Ergänze den Relativsatz: 'Das ist der Mann, ____ ich kenne.'",
+            options: ["der", "den", "dem"],
+            correct: 1
+        },
+        {
+            q: "5. Welche Form ist Passiv Präsens? 'Das Buch ____.'",
+            options: ["wird gelesen", "hat gelesen", "wird lesen"],
             correct: 0
         }
     ],
     'B2': [
         {
-            q: "1. Complete: 'Je mehr ich lerne, ____ besser werde ich.'",
-            options: ["desto", "umso", "als"],
-            correct: 0
+            q: "1. Ergänze: 'Je mehr ich lerne, ____ besser werde ich.'",
+            options: ["umso", "desto", "je"],
+            correct: 1
         },
         {
-            q: "2. Complete: 'Es ist wichtig, ____ die Hausaufgaben zu machen.'",
-            options: ["um", "ohne", "zu"],
-            correct: 2
+            q: "2. Welcher Satz enthält einen Finalsatz?",
+            options: ["Er lernt Deutsch, weil er in Deutschland arbeitet.", "Er lernt Deutsch, damit er in Deutschland arbeiten kann.", "Er lernt Deutsch, obwohl es schwer ist."],
+            correct: 1
         },
         {
-            q: "3. What is the meaning of 'ausgezeichnet'?",
-            options: ["Excellent", "Average", "Bad"],
+            q: "3. Was bedeutet 'ausgezeichnet'?",
+            options: ["mittelmäßig", "ausgezeichnet (sehr gut)", "schlecht"],
+            correct: 1
+        },
+        {
+            q: "4. Welche Form ist der Konjunktiv II von 'haben'?",
+            options: ["hatte", "hätte", "gehabt"],
+            correct: 1
+        },
+        {
+            q: "5. Ergänze das Partizip: 'Das ____ Gebäude wurde renoviert.' (bauen)",
+            options: ["gebaute", "erbaut", "gebaut"],
             correct: 0
         }
     ]
@@ -991,17 +1106,22 @@ function renderExam(lvl) {
     const qContent = document.getElementById('exam-questions-content');
     qContent.innerHTML = '';
     const qList = EXAM_QUESTIONS[lvl] || EXAM_QUESTIONS['A1'];
-    
+
+    // Apply current exam language UI
+    applyExamLang(currentExamLang);
+
     qList.forEach((q, idx) => {
         const qDiv = document.createElement('div');
-        qDiv.style.marginBottom = '20px';
-        qDiv.innerHTML = `<p style="font-weight: 700; margin-bottom: 8px; color: var(--text-bright);">${q.q}</p>`;
-        
+        qDiv.style.cssText = 'margin-bottom: 22px; background: rgba(0,0,0,0.04); border-radius: 12px; padding: 14px; border: 1px solid rgba(0,0,0,0.08);';
+        qDiv.innerHTML = `<p style="font-weight: 700; margin-bottom: 10px; color: var(--text-bright); font-size: 1rem;">${q.q}</p>`;
+
         q.options.forEach((opt, optIdx) => {
             qDiv.innerHTML += `
-                <label style="display: block; margin-bottom: 6px; cursor: pointer;">
-                    <input type="radio" name="q_${idx}" value="${optIdx}" style="margin-right: 8px;">
-                    ${opt}
+                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; cursor: pointer; padding: 8px 10px; border-radius: 8px; transition: background 0.2s;" 
+                       onmouseover="this.style.background='rgba(59,130,246,0.07)'" 
+                       onmouseout="this.style.background='transparent'">
+                    <input type="radio" name="q_${idx}" value="${optIdx}" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
+                    <span style="font-size: 0.97rem;">${opt}</span>
                 </label>
             `;
         });

@@ -386,13 +386,23 @@
 
             <!-- Screen 3: Exam (Hidden by default, shown when user completes all level lessons) -->
             <div id="screen-exam" class="modal-screen hidden">
-                <h2 class="modal-title" style="color: var(--accent-gold);"><i class="fa-solid fa-graduation-cap"></i> EXAM // IMTIHON</h2>
-                <p class="modal-desc" id="exam-desc-text">Javoblarni to'g'ri belgilang va yangi darajaga o'ting!</p>
+                <!-- Exam Language Toggle -->
+                <div class="modal-lang-toggle" style="margin-bottom: 15px;">
+                    <button class="modal-lang-btn exam-lang-btn" data-lang="uz">🇺🇿 UZ</button>
+                    <button class="modal-lang-btn exam-lang-btn" data-lang="ru">🇷🇺 RU</button>
+                    <button class="modal-lang-btn exam-lang-btn" data-lang="en">🇬🇧 EN</button>
+                    <button class="modal-lang-btn exam-lang-btn active" data-lang="de">🇩🇪 DE</button>
+                </div>
+                <h2 class="modal-title" style="color: var(--accent-gold);"><i class="fa-solid fa-graduation-cap"></i> <span id="exam-title-text">PRÜFUNG // IMTIHON</span></h2>
+                <p class="modal-desc" id="exam-desc-text">Wähle die richtige Antwort und steige auf das nächste Niveau auf!</p>
                 <div class="exam-questions" id="exam-questions-content" style="text-align: left; margin: 15px 0;">
                     <!-- Questions will be dynamically loaded here -->
                 </div>
-                <button class="accept-btn" id="submit-exam-btn">
-                    <span>IMTIHONNI TOPSHIRISH / SUBMIT EXAM</span>
+                <button class="accept-btn" id="submit-exam-btn" style="margin-bottom: 12px;">
+                    <span id="submit-exam-btn-text">PRÜFUNG ABGEBEN</span>
+                </button>
+                <button id="exam-back-btn" style="width:100%; background: rgba(100,100,100,0.15); border: 1px solid rgba(100,100,100,0.3); color: var(--text-color); border-radius: 12px; padding: 13px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    <i class="fa-solid fa-chevron-left"></i> <span id="exam-back-btn-text">Zurück zum Menü</span>
                 </button>
             </div>
         </div>
