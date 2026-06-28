@@ -783,14 +783,19 @@ async function loadUserData() {
                 userDetails.is_admin = true;
                 userDetails.sub = 'vip';
             }
-            if (userDetails.is_admin || userDetails.webapp_registered) {
+            // If user has active subscription OR already has a selected level, skip registration/login wall
+            const hasActiveSub = userDetails.sub && userDetails.sub !== 'none';
+            const isReturningUser = hasActiveSub || (selectedLevel && selectedLevel !== '');
+            
+            if (userDetails.is_admin || isReturningUser) {
                 welcomeModal.classList.add('hidden');
                 if (userDetails.is_admin) {
                     document.getElementById('admin-menu-grid').classList.remove('hidden');
-                    switchView('dashboard');
-                } else {
-                    document.getElementById('login-view').style.display = 'flex';
                 }
+                switchView('dashboard');
+            } else if (userDetails.webapp_registered) {
+                welcomeModal.classList.add('hidden');
+                document.getElementById('login-view').style.display = 'flex';
             } else {
                 // Har doim avval qoidalar (warning) oynasini ko'rsat
                 welcomeModal.classList.remove('hidden');
@@ -855,8 +860,15 @@ acceptChallengeBtn.addEventListener('click', () => {
         userDetails.is_admin = true;
         userDetails.sub = 'vip';
     }
-    if (userDetails.is_admin) {
-        document.getElementById('admin-menu-grid').classList.remove('hidden');
+    
+    // If user has active subscription or is a returning user, go straight to dashboard
+    const hasActiveSub2 = userDetails.sub && userDetails.sub !== 'none';
+    const isReturningUser2 = hasActiveSub2 || (selectedLevel && selectedLevel !== '');
+    
+    if (userDetails.is_admin || isReturningUser2) {
+        if (userDetails.is_admin) {
+            document.getElementById('admin-menu-grid').classList.remove('hidden');
+        }
         switchView('dashboard');
     } else if (userDetails.webapp_registered) {
         document.getElementById('login-view').style.display = 'flex';
