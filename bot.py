@@ -42,20 +42,7 @@ def fmt_username(un):
         return un_str
     return f"@{un_str}"
 
-def auto_git_push():
-    def task():
-        try:
-            if not os.path.exists(".git"): return
-            import subprocess
-            subprocess.run(["git", "config", "user.name", "Nemis AI Bot"], capture_output=True)
-            subprocess.run(["git", "config", "user.email", "bot@nemis.ai"], capture_output=True)
-            subprocess.run(["git", "add", "nemis.db", "courses_backup.json"], capture_output=True)
-            subprocess.run(["git", "commit", "-m", "db: Auto-update courses database [skip ci]"], capture_output=True)
-            subprocess.run(["git", "push"], capture_output=True)
-            print("[AUTO-GIT] Database and backup pushed to GitHub successfully.")
-        except Exception as e:
-            print(f"[AUTO-GIT] Error syncing database: {e}")
-    threading.Thread(target=task, daemon=True).start()
+
 
 def check_for_security_threats(text, uid):
     if str(uid) in OWNER_IDS: return None
@@ -198,33 +185,10 @@ class Database:
             u = dict(r); u['unlocked'] = json.loads(u['unlocked']); u['ai_history'] = json.loads(u['ai_history'])
             u['violation_history'] = json.loads(u['violation_history']); res[r['id']] = u
         return res
-    def get_courses(self):
-        c = self.get_conn(); rows = c.execute("SELECT * FROM courses").fetchall(); c.close()
-        return {r['name']: json.loads(r['data']) for r in rows}
     def get_payments(self):
         c = self.get_conn(); rows = c.execute("SELECT * FROM payments").fetchall(); c.close(); return [dict(r) for r in rows]
     def get_hacker_logs(self):
         c = self.get_conn(); rows = c.execute("SELECT * FROM hacker_logs ORDER BY id DESC LIMIT 50").fetchall(); c.close(); return [dict(r) for r in rows]
-    def update_course(self, n, d):
-        with self.lock:
-            c = self.get_conn(); c.execute("INSERT OR REPLACE INTO courses (name, data) VALUES (?,?)", (n, json.dumps(d))); c.commit(); c.close()
-        try:
-            courses = self.get_courses()
-            with open("courses_backup.json", "w", encoding="utf-8") as f:
-                json.dump(courses, f, ensure_ascii=False, indent=4)
-        except Exception as e:
-            print(f"[BACKUP] Error writing json backup: {e}")
-        auto_git_push()
-    def update_interest(self, cat, uid):
-        with self.lock:
-            c = self.get_conn(); r = c.execute("SELECT user_ids FROM interests WHERE category=?", (cat,)).fetchone()
-            uids = json.loads(r['user_ids']) if r else []
-            if uid not in uids:
-                uids.append(uid); c.execute("INSERT OR REPLACE INTO interests (category, user_ids) VALUES (?,?)", (cat, json.dumps(uids))); c.commit()
-            c.close()
-    def get_interests_all(self):
-        c = self.get_conn(); rows = c.execute("SELECT * FROM interests").fetchall(); c.close()
-        return {r['category']: json.loads(r['user_ids']) for r in rows}
 
 db = Database(DB_NAME)
 
@@ -238,12 +202,10 @@ TEXTS = {
         'agreement': "📜 Abdulaziz Nemis AI — Foydalanish Qoidalari va Ommaviy Oferta\nDIQQAT! Botdan foydalanishni boshlashdan oldin ushbu qoidalar va shartlar bilan to‘liq tanishib chiqing. \"Да, я согласен\" tugmasini bosish orqali siz ushbu qoidalarga so‘zsiz rozilik bildirasiz va ularni buzmaslik majburiyatini olasiz.\n\n1. 🛡️ Kiberxavfsizlik va O‘zbekiston Respublikasi Qonunchiligi\nUshbu botning dasturiy kodi, ma'lumotlar bazasi va unga ulangan Gemini Pro sun'iy intellekt tizimi mualliflik huquqi hamda O‘zbekiston Respublikasi qonunlari bilan qattiq himoyalangan. Botni buzishga (vzlom), dekompilyatsiya qilishga, ma'lumotlar bazasiga ruxsatsiz kirishga, tizimni o‘zgartirishga yoki serverga zararli hujumlar (DDoS/Spam) uyushtirishga bo‘lgan har qanday urinish mutlaqo taqiqlanadi. Qoidabuzarlik aniqlangan taqdirda, foydalanuvchining hisobi (ID) hech qanday ogohlantirishsiz va to‘langan pul qaytarilmasdan butunlay bloklanadi, uning IP-manzili hamda barcha tarmoq ma'lumotlari qayd etilib, huquqni muhofaza qilish organlariga topshiriladi. O‘zbekiston Respublikasi Jinoyat Kodeksining 278-moddasi (Kompyuter texnikasidan foydalanish qoidalarini buzish), 278-1-moddasi (Kompyuter axborotini modifikatsiyalash) va 278-6-moddasi (Kompyuter tizimi yoki tarmoqlariga qonunga xilof ravishda kirish)ga muvofiq, ushbu jinoiy qilmishlarni sodir etgan shaxslar yirik miqdordagi jarimalardan tortib, ozodlikdan mahrum qilishgacha bo‘lgan jiddiy jinoiy javobgarlikka tortiladilar.\n\n2. 🎴 Temir Intizom, Progress Tizimi va Jarimalar\nNemis tilini noldan boshlab mukammal o‘rganish va real testlarga tayyorlanish faqat har kungi tinimsiz hamda tizimli mehnatni talab qiladi. Shu sababli, Abdulaziz Nemis AI botida qat'iy \"Temir intizom\" va jarima tizimi joriy etilgan. Agar foydalanuvchi botga 1 kun davomida kirmasa, darslarni qoldirsa yoki berilgan kunlik uy vazifasini topshirmasa, uning o‘rganish darajasi (progressi) avtomatik ravishda 4 ta darsga orqaga qaytariladi. Masalan, agar siz 59-darajaga (darsga) chiqqan bo‘lsangiz va bir kun dars qoldirsangiz, progress tizimi sizni darhol 55-darajaga tushirib yuboradi. Agar siz endigina 5-darajada bo‘lsangiz va dars qoldirsangiz, tizim sizni 4 ta dars pastga — eng birinchi bosqichga (1-darajaga) qaytarib tashlaydi. Ushbu qoida barcha darajalar (A1, A2, B1, B2) uchun amal qiladi. Har bir bosqich yakunida talabalar faqat qattiq imtihon orqali keyingi darajaga o‘tadilar, imtihondan o‘ta olmaganlar esa o‘sha darajani mutlaqo boshidan o‘qishga majbur bo‘ladilar.\n\n3. 💳 Obuna bo‘lish va To‘lov Shartlari\nBotdan to‘liq va cheksiz foydalanish muddati to‘lov tasdiqlangan kundan boshlab to‘g‘ri 1 oy (30 kun) etib belgilanadi. Oylik obuna narxi 100 000 so‘mni tashkil etadi. Hech qanday vositachilar va ortiqcha komissiyalarsiz, to‘lov to‘g‘ridan-to‘g‘ri Humo yoki Uzcard plastik kartasiga o‘tkaziladi hamda to‘lov amalga oshirilganligini tasdiqlovchi chek (skrinshot) tekshirish uchun botga yuboriladi. Administrator tomonidan chek haqqoniyligi tasdiqlangandan so‘ng bot qayta faollashadi. Foydalanuvchining shaxsiy dangasaligi, darslarni qoldirganligi yoki jarimalar sababli darslardan orqaga qaytib ketganligi obuna muddatini bepul uzaytirishga mutlaqo asos bo‘lmaydi. Intizomsizlik qilib belgilangan 30 kun ichida o‘z darajasini tugata olmagan va darslardan ortib qolgan o‘quvchilar botdan foydalanishni davom ettirish uchun keyingi oyga ham to‘lovni to‘liq amalga oshirishlari shart.",
         'agree_btn': "🟢 Да, я согласен",
         'disagree_btn': "❌ Нет, я не согласен",
-        'courses_btn': "📚 Мои Курсы", 'subs_btn': "💎 Тарифы", 'ai_btn': "📖 Начать обучение", 'support_btn': "📞 Тех. поддержка", 'founder_btn': "👨‍💼 Основатель", 'back_btn': "⬅️ Назад",
+        'subs_btn': "💎 Тарифы", 'ai_btn': "📖 Начать обучение", 'support_btn': "📞 Тех. поддержка", 'founder_btn': "👨‍💼 Основатель", 'back_btn': "⬅️ Назад",
         'access_granted': "Отлично! Вам доступны разделы платформы.",
         'subs_info': "💎 *ТАРИФЫ (на 1 месяц):*\n\n🥉 **Standard — 60,000 сум**\n(Доступ к обучению + AI помощник 200 вопросов)\n\n🥈 **Platinum — 120,000 сум**\n(Доступ к обучению + AI помощник 400 вопросов)\n\n🥇 **VIP — 2,000,000 сум**\n(Доступ к обучению на 1 месяц + AI помощник 5000 вопросов)",
         'ai_welcome': "🤖 Я ваш AI-помощник. Задавайте вопросы!",
-        'categories': {'lang': "🌐 Языки"},
-        'courses': {'lang': ["🇩🇪 Немецкий (с нуля до B1)"]},
         'founder_txt': "👨‍💼 Kamolov Abdulaziz Sherzodbekovich\nXalqaro darajali muhandis & IT-tadbirkor\n\n📚 Ta'lim va malaka:\n🎓 Xalqaro qo'sh diplom (O'zbekiston & Belarus)\n• Belarus milliy texnika universiteti (BNTU), Minsk sh.\n• Andijon mashinasozlik instituti (AndMI)\n• Yo'nalish: «Intellektual asboblar va ishlab chiqarish mashinalari»\n• Format: Birgalikdagi xalqaro dastur, kredit-modul tizimi\n• Asosiy tayyorgarlik: 9 yil rus sinfida + 2 yil akademik litsey\n\n💼 Kasbiy tajriba:\n🏆 «Abdulaziz Nemis AI» asoschisi — ta'lim platformasini ishlab chiquvchi va rahbari\n🎓 Maxsus fanlar o'qituvchisi (Mashina va mexanizmlar qurilishi)\n🏭 Xalqaro kompaniya UZ DONGWON da muhandislik amaliyoti",
         'support_txt': "📞 Qo'llab-quvvatlash:\n\n📱 Telegram: @admin\n📞 Tel: +998 50 777 51 52\n\n⚠️ Iltimos, mayda-chuyda narsalar uchun qo'ng'iroq qilmang."
     },
@@ -256,12 +218,10 @@ TEXTS = {
         'agreement': "📜 Abdulaziz Nemis AI — Foydalanish Qoidalari va Ommaviy Oferta\nDIQQAT! Botdan foydalanishni boshlashdan oldin ushbu qoidalar va shartlar bilan to‘liq tanishib chiqing. \"Да, я согласен\" tugmasini bosish orqali siz ushbu qoidalarga so‘zsiz rozilik bildirasiz va ularni buzmaslik majburiyatini olasiz.\n\n1. 🛡️ Kiberxavfsizlik va O‘zbekiston Respublikasi Qonunchiligi\nUshbu botning dasturiy kodi, ma'lumotlar bazasi va unga ulangan Gemini Pro sun'iy intellekt tizimi mualliflik huquqi hamda O‘zbekiston Respublikasi qonunlari bilan qattiq himoyalangan. Botni buzishga (vzlom), dekompilyatsiya qilishga, ma'lumotlar bazasiga ruxsatsiz kirishga, tizimni o‘zgartirishga yoki serverga zararli hujumlar (DDoS/Spam) uyushtirishga bo‘lgan har qanday urinish mutlaqo taqiqlanadi. Qoidabuzarlik aniqlangan taqdirda, foydalanuvchining hisobi (ID) hech qanday ogohlantirishsiz va to‘langan pul qaytarilmasdan butunlay bloklanadi, uning IP-manzili hamda barcha tarmoq ma'lumotlari qayd etilib, huquqni muhofaza qilish organlariga topshiriladi. O‘zbekiston Respublikasi Jinoyat Kodeksining 278-moddasi (Kompyuter texnikasidan foydalanish qoidalarini buzish), 278-1-moddasi (Kompyuter axborotini modifikatsiyalash) va 278-6-moddasi (Kompyuter tizimi yoki tarmoqlariga qonunga xilof ravishda kirish)ga muvofiq, ushbu jinoiy qilmishlarni sodir etgan shaxslar yirik miqdordagi jarimalardan tortib, ozodlikdan mahrum qilishgacha bo‘lgan jiddiy jinoiy javobgarlikka tortiladilar.\n\n2. 🎴 Temir Intizom, Progress Tizimi va Jarimalar\nNemis tilini noldan boshlab mukammal o‘rganish va real testlarga tayyorlanish faqat har kungi tinimsiz hamda tizimli mehnatni talab qiladi. Shu sababli, Abdulaziz Nemis AI botida qat'iy \"Temir intizom\" va jarima tizimi joriy etilgan. Agar foydalanuvchi botga 1 kun davomida kirmasa, darslarni qoldirsa yoki berilgan kunlik uy vazifasini topshirmasa, uning o‘rganish darajasi (progressi) avtomatik ravishda 4 ta darsga orqaga qaytariladi. Masalan, agar siz 59-darajaga (darsga) chiqqan bo‘lsangiz va bir kun dars qoldirsangiz, progress tizimi sizni darhol 55-darajaga tushirib yuboradi. Agar siz endigina 5-darajada bo‘lsangiz va dars qoldirsangiz, tizim sizni 4 ta dars pastga — eng birinchi bosqichga (1-darajaga) qaytarib tashlaydi. Ushbu qoida barcha darajalar (A1, A2, B1, B2) uchun amal qiladi. Har bir bosqich yakunida talabalar faqat qattiq imtihon orqali keyingi darajaga o‘tadilar, imtihondan o‘ta olmaganlar esa o‘sha darajani mutlaqo boshidan o‘qishga majbur bo‘ladilar.\n\n3. 💳 Obuna bo‘lish va To‘lov Shartlari\nBotdan to‘liq va cheksiz foydalanish muddati to‘lov tasdiqlangan kundan boshlab to‘g‘ri 1 oy (30 kun) etib belgilanadi. Oylik obuna narxi 100 000 so‘mni tashkil etadi. Hech qanday vositachilar va ortiqcha komissiyalarsiz, to‘lov to‘g‘ridan-to‘g‘ri Humo yoki Uzcard plastik kartasiga o‘tkaziladi hamda to‘lov amalga oshirilganligini tasdiqlovchi chek (skrinshot) tekshirish uchun botga yuboriladi. Administrator tomonidan chek haqqoniyligi tasdiqlangandan so‘ng bot qayta faollashadi. Foydalanuvchining shaxsiy dangasaligi, darslarni qoldirganligi yoki jarimalar sababli darslardan orqaga qaytib ketganligi obuna muddatini bepul uzaytirishga mutlaqo asos bo‘lmaydi. Intizomsizlik qilib belgilangan 30 kun ichida o‘z darajasini tugata olmagan va darslardan ortib qolgan o‘quvchilar botdan foydalanishni davom ettirish uchun keyingi oyga ham to‘lovni to‘liq amalga oshirishlari shart.",
         'agree_btn': "🟢 Да, я согласен",
         'disagree_btn': "❌ Нет, я не согласен",
-        'courses_btn': "📚 Kurslarim", 'subs_btn': "💎 Tariflar", 'ai_btn': "📖 O'qishni boshlash", 'support_btn': "📞 Tex. yordam", 'founder_btn': "👨‍💼 Asoschi", 'back_btn': "⬅️ Orqaga",
+        'subs_btn': "💎 Tariflar", 'ai_btn': "📖 O'qishni boshlash", 'support_btn': "📞 Tex. yordam", 'founder_btn': "👨‍💼 Asoschi", 'back_btn': "⬅️ Orqaga",
         'access_granted': "Platformadan foydalanishingiz mumkin.",
         'subs_info': "💎 *TARIFLAR (1 oyga):*\n\n🥉 **Standard — 60,000 so'm**\n(O'qishga kirish + AI 200 ta savol)\n\n🥈 **Platinum — 120,000 so'm**\n(O'qishga kirish + AI 400 ta savol)\n\n🥇 **VIP — 2,000,000 so'm**\n(O'qishga kirish 1 oyga + AI 5000 ta savol)",
         'ai_welcome': "🤖 Men AI yordamchingizman. Savol bering!",
-        'categories': {'lang': "🌐 Tillar"},
-        'courses': {'lang': ["🇩🇪 Nemis tili (noldan B1 gacha)"]},
         'founder_txt': "👨‍💼 Kamolov Abdulaziz Sherzodbekovich\nXalqaro darajali muhandis & IT-tadbirkor\n\n📚 Ta'lim va malaka:\n🎓 Xalqaro qo'sh diplom (O'zbekiston & Belarus)\n• Belarus milliy texnika universiteti (BNTU), Minsk sh.\n• Andijon mashinasozlik instituti (AndMI)\n• Yo'nalish: «Intellektual asboblar va ishlab chiqarish mashinalari»\n• Format: Birgalikdagi xalqaro dastur, kredit-modul tizimi\n• Asosiy tayyorgarlik: 9 yil rus sinfida + 2 yil akademik litsey\n\n💼 Kasbiy tajriba:\n🏆 «Abdulaziz Nemis AI» asoschisi — ta'lim platformasini ishlab chiquvchi va rahbari\n🎓 Maxsus fanlar o'qituvchisi (Mashina va mexanizmlar qurilishi)\n🏭 Xalqaro kompaniya UZ DONGWON da muhandislik amaliyoti",
         'support_txt': "📞 Qo'llab-quvvatlash:\n\n📱 Telegram: @admin\n📞 Tel: +998 50 777 51 52\n\n⚠️ Iltimos, mayda-chuyda narsalar uchun qo'ng'iroq qilmang."
     },
@@ -274,12 +234,10 @@ TEXTS = {
         'agreement': "⚠️ *ATTENTION!*\n\nAttempts to hack, decompile, spam, or gain unauthorized access to the database of the Abdulaziz Nemis AI bot are punishable by the law of the Republic of Uzbekistan.\n\nBased on *Article 278 of the Criminal Code of the Republic of Uzbekistan* (Violation of the rules of operation of computer equipment and systems) and *Article 278-1* (Modification of computer information), guilty parties carry criminal liability up to *imprisonment*. Your session and IP address are logged.\n\nBy pressing the button below, you confirm that you agree to the terms and commit to using the bot exclusively for learning.",
         'agree_btn': "🟢 Да, я согласен / Ha, roziman",
         'disagree_btn': "❌ Не согласен / Rozimasman",
-        'courses_btn': "📚 My Courses", 'subs_btn': "💎 Plans", 'ai_btn': "📖 Start Learning", 'support_btn': "📞 Support", 'founder_btn': "👨‍💼 Founder", 'back_btn': "⬅️ Back",
+        'subs_btn': "💎 Plans", 'ai_btn': "📖 Start Learning", 'support_btn': "📞 Support", 'founder_btn': "👨‍💼 Founder", 'back_btn': "⬅️ Back",
         'access_granted': "Welcome!",
         'subs_info': "💎 *PLANS (per month):*\n\n🥉 **Standard — 60,000 UZS**\n(Access to study + AI 200 questions)\n\n🥈 **Platinum — 120,000 UZS**\n(Access to study + AI 400 questions)\n\n🥇 **VIP — 2,000,000 UZS**\n(Access to study for 1 month + AI 5000 questions)",
         'ai_welcome': "🤖 I am your AI assistant.",
-        'categories': {'lang': "🌐 Languages"},
-        'courses': {'lang': ["🇩🇪 German (from zero to B1)"]},
         'founder_txt': "👨‍💼 Kamolov Abdulaziz Sherzodbekovich\nXalqaro darajali muhandis & IT-tadbirkor\n\n📚 Ta'lim va malaka:\n🎓 Xalqaro qo'sh diplom (O'zbekiston & Belarus)\n• Belarus milliy texnika universiteti (BNTU), Minsk sh.\n• Andijon mashinasozlik instituti (AndMI)\n• Yo'nalish: «Intellektual asboblar va ishlab chiqarish mashinalari»\n• Format: Birgalikdagi xalqaro dastur, kredit-modul tizimi\n• Asosiy tayyorgarlik: 9 yil rus sinfida + 2 yil akademik litsey\n\n💼 Kasbiy tajriba:\n🏆 «Abdulaziz Nemis AI» asoschisi — ta'lim platformasini ishlab chiquvchi va rahbari\n🎓 Maxsus fanlar o'qituvchisi (Mashina va mexanizmlar qurilishi)\n🏭 Xalqaro kompaniya UZ DONGWON da muhandislik amaliyoti",
         'support_txt': "📞 Qo'llab-quvvatlash:\n\n📱 Telegram: @admin\n📞 Tel: +998 50 777 51 52\n\n⚠️ Iltimos, mayda-chuyda narsalar uchun qo'ng'iroq qilmang."
     },
@@ -292,23 +250,14 @@ TEXTS = {
         'agreement': "⚠️ *ACHTUNG!*\n\nVersuche, die Datenbank des Bots Abdulaziz Nemis AI zu hacken, zu dekompilieren, Spam-Angriffe durchzuführen oder unbefugten Zugriff zu erlangen, werden nach dem Gesetz der Republik Usbekistan bestraft.\n\nBasierend auf *Artikel 278 des Strafgesetzbuches der Republik Usbekistan* (Verstoß gegen die Nutzungsregeln von Computertechnik und Telekommunikationsnetzen) und *Artikel 278-1* (Modifikation von Computerinformationen) tragen die Schuldigen strafrechtliche Verantwortung bis hin zum *Freiheitsentzug*. Ihre Sitzung und IP-Adresse werden aufgezeichnet.\n\nDurch Klicken auf die Schaltfläche unten bestätigen Sie, dass Sie die Regeln gelesen haben und sich verpflichten, den Bot ausschließlich zum Lernen zu nutzen.",
         'agree_btn': "🟢 Да, я согласен / Ha, roziman",
         'disagree_btn': "❌ Не согласен / Rozimasman",
-        'courses_btn': "📚 Meine Kurse", 'subs_btn': "💎 Tarife", 'ai_btn': "📖 Lernen starten", 'support_btn': "📞 Support", 'founder_btn': "👨‍💼 Gründer", 'back_btn': "⬅️ Zurück",
+        'subs_btn': "💎 Tarife", 'ai_btn': "📖 Lernen starten", 'support_btn': "📞 Support", 'founder_btn': "👨‍💼 Gründer", 'back_btn': "⬅️ Zurück",
         'access_granted': "Ausgezeichnet! Sie haben jetzt Zugriff.",
         'subs_info': "💎 *TARIFE (für 1 Monat):*\n\n🥉 **Standard — 60 000 UZS**\n(Zugang zum Lernen + KI-Assistent 200 Fragen)\n\n🥈 **Platinum — 120 000 UZS**\n(Zugang zum Lernen + KI-Assistent 400 Fragen)\n\n🥇 **VIP — 2 000 000 UZS**\n(Zugang zum Lernen für 1 Monat + KI-Assistent 5000 Fragen)",
         'ai_welcome': "🤖 Ich bin Ihr KI-Assistent. Fragen Sie mich etwas!",
-        'categories': {'prog': "💻 Programmierung", 'design': "🎨 Design", 'lang': "🌐 Sprachen", '3d': "🏗️ 3D-Modellierung"},
-        'courses': {'prog': ["🤖 Erstellung von Telegram-Bots"], 'design': ["Design mit KI erstellen"], 'lang': ["🇩🇪 Deutsch", "🇺🇸 Englisch", "🇷🇺 Russisch"], '3d': ["⚙️ SolidWorks"]},
         'founder_txt': "👨‍💼 Kamolov Abdulaziz Sherzodbekovich\nInternationaler Ingenieur & IT-Unternehmer\n\n📚 Ausbildung & Qualifikation:\n🎓 Internationales Doppeldiplom (Usbekistan & Belarus)\n• Belarussische Nationale Technische Universität (BNTU), Minsk\n• Andijan Institute of Mechanical Engineering (AndMI)\n• Fachrichtung: «Intelligente Geräte und Produktionsmaschinen»\n• Format: Gemeinsames internationales Programm, Credit-Modul-System\n\n💼 Berufserfahrung:\n🏆 Gründer von «Abdulaziz Nemis AI» — Entwickler und Leiter der Bildungsplattform\n🎓 Dozent für Spezialfächer (Maschinen- und Mechanismenbau)\n🏭 Ingenieurpraktikum beim internationalen Unternehmen UZ DONGWON",
         'support_txt': "📞 Support:\n\n📱 Telegram: @admin\n📞 Tel: +998 50 777 51 52\n\n⚠️ Bitte rufen Sie nicht wegen Kleinigkeiten an."
     }
 }
-
-def get_course_id(name):
-    for l in TEXTS:
-        for cat in TEXTS[l].get('courses', {}):
-            for i, cname in enumerate(TEXTS[l]['courses'][cat]):
-                if cname == name: return f"{cat}_{i}"
-    return name
 
 def send_msg(cid, txt, kb=None):
     is_owner = str(cid) in OWNER_IDS
@@ -424,21 +373,7 @@ def send_qr_code(cid, caption, kb=None):
             
     return send_msg(cid, caption)
 
-def send_vid(cid, vid, cap=None, kb=None):
-    is_owner = str(cid) in OWNER_IDS
-    p = {'chat_id': cid, 'video': vid, 'protect_content': str(not is_owner).lower(), 'parse_mode': 'Markdown'}
-    if cap: p['caption'] = cap
-    if kb: p['reply_markup'] = json.dumps(kb)
-    try:
-        urllib.request.urlopen(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendVideo", data=urllib.parse.urlencode(p).encode('utf-8'))
-        return True
-    except:
-        p.pop('parse_mode', None)
-        try:
-            urllib.request.urlopen(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendVideo", data=urllib.parse.urlencode(p).encode('utf-8'))
-            return True
-        except:
-            return False
+
 
 def get_ai_resp(prompt, lang="ru"):
     try:
@@ -1019,13 +954,6 @@ def handle_update(upd):
             elif action == "no": db.update_user(target_uid, step='main'); send_msg(target_uid, "❌ To'lov rad etildi."); send_msg(cid, f"❌ NO: {target_uid}")
             elif action == "fake": db.update_user(target_uid, banned=1); send_msg(target_uid, "🚫 FAKE uchun BAN!"); send_msg(cid, f"🚫 BANNED: {target_uid}")
         
-        # Deletion functionality disabled to preserve uploaded lessons
-        if str(uid) in OWNER_IDS:
-            send_msg(cid, "🚫 Удаление видео отключено администратором, уроки сохраняются навсегда.")
-        # Original deletion code removed
-        
-        # Note: The adm_delvid callback is intentionally left non-functional.
-        # This ensures that uploaded lessons are never removed.
 
 
     if 'message' not in upd: return
@@ -1367,67 +1295,6 @@ def handle_update(upd):
             db.update_user(uid, ai_count=u.get('ai_count', 0) + 1)
         return
 
-    if txt == t['courses_btn']:
-        db.update_user(uid, step="cats"); items = [{"text": v} for v in t['categories'].values()]
-        send_msg(cid, "Category:", kb={"keyboard": [items[i:i+2] for i in range(0, len(items), 2)] + [[{"text": t['back_btn']}]], "resize_keyboard": True}); return
-
-    if u['step'] == "cats" and any(txt == v for v in t['categories'].values()):
-        cat_id = [k for k, v in t['categories'].items() if v == txt][0]
-        if cat_id == 'design':
-            msg_dict = {
-                'ru': "Этот курс не активен, скоро будет активным",
-                'uz': "Bu kurs hozircha faol emas, tez orada faol bo'ladi",
-                'en': "This course is currently not active, it will be active soon"
-            }
-            send_msg(cid, msg_dict.get(lang, msg_dict['ru']))
-            return
-        db.update_user(uid, step=f"c_{cat_id}"); items = [{"text": c} for c in t['courses'][cat_id]]
-        send_msg(cid, f"{txt}:", kb={"keyboard": [items[i:i+2] for i in range(0, len(items), 2)] + [[{"text": t['back_btn']}]], "resize_keyboard": True}); return
-
-    if u['step'].startswith("c_") and txt:
-        cat = u['step'].split("_")[1]
-        if txt in t['courses'].get(cat, []):
-            if cat == 'design':
-                msg_dict = {
-                    'ru': "Этот курс не активен, скоро будет активным",
-                    'uz': "Bu kurs hozircha faol emas, tez orada faol bo'ladi",
-                    'en': "This course is currently not active, it will be active soon"
-                }
-                send_msg(cid, msg_dict.get(lang, msg_dict['ru']))
-                return
-            if cat == 'lang' and txt in ["🇺🇸 Английский", "🇺🇸 Ingliz tili", "🇺🇸 English"]:
-                msg_dict = {
-                    'ru': "Этот язык не активен, скоро будет активным",
-                    'uz': "Bu til hozircha faol emas, tez orada faol bo'ladi",
-                    'en': "This language is currently not active, it will be active soon"
-                }
-                send_msg(cid, msg_dict.get(lang, msg_dict['ru']))
-                return
-            if not is_owner and u['sub'] == 'none':
-                db.update_user(uid, step="subs")
-                send_msg(cid, "🔒 Kursni ochish uchun tarifni faollashtiring / Для доступа к курсу активируйте тариф:")
-                send_msg(cid, t['subs_info'], kb={"keyboard": [[{"text": "Standard"}, {"text": "Platinum"}, {"text": "VIP"}], [{"text": t['back_btn']}]], "resize_keyboard": True})
-                return
-            db.update_user(uid, step=f"lessons||{txt}")
-            c_id = get_course_id(txt)
-            courses = db.get_courses()
-            data = courses.get(c_id, [])
-            if not data:
-                data = courses.get(txt, [])
-            items = [{"text": f"Qism {i+1}"} for i in range(len(data))]
-            send_msg(cid, f"Курс: {txt}", kb={"keyboard": [items[i:i+2] for i in range(0, len(items), 2)] + [[{"text": t['back_btn']}]], "resize_keyboard": True}); return
-
-    if u['step'].startswith("lessons||") and txt:
-        course_name = u['step'].split("||")[1]
-        c_id = get_course_id(course_name)
-        courses = db.get_courses()
-        data = courses.get(c_id, [])
-        if not data:
-            data = courses.get(course_name, [])
-        try:
-            pnum = int(txt.split()[-1])
-            if 1 <= pnum <= len(data): v = data[pnum-1]; send_vid(cid, v['video'], v.get('caption'))
-        except: pass
 
 def set_default_menu_button():
     try:
