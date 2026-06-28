@@ -367,7 +367,7 @@ def get_lesson():
             "1. 💡 Grammatik (Comprehensive grammar explanation with multiple examples. Include reading rules if applicable)\n"
             "2. 🗣️ Wortschatz (Extensive vocabulary list including essential verbs, nouns, and phrases with translations)\n"
             "3. 🎭 Dialog (A conversational dialogue demonstrating the topic)\n"
-            "4. 📝 Übungen (3 quick practice exercises)\n"
+            "4. 📝 Übungen (3 quick practice exercises. The questions/tasks MUST be entirely in German)\n"
             "5. 🎯 Leseaufgabe / Praktisches Aufgabe (Provide a dedicated, clear German text related to the topic. It MUST be a reading text like a story, a letter, or an article. Keep the text entirely in German. Underneath the text, add a note in {explain_lang} saying: 'If you don't understand this text, or want me to check your reading, copy the text and send it to the AI Chat Tutor. You can ask the tutor to explain it to you or listen to you read.')\n\n"
             "Provide solutions to the exercises at the very end of the lesson."
         )

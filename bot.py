@@ -482,46 +482,46 @@ ENTRANCE_EXAMS = {
             'correct': 0
         },
         {
-            'q': "2. Complete: Wo ____ du? (Где ты живешь? / Qayerda yashaysiz?)",
+            'q': "2. Ergänzen Sie: Wo ____ du? (Где ты живешь? / Qayerda yashaysiz?)",
             'opts': ["wohne", "wohnst", "wohnt"],
             'correct': 1
         },
         {
-            'q': "3. What is the correct article: ____ Tisch (стол / stol)",
+            'q': "3. Welcher Artikel ist richtig: ____ Tisch (стол / stol)",
             'opts': ["der", "die", "das"],
             'correct': 0
         }
     ],
     'B1': [
         {
-            'q': "1. Complete: Gestern ____ ich nach Berlin gefahren.",
+            'q': "1. Ergänzen Sie: Gestern ____ ich nach Berlin gefahren.",
             'opts': ["habe", "bin", "werde"],
             'correct': 1
         },
         {
-            'q': "2. Translate: 'Ich freue mich auf den Urlaub.'",
+            'q': "2. Übersetzen Sie: 'Ich freue mich auf den Urlaub.'",
             'opts': ["Я радовался отпуску.", "Я радуюсь предстоящему отпуску.", "Я не хочу в отпуск."],
             'correct': 1
         },
         {
-            'q': "3. Complete: Er hilft mir, ____ ich die Hausaufgabe verstehe.",
+            'q': "3. Ergänzen Sie: Er hilft mir, ____ ich die Hausaufgabe verstehe.",
             'opts': ["dass", "weil", "obwohl"],
             'correct': 0
         }
     ],
     'B2': [
         {
-            'q': "1. Complete: Wenn ich mehr Zeit ____, würde ich reisen.",
+            'q': "1. Ergänzen Sie: Wenn ich mehr Zeit ____, würde ich reisen.",
             'opts': ["habe", "hätte", "werde haben"],
             'correct': 1
         },
         {
-            'q': "2. Complete: Die Arbeit, ____ ich gestern fertiggestellt habe, war schwer.",
+            'q': "2. Ergänzen Sie: Die Arbeit, ____ ich gestern fertiggestellt habe, war schwer.",
             'opts': ["die", "der", "das"],
             'correct': 0
         },
         {
-            'q': "3. What is the passive form of 'Er schreibt einen Brief'?",
+            'q': "3. Wie lautet das Passiv von 'Er schreibt einen Brief'?",
             'opts': ["Ein Brief wird geschrieben.", "Ein Brief wurde geschrieben.", "Ein Brief ist geschrieben."],
             'correct': 0
         }
@@ -648,7 +648,7 @@ def send_lesson(cid, uid, lang):
             f"📖 Lektion {lesson_num}: [Lesson Topic Name]\n\n"
             "1. 💡 Grammatik (Detailed grammar explanation with examples)\n"
             "2. 🗣️ Wortschatz (Vocabulary list with translations)\n"
-            "3. 📝 Übungen (3 quick practice exercises)\n\n"
+            "3. 📝 Übungen (3 quick practice exercises. The questions MUST be entirely in German)\n\n"
             "Provide solutions to the exercises at the very end of the lesson."
         )
         lesson_text = get_ai_resp(prompt, lang)
@@ -674,68 +674,68 @@ def send_lesson(cid, uid, lang):
 LEVEL_EXAMS = {
     'A1': [
         {
-            'q': "1. Translate: 'Ich wohne in Berlin.'",
+            'q': "1. Übersetzen Sie: 'Ich wohne in Berlin.'",
             'opts': ["I live in Berlin / Я живу в Берлине / Men Berlinda yashayman", "I work in Berlin / Я работаю в Берлине / Men Berlinda ishlayman", "I am visiting Berlin / Я в гостях в Берлине / Men Berlinda mehmondaman"],
             'correct': 0
         },
         {
-            'q': "2. Which is the correct article for 'Apfel' (Apple)?",
+            'q': "2. Welcher Artikel ist richtig für 'Apfel' (Apple)?",
             'opts': ["der", "die", "das"],
             'correct': 0
         },
         {
-            'q': "3. Translate: 'Wie alt bist du?'",
+            'q': "3. Übersetzen Sie: 'Wie alt bist du?'",
             'opts': ["How are you? / Как дела? / Qalaysiz?", "How old are you? / Сколько тебе лет? / Yoshiingiz nechida?", "What is your name? / Как тебя зовут? / Ismingiz nima?"],
             'correct': 1
         }
     ],
     'A2': [
         {
-            'q': "1. What is the past participle of 'machen'?",
+            'q': "1. Was ist das Partizip Perfekt von 'machen'?",
             'opts': ["gemacht", "gemach", "gemachen"],
             'correct': 0
         },
         {
-            'q': "2. Complete: 'Ich habe ein ____ Auto gekauft.'",
+            'q': "2. Ergänzen Sie: 'Ich habe ein ____ Auto gekauft.'",
             'opts': ["neues", "neu", "neuen"],
             'correct': 0
         },
         {
-            'q': "3. Which preposition requires the dative case?",
+            'q': "3. Welche Präposition steht mit dem Dativ?",
             'opts': ["mit", "für", "ohne"],
             'correct': 0
         }
     ],
     'B1': [
         {
-            'q': "1. Which conjunction requires subordinate clause word order (verb at the end)?",
+            'q': "1. Welche Konjunktion verlangt die Nebensatz-Wortstellung (Verb am Ende)?",
             'opts': ["weil", "aber", "denn"],
             'correct': 0
         },
         {
-            'q': "2. Complete: 'Wenn ich reich ____, würde ich ein Haus kaufen.'",
+            'q': "2. Ergänzen Sie: 'Wenn ich reich ____, würde ich ein Haus kaufen.'",
             'opts': ["wäre", "bin", "wurde"],
             'correct': 0
         },
         {
-            'q': "3. What is the antonym of 'pünktlich'?",
+            'q': "3. Was ist das Antonym (Gegenteil) von 'pünktlich'?",
             'opts': ["unpünktlich", "irrational", "unrational"],
             'correct': 0
         }
     ],
     'B2': [
         {
-            'q': "1. Complete: 'Wenn ich mehr Zeit hätte, ____ ich eine Weltreise machen.'",
+            'q': "1. Ergänzen Sie: 'Wenn ich mehr Zeit hätte, ____ ich eine Weltreise machen.'",
             'opts': ["würde", "werde", "habe"],
             'correct': 0
         },
         {
-            'q': "2. Which noun is feminine?",
+            'q': "2. Welches Nomen ist feminin?",
             'opts': ["Entscheidung", "Zustand", "Ergebnis"],
             'correct': 0
         },
         {
-            'q': "3. Complete: 'Der Zug, ____ ich gestern verpasst habe, war pünktlich.'",
+            'q': "3. Ergänzen Sie: 'Der Zug, ____ ich gestern verpasst habe, war pünktlich.'",
             'opts': ["den", "der", "dem"],
             'correct': 0
         }
