@@ -899,8 +899,190 @@ if (declineChallengeBtn) {
     });
 }
 
+
+// ===================================================
+// HOMEWORK SYSTEM
+// ===================================================
+const HW_LOC = {
+    uz: {
+        title: 'UY VAZIFA',
+        answerLabel: '📝 Javobingizni yozing:',
+        submitBtn: 'Javobni Topshirish',
+        newBtn: 'Yangi uy vazifa olish',
+        placeholder: 'Uy vazifa javobingizni shu yerga yozing...',
+        loading: 'Uy vazifa yuklanmoqda...',
+        checking: 'Javobingiz tekshirilmoqda...',
+        alreadyDone: '✅ Siz bu dars uy vazifasini topshirgansiz.',
+    },
+    ru: {
+        title: 'ДОМАШНЕЕ ЗАДАНИЕ',
+        answerLabel: '📝 Напишите ваш ответ:',
+        submitBtn: 'Сдать задание',
+        newBtn: 'Получить новое задание',
+        placeholder: 'Напишите ответ на домашнее задание здесь...',
+        loading: 'Задание загружается...',
+        checking: 'Ваш ответ проверяется...',
+        alreadyDone: '✅ Вы уже сдали домашнее задание за этот урок.',
+    },
+    en: {
+        title: 'HOMEWORK',
+        answerLabel: '📝 Write your answer:',
+        submitBtn: 'Submit Homework',
+        newBtn: 'Get New Homework',
+        placeholder: 'Write your homework answer here...',
+        loading: 'Loading homework...',
+        checking: 'Checking your answer...',
+        alreadyDone: '✅ You already submitted homework for this lesson.',
+    },
+    de: {
+        title: 'HAUSAUFGABE',
+        answerLabel: '📝 Schreiben Sie Ihre Antwort:',
+        submitBtn: 'Hausaufgabe abgeben',
+        newBtn: 'Neue Hausaufgabe erhalten',
+        placeholder: 'Schreiben Sie hier Ihre Antwort auf die Hausaufgabe...',
+        loading: 'Hausaufgabe wird geladen...',
+        checking: 'Ihre Antwort wird überprüft...',
+        alreadyDone: '✅ Sie haben die Hausaufgabe für diese Lektion bereits eingereicht.',
+    }
+};
+
+const hwModal = document.getElementById('homework-modal');
+const hwCloseBtn = document.getElementById('hw-close-btn');
+const hwModalTitle = document.getElementById('hw-modal-title');
+const hwLoading = document.getElementById('hw-loading');
+const hwText = document.getElementById('hw-text');
+const hwAnswerSection = document.getElementById('hw-answer-section');
+const hwAnswerLabel = document.getElementById('hw-answer-label');
+const hwAnswerInput = document.getElementById('hw-answer-input');
+const hwSubmitBtn = document.getElementById('hw-submit-btn');
+const hwSubmitLabel = document.getElementById('hw-submit-label');
+const hwResultArea = document.getElementById('hw-result-area');
+const hwNewBtn = document.getElementById('hw-new-btn');
+const hwNewLabel = document.getElementById('hw-new-label');
+
+function applyHwLang() {
+    const loc = HW_LOC[userLang] || HW_LOC['ru'];
+    if (hwModalTitle) hwModalTitle.textContent = loc.title;
+    if (hwAnswerLabel) hwAnswerLabel.textContent = loc.answerLabel;
+    if (hwSubmitLabel) hwSubmitLabel.textContent = loc.submitBtn;
+    if (hwNewLabel) hwNewLabel.textContent = loc.newBtn;
+    if (hwAnswerInput) hwAnswerInput.placeholder = loc.placeholder;
+}
+
+async function openHomework() {
+    if (!hwModal) return;
+    const loc = HW_LOC[userLang] || HW_LOC['ru'];
+    applyHwLang();
+
+    // Reset state
+    hwLoading.style.display = 'flex';
+    hwLoading.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${loc.loading}`;
+    hwText.style.display = 'none';
+    hwText.textContent = '';
+    hwAnswerSection.style.display = 'none';
+    hwAnswerInput.value = '';
+    hwResultArea.style.display = 'none';
+    hwResultArea.textContent = '';
+    hwNewBtn.style.display = 'none';
+    hwModal.classList.remove('hidden');
+
+    try {
+        const resp = await fetch(API_BASE + '/api/get_homework', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, lang: userLang })
+        });
+        if (!resp.ok) { hwLoading.innerHTML = '❌ Xatolik yuz berdi.'; return; }
+        const data = await resp.json();
+
+        hwLoading.style.display = 'none';
+        hwText.style.display = 'block';
+        hwText.textContent = data.homework;
+
+        if (data.status === 'submitted') {
+            hwAnswerSection.style.display = 'none';
+            hwResultArea.style.display = 'block';
+            hwResultArea.textContent = loc.alreadyDone;
+            hwNewBtn.style.display = 'block';
+        } else {
+            hwAnswerSection.style.display = 'block';
+        }
+    } catch (e) {
+        hwLoading.innerHTML = '❌ Tarmoq xatosi.';
+    }
+}
+
+// Dashboard "Uy Vazifa" button
+const btnHomework = document.getElementById('btn-homework');
+if (btnHomework) {
+    btnHomework.addEventListener('click', () => {
+        openHomework();
+    });
+}
+
+// Close homework modal
+if (hwCloseBtn) {
+    hwCloseBtn.addEventListener('click', () => {
+        hwModal.classList.add('hidden');
+    });
+}
+
+// Submit homework
+if (hwSubmitBtn) {
+    hwSubmitBtn.addEventListener('click', async () => {
+        const answer = hwAnswerInput.value.trim();
+        const loc = HW_LOC[userLang] || HW_LOC['ru'];
+        if (!answer) { alert('Javob bo\'sh. Iltimos, yozing!'); return; }
+
+        hwSubmitBtn.disabled = true;
+        hwSubmitLabel.textContent = loc.checking;
+
+        try {
+            const resp = await fetch(API_BASE + '/api/submit_homework', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, answer, lang: userLang })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                hwAnswerSection.style.display = 'none';
+                hwResultArea.style.display = 'block';
+                hwResultArea.textContent = data.feedback || '✅ Qabul qilindi!';
+                hwNewBtn.style.display = 'block';
+                if (tg.HapticFeedback && typeof tg.HapticFeedback.notificationOccurred === 'function') {
+                    try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
+                }
+            } else {
+                alert(data.error || 'Xatolik!');
+                hwSubmitBtn.disabled = false;
+                hwSubmitLabel.textContent = loc.submitBtn;
+            }
+        } catch (e) {
+            alert('Tarmoq xatosi!');
+            hwSubmitBtn.disabled = false;
+            hwSubmitLabel.textContent = loc.submitBtn;
+        }
+    });
+}
+
+// Get new homework button — clears previous and fetches fresh
+if (hwNewBtn) {
+    hwNewBtn.addEventListener('click', async () => {
+        // Reset DB homework_status to none so new one will be generated
+        try {
+            await fetch(API_BASE + '/api/get_homework', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, lang: userLang, force_new: true })
+            });
+        } catch(e) {}
+        openHomework();
+    });
+}
+
 // --- EXAM LOCALIZATION ---
 const EXAM_LOCALIZATION = {
+
     'uz': {
         title: 'IMTIHON // PRÜFUNG',
         desc: "To'g'ri javobni tanlang va yangi darajaga o'ting!",

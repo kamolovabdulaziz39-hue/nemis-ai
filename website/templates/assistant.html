@@ -221,7 +221,17 @@
                 </button>
             </div>
 
-                <!-- Action 3: Take Level Exam -->
+                <!-- Action 3: Homework -->
+                <button class="menu-card" id="btn-homework">
+                    <div class="card-icon" style="background-color: rgba(34, 197, 94, 0.15); color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);"><i class="fa-solid fa-pencil"></i></div>
+                    <div class="card-details">
+                        <h3 id="card-homework-title">Uy Vazifa</h3>
+                        <p id="card-homework-desc">AI tomonidan berilgan uy topshirig'ingiz</p>
+                    </div>
+                    <div class="card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+
+                <!-- Action 4: Take Level Exam -->
                 <button class="menu-card" id="btn-take-exam" disabled>
                     <div class="card-icon" style="background-color: rgba(255, 204, 0, 0.15); color: var(--accent-gold); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);"><i class="fa-solid fa-graduation-cap"></i></div>
                     <div class="card-details">
@@ -232,6 +242,44 @@
                 </button>
             </div>
         </main>
+    </div>
+
+    <!-- Homework Modal -->
+    <div class="modal-overlay hidden" id="homework-modal" style="z-index: 200;">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto; padding: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="font-family: var(--font-display); color: #22c55e; font-size: 1.4rem; margin: 0;">
+                    <i class="fa-solid fa-pencil"></i> <span id="hw-modal-title">UY VAZIFA</span>
+                </h2>
+                <button id="hw-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color);">✕</button>
+            </div>
+
+            <!-- Homework content area -->
+            <div id="hw-content-area" style="min-height: 120px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; font-size: 0.97rem; line-height: 1.6; color: var(--text-color); white-space: pre-wrap;">
+                <div id="hw-loading" style="display:flex; align-items:center; gap:10px; color:#22c55e;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Uy vazifa yuklanmoqda...
+                </div>
+                <div id="hw-text" style="display:none;"></div>
+            </div>
+
+            <!-- Answer input -->
+            <div id="hw-answer-section" style="display:none;">
+                <p style="font-weight: 700; margin-bottom: 8px; font-size: 0.95rem;" id="hw-answer-label">📝 Javobingizni yozing:</p>
+                <textarea id="hw-answer-input" rows="5" placeholder="Uy vazifa javobingizni shu yerga yozing..."
+                    style="width: 100%; border: 1px solid rgba(34,197,94,0.3); border-radius: 10px; padding: 12px; font-size: 0.97rem; resize: vertical; background: #f8fafc; color: #1e293b; outline: none; box-sizing: border-box;"></textarea>
+                <button id="hw-submit-btn" style="margin-top: 12px; width: 100%; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: white; border-radius: 12px; padding: 14px; font-size: 1rem; font-weight: 700; cursor: pointer;">
+                    <i class="fa-solid fa-paper-plane"></i> <span id="hw-submit-label">Javobni Topshirish</span>
+                </button>
+            </div>
+
+            <!-- Result area -->
+            <div id="hw-result-area" style="display:none; margin-top: 15px; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.25); border-radius: 12px; padding: 15px; white-space: pre-wrap; font-size: 0.97rem; line-height: 1.6;"></div>
+
+            <!-- Close / new homework -->
+            <button id="hw-new-btn" style="display:none; margin-top: 12px; width: 100%; background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.2); color: var(--text-color); border-radius: 12px; padding: 13px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                <i class="fa-solid fa-rotate-right"></i> <span id="hw-new-label">Yangi uy vazifa olish</span>
+            </button>
+        </div>
     </div>
 
     <!-- 4. Lessons List View -->

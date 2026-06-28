@@ -434,18 +434,138 @@ def get_db_connection():
 
 def upgrade_schema():
     conn = get_db_connection()
-    try:
-        conn.execute("ALTER TABLE users ADD COLUMN webapp_password TEXT")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        conn.execute("ALTER TABLE users ADD COLUMN webapp_surname TEXT")
-    except sqlite3.OperationalError:
-        pass
+    for col, definition in [
+        ("webapp_password", "TEXT"),
+        ("webapp_surname", "TEXT"),
+        ("homework_text", "TEXT"),
+        ("homework_status", "TEXT DEFAULT 'none'"),
+    ]:
+        try:
+            conn.execute(f"ALTER TABLE users ADD COLUMN {col} {definition}")
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
     conn.close()
 
 upgrade_schema()
+
+
+@app.route('/api/get_homework', methods=['POST'])
+def get_homework():
+    data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
+    lang = data.get('lang', 'ru')
+    force_new = data.get('force_new', False)
+    if not uid:
+        return {"error": "Missing user_id"}, 400
+
+    conn = get_db_connection()
+    user = conn.execute("SELECT current_lesson, selected_level, homework_text, homework_status FROM users WHERE id=?", (uid,)).fetchone()
+    conn.close()
+    if not user:
+        return {"error": "User not found"}, 404
+
+    current_lesson = user['current_lesson'] or 1
+    selected_level = user['selected_level'] or 'A1'
+
+    # If homework already exists for this lesson (and force_new is not set), return it
+    if not force_new and user['homework_text'] and user['homework_status'] in ('pending', 'submitted'):
+        return {
+            "homework": user['homework_text'],
+            "status": user['homework_status'],
+            "lesson": current_lesson,
+            "level": selected_level
+        }
+
+    # Generate new homework via Gemini AI
+    lang_map = {'uz': 'Uzbek', 'ru': 'Russian', 'en': 'English', 'de': 'German'}
+    explain_lang = lang_map.get(lang, 'Russian')
+
+    prompt = (
+        f"You are a German language teacher. Create a clear homework assignment for a student at level {selected_level}, Lesson {current_lesson}.\n"
+        f"The homework must be written entirely in GERMAN (Deutsch).\n"
+        f"The instructions/explanations for the student should be in {explain_lang}.\n"
+        f"Format:\n"
+        f"📝 Hausaufgabe — {selected_level}, Lektion {current_lesson}\n\n"
+        f"Aufgabe 1: [A translation exercise — give 3-5 sentences in {explain_lang} to translate into German]\n\n"
+        f"Aufgabe 2: [A fill-in-the-blank grammar exercise — 4-5 sentences with missing words, all in German]\n\n"
+        f"Aufgabe 3: [A short writing task — ask the student to write 3-5 sentences in German on a topic related to this lesson]\n\n"
+        f"Keep it focused, practical, and appropriate for {selected_level} level. Do NOT include answers."
+    )
+
+    try:
+        homework_text = get_ai_resp(prompt, lang)
+    except Exception as e:
+        return {"error": f"AI error: {e}"}, 500
+
+    conn = get_db_connection()
+    conn.execute("UPDATE users SET homework_text=?, homework_status='pending' WHERE id=?", (homework_text, uid))
+    conn.commit()
+    conn.close()
+
+    return {
+        "homework": homework_text,
+        "status": "pending",
+        "lesson": current_lesson,
+        "level": selected_level
+    }
+
+
+@app.route('/api/submit_homework', methods=['POST'])
+def submit_homework():
+    data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
+    answer = data.get('answer', '').strip()
+    lang = data.get('lang', 'ru')
+
+    if not uid or not answer:
+        return {"error": "Missing user_id or answer"}, 400
+
+    conn = get_db_connection()
+    user = conn.execute("SELECT current_lesson, selected_level, homework_text FROM users WHERE id=?", (uid,)).fetchone()
+    conn.close()
+    if not user:
+        return {"error": "User not found"}, 404
+
+    homework_text = user['homework_text'] or ''
+    current_lesson = user['current_lesson'] or 1
+    selected_level = user['selected_level'] or 'A1'
+
+    lang_map = {'uz': 'Uzbek', 'ru': 'Russian', 'en': 'English', 'de': 'German'}
+    explain_lang = lang_map.get(lang, 'Russian')
+
+    check_prompt = (
+        f"You are a professional German language teacher. A student at level {selected_level} (Lesson {current_lesson}) submitted their homework.\n\n"
+        f"HOMEWORK ASSIGNMENT:\n{homework_text}\n\n"
+        f"STUDENT'S ANSWER:\n{answer}\n\n"
+        f"Please evaluate the student's answers carefully:\n"
+        f"1. Give a score from 1 to 10\n"
+        f"2. Point out specific mistakes (wrong grammar, wrong word, wrong spelling) — show the correct version\n"
+        f"3. Praise what was done well\n"
+        f"4. Give a short motivational message\n\n"
+        f"Write your feedback in {explain_lang}. Use this format:\n"
+        f"✅ Baho / Оценка / Score: X/10\n"
+        f"📌 Xatolar / Ошибки / Mistakes:\n[list mistakes with corrections]\n"
+        f"👍 Yaxshi / Хорошо / Good:\n[what was done correctly]\n"
+        f"💪 [Short motivational closing message]"
+    )
+
+    try:
+        feedback = get_ai_resp(check_prompt, lang)
+    except Exception as e:
+        return {"error": f"AI error: {e}"}, 500
+
+    conn = get_db_connection()
+    conn.execute("UPDATE users SET homework_status='submitted' WHERE id=?", (uid,))
+    conn.commit()
+    conn.close()
+
+    return {
+        "feedback": feedback,
+        "status": "submitted"
+    }
+
+
 
 @app.route('/admin')
 @requires_auth
