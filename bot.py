@@ -125,9 +125,7 @@ class Database:
                 "selected_level": "TEXT",
                 "temp_exam_level": "TEXT",
                 "temp_exam_q_idx": "INTEGER DEFAULT -1",
-                "temp_exam_correct": "INTEGER DEFAULT 0",
-                "webapp_password": "TEXT",
-                "webapp_surname": "TEXT"
+                "temp_exam_correct": "INTEGER DEFAULT 0"
             }
             for col, col_type in user_cols_to_add.items():
                 if col not in existing_user_cols:
@@ -963,6 +961,7 @@ def handle_update(upd):
 
             if action == "ok":
                 exp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 30*86400))
+                db.update_user(target_uid, sub=plan, sub_expire=exp, unlocked=[], ai_count=0, step='main')
                 
                 # Determine amount based on plan
                 amount = 60000 if plan == "standard" else (120000 if plan == "platinum" else 2000000)
@@ -975,15 +974,8 @@ def handle_update(upd):
                     c = db.get_conn()
                     c.execute("INSERT INTO payments (user_id, amount, date, phone, tariff) VALUES (?,?,?,?,?)", (target_uid, amount, pay_date, phone, plan))
                     c.commit(); c.close()
-                
-                # If target user has no password yet, set step to create_password. Otherwise, step to main.
-                if target_u and not target_u.get('webapp_password'):
-                    db.update_user(target_uid, sub=plan, sub_expire=exp, unlocked=[], ai_count=0, step='create_password')
-                    send_msg(target_uid, "✅ To'lov qabul qilindi! Endi kelgusida tizimga kirish uchun parolingizni yarating (istalgan so'z yoki raqamlar): / ✅ Оплата принята! Теперь создайте ваш пароль для входа в систему в будущем (любое слово или цифры):")
-                else:
-                    db.update_user(target_uid, sub=plan, sub_expire=exp, unlocked=[], ai_count=0, step='main')
-                    send_msg(target_uid, "✅ To'lov qabul qilindi! Kursga kirish ruxsati ochildi. / ✅ Оплата принята! Доступ к курсу открыт.")
-                send_msg(cid, f"✅ OK: {target_uid} ({plan.upper()})")
+                    
+                send_msg(target_uid, "✅ To'lov qabul qilindi! Kursga kirish ruxsati ochildi."); send_msg(cid, f"✅ OK: {target_uid} ({plan.upper()})")
             elif action == "no": db.update_user(target_uid, step='main'); send_msg(target_uid, "❌ To'lov rad etildi."); send_msg(cid, f"❌ NO: {target_uid}")
             elif action == "fake": db.update_user(target_uid, banned=1); send_msg(target_uid, "🚫 FAKE uchun BAN!"); send_msg(cid, f"🚫 BANNED: {target_uid}")
         
@@ -1019,13 +1011,13 @@ def handle_update(upd):
                 )
                 c.commit(); c.close()
             alert = (
-                f"\U0001f6a8 *\u0421\u0418\u0421\u0422\u0415\u041c\u0410 \u0411\u0415\u0417\u041e\u041f\u0410\u0421\u041d\u041e\u0421\u0422\u0418: \u041e\u0411\u041d\u0410\u0420\u0423\u0416\u0415\u041d\u0410 \u0410\u0422\u0410\u041a\u0410!*\n\n"
-                    f"\U0001f464 *\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c:* {u.get('name')} ({fmt_username(u.get('username'))})\n"
-                f"\U0001f194 *ID:* `{uid}`\n"
-                f"\U0001f4f1 *\u0422\u0435\u043b\u0435\u0444\u043e\u043d:* `{u.get('phone', '-')}`\n"
-                f"\U0001f4ac *\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435:* `{txt}`\n"
-                f"\U0001f6e1 *\u0423\u0433\u0440\u043e\u0437\u0430:* `{threat}`\n"
-                f"\U0001f4c5 *\u0412\u0440\u0435\u043c\u044f:* {timestamp}"
+                f"🚨 *СИСТЕМА БЕЗОПАСНОСТИ: ОБНАРУЖЕНА АТАКА!*\n\n"
+                f"👤 *Пользователь:* {u.get('name')} ({fmt_username(u.get('username'))})\n"
+                f"🆔 *ID:* `{uid}`\n"
+                f"📱 *Телефон:* `{u.get('phone', '-')}`\n"
+                f"💬 *Сообщение:* `{txt}`\n"
+                f"🛡️ *Угроза:* `{threat}`\n"
+                f"📅 *Время:* {timestamp}"
             )
             for oid in OWNER_IDS:
                 send_msg(oid, alert)
@@ -1088,17 +1080,16 @@ def handle_update(upd):
         send_msg(cid, "Veb-ilovaga kirish uchun quyidagi tugmani bosing / Нажмите кнопку ниже для входа:", kb=kb)
         return
     if txt == '/start':
-        user_sub = u.get('sub', 'none')
-        if user_sub != 'none':
-            if u.get('webapp_password'):
-                db.update_user(uid, step="awaiting_password")
-                send_msg(cid, "С возвращением! Введите ваш пароль для входа / Xush kelibsiz! Tizimga kirish uchun parolingizni kiriting:")
-            else:
-                db.update_user(uid, step="create_password")
-                send_msg(cid, "Вы уже оплатили доступ. Пожалуйста, создайте пароль для входа в систему: / Siz to'lov qilgansiz. Iltimos, kelgusida tizimga kirish uchun parolingizni yarating:")
-        else:
-            db.update_user(uid, step="register_name")
-            send_msg(cid, "Добро пожаловать! Пожалуйста, введите ваше Имя для регистрации: / Xush kelibsiz! Ro'yxatdan o'tish uchun ismingizni kiriting:")
+        db.update_user(uid, step="main")
+        
+        welcome_text = (
+            "Assalomu alaykum! 👋 Abdulaziz NEMIS AI raqamli akademiyamizga xush kelibsiz! 🏛✨\n\n"
+            "Bu yerda ortiqcha vaqt yo‘qotishlarsiz ⏳, uzoq yo‘l yurmasdan 🚷, uyingizda o‘tirib 24/7 rejimda mukammal bilim olasiz! 🧠💻 Bizning tizim dangasalikni butunlay yo‘q qiladi va yuqori natija beradi. 🎯🔥\n\n"
+            "Pastdagi tugmani bosib, akademiyaga kiring! 🚀🏁"
+        )
+        
+        # Send the beautiful greeting with the NEW main keyboard (which only has the Web App button)
+        send_msg(cid, welcome_text, kb=get_main_kb(uid, lang))
         return
 
     if (txt == '/admin' or txt.lower() in ['admin', 'админ']) and is_owner:
@@ -1218,46 +1209,6 @@ def handle_update(upd):
                 db.update_user(uid, step="main")
                 send_msg(cid, "🏠 Asosiy menyu:", kb=get_main_kb(uid, u.get('lang', 'uz')))
                 return
-
-    # Registration and Password Flow Steps
-    if u['step'] == "register_name" and txt:
-        db.update_user(uid, name=txt, step="register_surname")
-        send_msg(cid, "Введите вашу Фамилию: / Familiyangizni kiriting:")
-        return
-
-    if u['step'] == "register_surname" and txt:
-        db.update_user(uid, webapp_surname=txt, step="subs")
-        send_msg(cid, t['subs_info'], kb={"keyboard": [[{"text": "Standard"}, {"text": "Platinum"}, {"text": "VIP"}], [{"text": t['back_btn']}]], "resize_keyboard": True})
-        return
-
-    if u['step'] == "create_password" and txt:
-        if len(txt) < 4:
-            send_msg(cid, "Пароль слишком короткий. Введите пароль еще раз (минимум 4 символа): / Parol juda qisqa. Qaytadan kiriting (kamida 4 ta belgi):")
-            return
-        db.update_user(uid, webapp_password=txt, step="main")
-        welcome_text = (
-            "Assalomu alaykum! 👋 Abdulaziz NEMIS AI raqamli akademiyamizga xush kelibsiz! 🏛✨\n\n"
-            "Bu yerda ortiqcha vaqt yo‘qotishlarsiz ⏳, uzoq yo‘l yurmasdan 🚷, uyingizda o‘tirib 24/7 rejimda mukammal bilim olasiz! 🧠💻 Bizning tizim dangasalikni butunlay yo‘q qiladi va yuqori natija beradi. 🎯🔥\n\n"
-            "Pastdagi tugmani bosib, akademiyaga kiring! 🚀🏁"
-        )
-        send_msg(cid, "🎉 Пароль успешно создан! / Parol muvaffaqiyatli yaratildi!")
-        send_msg(cid, welcome_text, kb=get_main_kb(uid, lang))
-        return
-
-    if u['step'] == "awaiting_password" and txt:
-        saved_password = u.get('webapp_password')
-        if txt == saved_password:
-            db.update_user(uid, step="main")
-            welcome_text = (
-                "Assalomu alaykum! 👋 Abdulaziz NEMIS AI raqamli akademiyamizga xush kelibsiz! 🏛✨\n\n"
-                "Bu yerda ortiqcha vaqt yo‘qotishlarsiz ⏳, uzoq yo‘l yurmasdan 🚷, uyingizda o‘tirib 24/7 rejimda mukammal bilim olasiz! 🧠💻 Bizning tizim dangasalikni butunlay yo‘q qiladi va yuqori natija beradi. 🎯🔥\n\n"
-                "Pastdagi tugmani bosib, akademiyaga kiring! 🚀🏁"
-            )
-            send_msg(cid, "✅ Успешный вход! С возвращением! / Kirish muvaffaqiyatli! Xush kelibsiz!")
-            send_msg(cid, welcome_text, kb=get_main_kb(uid, lang))
-        else:
-            send_msg(cid, "❌ Неверный пароль. Попробуйте еще раз: / Parol noto'g'ri. Qayta urinib ko'ring:")
-        return
 
     if u['step'] == "agreement":
         if "roziman" in txt.lower() or "согласен" in txt.lower() or txt == t['agree_btn']:
