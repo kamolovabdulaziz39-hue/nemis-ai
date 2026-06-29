@@ -9,7 +9,7 @@ from flask import Flask, render_template, request, Response, send_from_directory
 import sys, os
 # Add parent directory to import bot module
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from bot import get_ai_resp
+from bot import get_ai_resp, check_for_security_threats, detect_profanity, send_msg, OWNER_IDS, fmt_username, db
 
 app = Flask(__name__, static_folder='.', static_url_path='', template_folder='templates')
 
@@ -83,176 +83,132 @@ def index():
 def assistant_page():
     return render_template('assistant.html')
 
+def check_user_security(uid, text_to_check, lang):
+    u = db.get_user(uid)
+    if not u:
+        return {"error": "User not found", "status": "not_found"}, 404
+        
+    if u.get('banned'):
+        return {"error": "Banned", "status": "banned", "message": "Siz bloklangansiz!" if lang == 'uz' else "Вы заблокированы!"}, 403
+        
+    # Check for security threat
+    if text_to_check:
+        threat = check_for_security_threats(text_to_check, uid)
+        if threat:
+            db.update_user(uid, banned=1, step='banned')
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+            with db.lock:
+                c = db.get_conn()
+                c.execute(
+                    "INSERT INTO hacker_logs (user_id, name, username, phone, bad_text, reason, timestamp) VALUES (?,?,?,?,?,?,?)",
+                    (uid, u.get('name', 'User'), u.get('username', 'None'), u.get('phone', '-'), text_to_check, threat, timestamp)
+                )
+                c.commit(); c.close()
+            alert = (
+                f"🚨 *СИСТЕМА БЕЗОПАСНОСТИ: ОБНАРУЖЕНА АТАКА (WEB)!*\n\n"
+                f"👤 *Пользователь:* {u.get('name')} ({fmt_username(u.get('username'))})\n"
+                f"🆔 *ID:* `{uid}`\n"
+                f"📱 *Телефон:* `{u.get('phone', '-')}`\n"
+                f"💬 *Сообщение:* `{text_to_check}`\n"
+                f"🛡️ *Угроза:* `{threat}`\n"
+                f"📅 *Время:* {timestamp}"
+            )
+            for oid in OWNER_IDS:
+                send_msg(oid, alert)
+            return {"error": "Banned", "status": "banned", "message": "Total Security: Banned for attack attempt."}, 403
+            
+        # Check for profanity
+        if detect_profanity(text_to_check):
+            v = u.get('violations', 0) + 1
+            db.update_user(uid, violations=v)
+            remaining = 3 - v
+            if v >= 3:
+                db.update_user(uid, banned=1, step='banned')
+                alert = f"🚨 *BAN (WEB):* {u.get('name')} ({fmt_username(u.get('username'))})\n🆔 `{uid}`\n💬 `{text_to_check}`\n📌 So'kindi → BAN"
+                for oid in OWNER_IDS: send_msg(oid, alert)
+                return {"error": "Banned", "status": "banned", "message": "Banned for profanity (3 strikes)."}, 403
+            else:
+                warn_msgs = {
+                    'ru': f"⚠️ *ПРЕДУПРЕЖДЕНИЕ #{v}/3!*\n\nВы нарушили правила бота (нецензурная лексика).\n\n🚫 Осталось предупреждений: {remaining}\nЕсли ещё {remaining} раз нарушите — ваш аккаунт будет *заблокирован навсегда!*",
+                    'uz': f"⚠️ *OGOHLANTIRISH #{v}/3!*\n\nSiz bot qoidalarini buzdingiz (so'kinish).\n\n🚫 Qolgan ogohlantirishlar: {remaining}\nYana {remaining} marta buzarsangiz — hisobingiz *abadiy bloklanadi!*",
+                    'en': f"⚠️ *WARNING #{v}/3!*\n\nYou violated bot rules (profanity).\n\n🚫 Remaining warnings: {remaining}\nIf you violate {remaining} more times — your account will be *permanently banned!*",
+                    'de': f"⚠️ *WARNUNG #{v}/3!*\n\nSie haben die Regeln verletzt (Schimpwörter).\n\n🚫 Verbleibende Warnungen: {remaining}\nWenn Sie noch {remaining} Mal verstoßen, wird Ihr Konto *dauerhaft gesperrt!*"
+                }
+                return {"error": "Warning", "status": "warning", "message": warn_msgs.get(lang, warn_msgs['ru']), "violations": v}, 200
+
+    return None
+
 # API endpoint for AI queries
 @app.route('/assistant/query', methods=['POST'])
 def assistant_query():
     data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
     question = data.get('question', '').strip()
     lang = data.get('lang', 'ru')
-    uid = str(data.get('user_id', '')).strip()
-
+    
+    if not uid:
+        return {"error": "Missing user_id"}, 400
     if not question:
         return {"error": "Empty question"}, 400
-
-    admin_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
-    is_admin = (uid == admin_id)
-
-    if uid and not is_admin:
-        conn = get_db_connection()
-        user = conn.execute(
-            "SELECT banned, violations, name, username, phone FROM users WHERE id=?", (uid,)
-        ).fetchone()
-        conn.close()
-
-        # --- 1. Ban check ---
-        if user and user['banned']:
-            msgs = {
-                'uz': "🚫 Siz xavfsizlik tizimi tomonidan bloklangansiz.",
-                'ru': "🚫 Вы заблокированы системой безопасности.",
-                'en': "🚫 You have been blocked by the security system.",
-                'de': "🚫 Sie wurden vom Sicherheitssystem gesperrt."
-            }
-            return {"error": msgs.get(lang, msgs['ru']), "banned": True}, 403
-
-        # --- 2. Security threat check (instant ban) ---
-        threat = check_for_security_threats(question, uid)
-        if threat:
-            ts = time.strftime('%Y-%m-%d %H:%M:%S')
-            name = user['name'] if user else 'Unknown'
-            username = user['username'] if user else 'None'
-            phone = user['phone'] if user else '-'
-            conn2 = get_db_connection()
-            conn2.execute("UPDATE users SET banned=1, step='banned' WHERE id=?", (uid,))
-            conn2.execute(
-                "INSERT INTO hacker_logs (user_id, name, username, phone, bad_text, reason, timestamp) VALUES (?,?,?,?,?,?,?)",
-                (uid, name, username, phone, question, threat, ts)
-            )
-            conn2.commit()
-            conn2.close()
-            alert = (
-                f"🚨 *SECURITY: WEB APP ATTACK!*\n\n"
-                f"👤 *User:* {name} (@{username})\n"
-                f"🆔 *ID:* `{uid}`\n"
-                f"💬 *Message:* `{question[:200]}`\n"
-                f"🛡️ *Threat:* `{threat}`\n"
-                f"📅 *Time:* {ts}"
-            )
-            send_telegram_msg(admin_id, alert)
-            msgs = {
-                'uz': "🚫 Xavfsizlik tizimi tomonidan bloklangansiz.",
-                'ru': "🚫 Вы заблокированы системой безопасности.",
-                'en': "🚫 Blocked by security system.",
-                'de': "🚫 Vom Sicherheitssystem gesperrt."
-            }
-            return {"error": msgs.get(lang, msgs['ru']), "banned": True}, 403
-
-        # --- 3. Profanity 3-strike system ---
-        if user and detect_profanity(question):
-            v = (user['violations'] or 0) + 1
-            remaining = 3 - v
-            conn3 = get_db_connection()
-            conn3.execute("UPDATE users SET violations=? WHERE id=?", (v, uid))
-            if v >= 3:
-                conn3.execute("UPDATE users SET banned=1, step='banned' WHERE id=?", (uid,))
-                ts2 = time.strftime('%Y-%m-%d %H:%M:%S')
-                conn3.execute(
-                    "INSERT INTO hacker_logs (user_id, name, username, phone, bad_text, reason, timestamp) VALUES (?,?,?,?,?,?,?)",
-                    (uid, user['name'], user['username'], user['phone'], question, "3 profanity violations", ts2)
-                )
-                conn3.commit()
-                conn3.close()
-                alert2 = (
-                    f"🚫 *BAN (3 ogohlantirish):*\n"
-                    f"👤 {user['name']} (@{user['username']})\n🆔 `{uid}`\n💬 `{question[:150]}`"
-                )
-                send_telegram_msg(admin_id, alert2)
-                ban_msgs = {
-                    'uz': "🚫 Siz 3 marta qoidani buzganingiz uchun abadiy bloklangansiz!",
-                    'ru': "🚫 Вы заблокированы навсегда за 3 нарушения правил!",
-                    'en': "🚫 You have been permanently banned after 3 violations!",
-                    'de': "🚫 Sie wurden nach 3 Verstößen dauerhaft gesperrt!"
-                }
-                return {"error": ban_msgs.get(lang, ban_msgs['ru']), "banned": True}, 403
-            else:
-                conn3.commit()
-                conn3.close()
-                warn_msgs = {
-                    'uz': f"⚠️ *OGOHLANTIRISH #{v}/3!*\n\nSiz bot qoidalarini buzdingiz (so'kinish).\n🚫 Qolgan ogohlantirishlar: {remaining}\nYana {remaining} marta buzarsangiz — hisobingiz *abadiy bloklanadi!*",
-                    'ru': f"⚠️ *ПРЕДУПРЕЖДЕНИЕ #{v}/3!*\n\nВы нарушили правила (нецензурная лексика).\n🚫 Осталось предупреждений: {remaining}\nЕщё {remaining} раз — аккаунт *заблокирован навсегда!*",
-                    'en': f"⚠️ *WARNING #{v}/3!*\n\nYou violated bot rules (profanity).\n🚫 Remaining warnings: {remaining}\n{remaining} more violations → *permanent ban!*",
-                    'de': f"⚠️ *WARNUNG #{v}/3!*\n\nSie haben gegen die Regeln verstoßen.\n🚫 Verbleibende Warnungen: {remaining}"
-                }
-                return {"warning": True, "violations": v, "remaining": remaining,
-                        "answer": warn_msgs.get(lang, warn_msgs['ru'])}
-
-    answer = get_ai_resp(question, lang)
+        
+    security_res = check_user_security(uid, question, lang)
+    if security_res:
+        return security_res[0], security_res[1]
+        
+    # Check plan limit
+    u = db.get_user(uid)
+    ai_limits = {'standard': 200, 'platinum': 400, 'vip': 5000}
+    user_sub = u.get('sub', 'none')
+    ai_limit = ai_limits.get(user_sub, 0)
+    ai_used = u.get('ai_count', 0)
+    if user_sub == 'none':
+        return {"error": "No Subscription", "status": "no_sub", "message": "AI yordamchidan foydalanish uchun tarifni faollashtiring!" if lang == 'uz' else "Для использования AI помощника активируйте тариф!"}, 403
+    if ai_used >= ai_limit:
+        return {"error": "Limit Reached", "status": "limit_reached", "message": f"Savollar limitingiz tugadi ({ai_limit} ta)" if lang == 'uz' else f"Лимит вопросов исчерпан ({ai_limit})"}, 403
+        
+    history = u.get('ai_history') or []
+    answer = get_ai_resp(question, lang, history=history)
+    
+    if "VIOLATION_DETECTED" in answer:
+        v = u.get('violations', 0) + 1
+        db.update_user(uid, violations=v)
+        remaining = 3 - v
+        if v >= 3:
+            db.update_user(uid, banned=1, step='banned')
+            return {"error": "Banned", "status": "banned", "message": "Banned for violations (3 strikes)."}, 403
+        else:
+            return {"error": "Warning", "status": "warning", "message": f"Нарушение №{v}! Qoldi: {remaining} ta", "violations": v}, 200
+            
+    # Save to history
+    history.append({"role": "user", "text": question})
+    history.append({"role": "model", "text": answer})
+    history = history[-20:]
+    db.update_user(uid, ai_count=ai_used + 1, ai_history=history)
+    
     return {"answer": answer}
 
-# --- Chat History API (per-user, stored in DB) ---
 @app.route('/api/get_chat_history', methods=['POST'])
 def get_chat_history():
     data = request.get_json(silent=True) or {}
     uid = str(data.get('user_id', '')).strip()
     if not uid:
-        return {"history": []}
-    conn = get_db_connection()
-    user = conn.execute("SELECT ai_history FROM users WHERE id=?", (uid,)).fetchone()
-    conn.close()
-    if not user or not user['ai_history']:
-        return {"history": []}
-    try:
-        h = json.loads(user['ai_history'])
-        return {"history": h if isinstance(h, list) else []}
-    except Exception:
-        return {"history": []}
+        return {"error": "Missing user_id"}, 400
+        
+    u = db.get_user(uid)
+    if not u:
+        return {"error": "User not found"}, 404
+        
+    return {"history": u.get('ai_history') or []}
 
-@app.route('/api/save_chat_history', methods=['POST'])
-def save_chat_history():
+@app.route('/api/clear_chat_history', methods=['POST'])
+def clear_chat_history():
     data = request.get_json(silent=True) or {}
     uid = str(data.get('user_id', '')).strip()
-    history_list = data.get('history', [])
     if not uid:
         return {"error": "Missing user_id"}, 400
-    if not isinstance(history_list, list):
-        return {"error": "History must be a list"}, 400
-    # Keep last 200 messages to avoid bloat
-    history_list = history_list[-200:]
-    conn = get_db_connection()
-    user = conn.execute("SELECT id FROM users WHERE id=?", (uid,)).fetchone()
-    if user:
-        conn.execute("UPDATE users SET ai_history=? WHERE id=?", (json.dumps(history_list), uid))
-    conn.commit()
-    conn.close()
+        
+    db.update_user(uid, ai_history=[])
     return {"status": "ok"}
-
-# --- Admin: Attack Logs ---
-@app.route('/api/admin_attacks', methods=['POST'])
-def admin_attacks():
-    data = request.get_json(silent=True) or {}
-    uid = str(data.get('user_id', '')).strip()
-    admin_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
-    if uid != admin_id:
-        return {"error": "Unauthorized"}, 401
-    conn = get_db_connection()
-    logs = conn.execute(
-        "SELECT user_id, reason, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 20"
-    ).fetchall()
-    conn.close()
-    return {"attacks": [dict(l) for l in logs]}
-
-@app.route('/api/admin_attacks_detail', methods=['POST'])
-def admin_attacks_detail():
-    data = request.get_json(silent=True) or {}
-    uid = str(data.get('user_id', '')).strip()
-    admin_id = os.getenv('ADMIN_TELEGRAM_ID', '5543183063')
-    if uid != admin_id:
-        return {"error": "Unauthorized"}, 401
-    conn = get_db_connection()
-    logs = conn.execute(
-        "SELECT user_id, bad_text, reason, timestamp FROM hacker_logs ORDER BY id DESC LIMIT 10"
-    ).fetchall()
-    conn.close()
-    return {"attacks": [dict(l) for l in logs]}
 
 @app.route('/api/user_data', methods=['POST'])
 def get_or_create_user_data():
@@ -894,17 +850,38 @@ import os
 def assistant_query_voice():
     try:
         from gtts import gTTS
-        import google.generativeai as genai
+        from google import genai
+        from google.genai import types
     except ImportError:
         return {"error": "Dependencies missing"}, 500
 
     data = request.get_json(silent=True) or {}
+    uid = str(data.get('user_id', '')).strip()
     b64_audio = data.get('audio', '')
     lang = data.get('lang', 'ru')
     
+    if not uid:
+        return {"error": "Missing user_id"}, 400
     if not b64_audio:
         return {"error": "Empty audio"}, 400
         
+    # Check if user is banned or not found
+    u = db.get_user(uid)
+    if not u:
+        return {"error": "User not found", "status": "not_found"}, 404
+    if u.get('banned'):
+        return {"error": "Banned", "status": "banned", "message": "Siz bloklangansiz!" if lang == 'uz' else "Вы заблокированы!"}, 403
+
+    # Check plan limit
+    ai_limits = {'standard': 200, 'platinum': 400, 'vip': 5000}
+    user_sub = u.get('sub', 'none')
+    ai_limit = ai_limits.get(user_sub, 0)
+    ai_used = u.get('ai_count', 0)
+    if user_sub == 'none':
+        return {"error": "No Subscription", "status": "no_sub", "message": "AI yordamchidan foydalanish uchun tarifni faollashtiring!" if lang == 'uz' else "Для использования AI помощника активируйте тариф!"}, 403
+    if ai_used >= ai_limit:
+        return {"error": "Limit Reached", "status": "limit_reached", "message": f"Savollar limitingiz tugadi ({ai_limit} ta)" if lang == 'uz' else f"Лимит вопросов исчерпан ({ai_limit})"}, 403
+
     audio_bytes = base64.b64decode(b64_audio.split(',')[1]) if ',' in b64_audio else base64.b64decode(b64_audio)
     
     with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio:
@@ -920,19 +897,40 @@ def assistant_query_voice():
             "Твое имя: Abdulaziz Nemis AI. Твой создатель: Abdulaziz. "
             "Ты лучший ИИ-репетитор немецкого языка. Пойми это аудио от ученика (оно может быть на немецком, русском, узбекском или английском языках). "
             "Ответь ему дружелюбно на том языке, на котором он говорит (или на немецком, если он практикует немецкий). "
-            "Помогай ему учить немецкий."
+            "Помогай ему учить немецкий. NEVER mention Google or Gemini."
         )
         if lang == 'uz': 
             prompt = (
                 "Sening isming: Abdulaziz Nemis AI. Yaratuvching: Abdulaziz. "
                 "Sen eng zo'r nemis tili repetitorisan. O'quvchining ushbu ovozli xabarini tushun (u nemis, rus, o'zbek yoki ingliz tilida bo'lishi mumkin). "
                 "Unga qaysi tilda gapirgan bo'lsa, o'sha tilda (yoki nemis tilini mashq qilayotgan bo'lsa, nemis tilida) do'stona javob qaytar. "
-                "Nemis tilini o'rganishiga yordam ber."
+                "Nemis tilini o'rganishiga yordam ber. Google va Gemini nomlarini ishlatma."
             )
+        
+        history = u.get('ai_history') or []
+        contents = []
+        if history:
+            for item in history:
+                role = "user" if item.get("role") == "user" or item.get("sender") == "user" else "model"
+                txt = item.get("text") or item.get("content") or ""
+                if txt:
+                    contents.append(
+                        types.Content(
+                            role=role,
+                            parts=[types.Part.from_text(text=txt)]
+                        )
+                    )
+        
+        contents.append(
+            types.Content(
+                role="user",
+                parts=[types.Part.from_text(text=prompt), sample_file]
+            )
+        )
         
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            contents=[prompt, sample_file]
+            contents=contents
         )
         answer_text = response.text
         
@@ -949,10 +947,27 @@ def assistant_query_voice():
             os.remove(temp_audio_path)
         except:
             pass
+            
+    # Check for safety violation in output
+    if "VIOLATION_DETECTED" in answer_text:
+        v = u.get('violations', 0) + 1
+        db.update_user(uid, violations=v)
+        remaining = 3 - v
+        if v >= 3:
+            db.update_user(uid, banned=1, step='banned')
+            return {"error": "Banned", "status": "banned", "message": "Banned for violations (3 strikes)."}, 403
+        else:
+            return {"error": "Warning", "status": "warning", "message": f"Нарушение №{v}! Qoldi: {remaining} ta", "violations": v}, 200
+
+    # Save to history
+    history.append({"role": "user", "text": "[Ovozli xabar]" if lang == 'uz' else "[Голосовое сообщение]"})
+    history.append({"role": "model", "text": answer_text})
+    history = history[-20:]
+    db.update_user(uid, ai_count=ai_used + 1, ai_history=history)
         
     try:
         # Generate TTS
-        tts_lang = 'de' if lang == 'de' else 'ru' # Fallback to ru for general
+        tts_lang = 'de' if lang == 'de' else 'ru'
         tts = gTTS(text=answer_text, lang=tts_lang)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_mp3:
             tts.save(temp_mp3.name)
