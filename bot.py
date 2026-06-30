@@ -975,7 +975,17 @@ def handle_update(upd):
                     c.execute("INSERT INTO payments (user_id, amount, date, phone, tariff) VALUES (?,?,?,?,?)", (target_uid, amount, pay_date, phone, plan))
                     c.commit(); c.close()
                     
-                send_msg(target_uid, "✅ To'lov qabul qilindi! Kursga kirish ruxsati ochildi."); send_msg(cid, f"✅ OK: {target_uid} ({plan.upper()})")
+                approval_msg = (
+                    "✅ *To'lov qabul qilindi!*\n\n"
+                    "🎉 Kursga kirish ruxsati ochildi.\n\n"
+                    "📱 *Keyingi qadam:*\n"
+                    "Telegram menyusidagi tugmani bosib, ilovaga kiring.\n"
+                    "Birinchi marta kirishda ismingiz va parolni o'rnating.\n"
+                    "Keyingi safar *faqat parolni* kiriting.\n\n"
+                    "🔐 *Parolni yodda saqlang!*"
+                )
+                send_msg(target_uid, approval_msg)
+                send_msg(cid, f"✅ OK: {target_uid} ({plan.upper()})")
             elif action == "no": db.update_user(target_uid, step='main'); send_msg(target_uid, "❌ To'lov rad etildi."); send_msg(cid, f"❌ NO: {target_uid}")
             elif action == "fake": db.update_user(target_uid, banned=1); send_msg(target_uid, "🚫 FAKE uchun BAN!"); send_msg(cid, f"🚫 BANNED: {target_uid}")
         
