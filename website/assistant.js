@@ -823,41 +823,22 @@ async function loadUserData() {
                 userDetails.is_admin = true;
                 userDetails.sub = 'vip';
             }
-            // Routing logic based on user status
+            // If user has active subscription OR already has a selected level, skip registration/login wall
             if (userDetails.is_admin) {
-                // Admin: go straight to dashboard
                 welcomeModal.classList.add('hidden');
                 document.getElementById('admin-menu-grid').classList.remove('hidden');
                 switchView('dashboard');
-            } else if (userDetails.webapp_registered) {
-                // Already registered (has password): show login screen only
+            } else if (userDetails.webapp_registered || userDetails.sub !== 'none') {
                 const isSessionAuthenticated = sessionStorage.getItem('authenticated') === 'true';
-                welcomeModal.classList.add('hidden');
                 if (isSessionAuthenticated) {
+                    welcomeModal.classList.add('hidden');
                     switchView('dashboard');
                 } else {
+                    welcomeModal.classList.add('hidden');
                     document.getElementById('login-view').style.display = 'flex';
                 }
-            } else if (userDetails.sub !== 'none') {
-                // Approved & paid by admin, but hasn't set webapp password yet:
-                // Skip rules screen — go directly to registration form (set password once)
-                welcomeModal.classList.add('hidden');
-                // Pre-fill name from Telegram
-                const regNameInput = document.getElementById('reg-name');
-                if (regNameInput && userName) regNameInput.value = userName;
-                // Update subtitle to explain context
-                const regSubtitle = document.querySelector('#registration-view .auth-subtitle');
-                if (regSubtitle) {
-                    regSubtitle.textContent = userLang === 'uz' 
-                        ? "Siz allaqachon tasdiqlangansiz! Faqat parol o'rnating."
-                        : (userLang === 'ru' 
-                            ? "Вы уже подтверждены! Просто установите пароль."
-                            : "You are approved! Just set your password.");
-                }
-                document.getElementById('registration-view').style.display = 'flex';
-
             } else {
-                // New / unapproved user: show rules screen first
+                // Har doim avval qoidalar (warning) oynasini ko'rsat
                 welcomeModal.classList.remove('hidden');
                 showWarningScreen();
             }
@@ -924,8 +905,7 @@ acceptChallengeBtn.addEventListener('click', () => {
     if (userDetails.is_admin) {
         document.getElementById('admin-menu-grid').classList.remove('hidden');
         switchView('dashboard');
-    } else if (userDetails.webapp_registered) {
-        // Registered user: only ask for password
+    } else if (userDetails.webapp_registered || userDetails.sub !== 'none') {
         const isSessionAuthenticated = sessionStorage.getItem('authenticated') === 'true';
         if (isSessionAuthenticated) {
             switchView('dashboard');
@@ -933,7 +913,6 @@ acceptChallengeBtn.addEventListener('click', () => {
             document.getElementById('login-view').style.display = 'flex';
         }
     } else {
-        // New user: go to registration
         document.getElementById('registration-view').style.display = 'flex';
     }
 });

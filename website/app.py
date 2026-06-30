@@ -316,10 +316,22 @@ def webapp_login():
         return {"error": "Parolni kiriting"}, 400
         
     conn = get_db_connection()
-    user = conn.execute("SELECT webapp_password FROM users WHERE id=?", (uid,)).fetchone()
+    user = conn.execute("SELECT webapp_password, sub FROM users WHERE id=?", (uid,)).fetchone()
+    
+    if not user:
+        conn.close()
+        return {"error": "Foydalanuvchi topilmadi. Iltimos ro'yxatdan o'ting."}, 404
+        
+    # Auto-initialize password for paid users who don't have one set (e.g. database reset/recreation)
+    if user['sub'] != 'none' and not user['webapp_password']:
+        conn.execute("UPDATE users SET webapp_password=? WHERE id=?", (password, uid))
+        conn.commit()
+        # Refresh user object
+        user = conn.execute("SELECT webapp_password, sub FROM users WHERE id=?", (uid,)).fetchone()
+        
     conn.close()
     
-    if not user or not user['webapp_password']:
+    if not user['webapp_password']:
         return {"error": "Foydalanuvchi topilmadi. Iltimos ro'yxatdan o'ting."}, 404
         
     if user['webapp_password'] != password:

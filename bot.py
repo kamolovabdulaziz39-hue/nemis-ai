@@ -90,7 +90,7 @@ def check_for_security_threats(text, uid):
     return None
 
 # DATABASE
-DB_NAME = "nemis.db"
+DB_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nemis.db")
 class Database:
     def __init__(self, db_name):
         self.db_name = db_name
