@@ -1422,10 +1422,82 @@ def check_daily_regression():
             print(f"[REGRESSION ERROR] {e}")
         time.sleep(3600)  # Check every hour
 
+def start_auto_backup():
+    def backup_task():
+        print("[AUTO-BACKUP] Thread started.")
+        while True:
+            # Check every 10 minutes (600 seconds)
+            time.sleep(600)
+            try:
+                proj_root = os.path.dirname(os.path.abspath(__file__))
+                git_dir = os.path.join(proj_root, ".git")
+                if not os.path.exists(git_dir):
+                    continue
+                
+                db_path = os.path.join(proj_root, "nemis.db")
+                if not os.path.exists(db_path):
+                    continue
+                
+                # Check status of nemis.db
+                import subprocess
+                status_res = subprocess.run(["git", "status", "--porcelain", "nemis.db"], cwd=proj_root, capture_output=True, text=True)
+                if not status_res.stdout.strip():
+                    continue
+                
+                print("[AUTO-BACKUP] Changes detected in nemis.db. Committing and pushing...")
+                
+                # Configure git user
+                subprocess.run(["git", "config", "user.name", "Nemis AI Bot"], cwd=proj_root, capture_output=True)
+                subprocess.run(["git", "config", "user.email", "bot@nemis.ai"], cwd=proj_root, capture_output=True)
+                
+                # Add and commit
+                subprocess.run(["git", "add", "nemis.db"], cwd=proj_root, capture_output=True)
+                subprocess.run(["git", "commit", "-m", "db: Auto-backup database [skip ci] [skip render]"], cwd=proj_root, capture_output=True)
+                
+                # Push
+                github_token = os.getenv("GITHUB_TOKEN")
+                pushed = False
+                if github_token:
+                    for remote_name in ["new_origin", "origin"]:
+                        remote_res = subprocess.run(["git", "remote", "get-url", remote_name], cwd=proj_root, capture_output=True, text=True)
+                        url = remote_res.stdout.strip()
+                        if url and "github.com" in url:
+                            if "github.com:" in url:
+                                repo_path = url.split("github.com:")[-1]
+                            else:
+                                repo_path = url.split("github.com/")[-1]
+                            
+                            if repo_path.endswith(".git"):
+                                repo_path = repo_path[:-4]
+                            
+                            auth_url = f"https://x-access-token:{github_token}@github.com/{repo_path}.git"
+                            push_res = subprocess.run(["git", "push", auth_url, "main"], cwd=proj_root, capture_output=True, text=True)
+                            if push_res.returncode == 0:
+                                pushed = True
+                                print(f"[AUTO-BACKUP] Pushed successfully to {remote_name} via token.")
+                                break
+                
+                if not pushed:
+                    for remote_name in ["new_origin", "origin"]:
+                        push_res = subprocess.run(["git", "push", remote_name, "main"], cwd=proj_root, capture_output=True, text=True)
+                        if push_res.returncode == 0:
+                            pushed = True
+                            print(f"[AUTO-BACKUP] Pushed successfully to {remote_name} using default auth.")
+                            break
+                            
+            except Exception as e:
+                print(f"[AUTO-BACKUP] Error backing up database: {e}")
+                
+    import subprocess
+    threading.Thread(target=backup_task, daemon=True).start()
+
 def main():
     
     # Start regression checker background thread
     threading.Thread(target=check_daily_regression, daemon=True).start()
+    
+    # Start automatic database backup thread
+    start_auto_backup()
 
     # Set default menu button
     set_default_menu_button()
