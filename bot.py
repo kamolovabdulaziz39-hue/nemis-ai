@@ -97,7 +97,7 @@ class Database:
         self.lock = threading.Lock()
         self.init_db()
     def get_conn(self):
-        conn = sqlite3.connect(self.db_name); conn.row_factory = sqlite3.Row; return conn
+        conn = sqlite3.connect(self.db_name, timeout=30.0); conn.row_factory = sqlite3.Row; return conn
     def init_db(self):
         with self.lock:
             c = self.get_conn(); curr = c.cursor()
